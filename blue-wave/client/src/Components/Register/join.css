@@ -1,0 +1,143 @@
+/* header{
+    border: solid 2px blue;
+} */
+.mainLogo{
+    width: 150px; /* 원하는 너비로 조정 */
+    height: auto;
+}
+.logo_area{
+    text-align: center;
+    margin-bottom: 15px;
+}
+.letters_logo{
+    width: 150px;
+    height: auto;
+}
+.content{
+    margin: 0 auto;
+    max-width: 1280px;
+}
+.join_area{
+    margin: 0 auto;
+    padding: 58px 0 160px;
+    width: 400px;
+}
+.input_join{
+    padding: 0 0 20px
+}
+.input_box{
+    position: relative;
+}
+.join_title{
+    font-size: 32px;
+    letter-spacing: -.48px;
+    padding-bottom: 46px;
+    text-align: center;
+}
+.input_title{
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -.07px;
+    font-weight: 900;
+}
+.input_item{
+    position: relative;
+}
+.input_address{
+    display: flex;
+    align-items: center;
+}
+.input_phone{
+    display: flex;
+    align-items: center;
+}
+.hyphen{
+    margin: 0 15px;
+    font-size: 20px;;
+}
+input{
+    border: 0;
+    border-radius: 0;
+    resize: none;
+    outline: 0;
+    background-color: transparent;
+}
+input:focus {
+    border-bottom-color: #000;
+    outline: none;
+    border-bottom-width: 2px;
+  }
+input::placeholder {color:#bab7b7; font-size:13px;}
+input::-webkit-input-placeholder {color:#bab7b7; font-size:13px;}
+input:-ms-input-placeholder {color:#bab7b7; font-size:13px;}
+
+.input_txt{
+    font-size: 15px;
+    border-bottom: 1px solid #ebebeb;
+    letter-spacing: -.15px;
+    line-height: 22px;
+    width: 100%;
+    padding: 8px 0
+}
+.input_error{
+    display: none;
+}
+a{
+    text-decoration: none;
+}
+.join_btn{
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    border-radius: 12px;
+    height: 52px;
+    width: 100%;
+    font-size: 16px;
+    letter-spacing: -.16px;
+}
+.checkOk{ /* 유효성 검사 통과 버튼 색상*/
+    background-color: #2764e6;
+}
+.disabled{ /* 유효성 검사 에러 버튼 색상*/
+    background-color: #ebebeb;
+}
+.has_error{
+    color: #f15746;
+    display: block;
+    font-size: 13px;
+    line-height: 16px;
+}
+.has_error .input_txt{
+    border-width: 1px;
+    padding-bottom: 8px;
+    border-bottom-color: #ef6253;
+    border-bottom-width: 2px;
+}
+.address_btn{
+    align-items: center;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    background-color: #2764e6;
+    border-radius: 12px;
+    height: 35px;
+    width: 100px;
+    font-size: 16px;
+    letter-spacing: -.16px;
+}
+.join_terms{
+    padding: 0 0 40px;
+}
+.check_terms1{
+    display: flex;
+    height: 24px;
+}
+
+

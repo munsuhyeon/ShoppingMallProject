@@ -1,0 +1,51 @@
+.errorTxt{
+    color: #f15746;
+    display: block;
+    font-size: 13px;
+    line-height: 16px;
+}
+label{
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -.07px;
+    font-weight: 900;
+}
+.input_box{
+    position: relative;
+    padding: 0 0 20px
+}
+.input_item{
+    position: relative;
+}
+input{
+    border: 0;
+    border-radius: 0;
+    resize: none;
+    outline: 0;
+    background-color: transparent;
+}
+input:focus {
+    border-bottom-color: #000;
+    outline: none;
+    border-bottom-width: 2px;
+  }
+.input-error{
+    font-size: 15px;
+    border-bottom: 1px solid red;
+    letter-spacing: -.15px;
+    line-height: 22px;
+    width: 100%;
+    padding: 8px 0
+}
+.input_txt{
+    font-size: 15px;
+    border-bottom: 1px solid #ebebeb;
+    letter-spacing: -.15px;
+    line-height: 22px;
+    width: 100%;
+    padding: 8px 0
+}
+.input_address{
+    display: flex;
+    align-items: center;
+}
