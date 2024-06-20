@@ -1,4 +1,4 @@
-// src/components/Pagination.js
+// 페이지네이션입니다.
 import React from "react";
 import PropTypes from "prop-types";
 import "./Pagination.css"; // 필요한 CSS 파일

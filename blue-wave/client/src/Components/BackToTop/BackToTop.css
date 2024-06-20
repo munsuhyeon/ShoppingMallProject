@@ -21,9 +21,11 @@
   z-index: 1000;
   font-size: 20px;
   color: white;
+  font-family: "Noto Sans KR", sans-serif;
   font-weight: bold;
   /* 버튼 내부 텍스트의 수직 가운데 정렬을 위한 높이를 지정합니다. */
   line-height: 50px;
+  text-decoration: none;
 }
 
 #back-to-top:hover {

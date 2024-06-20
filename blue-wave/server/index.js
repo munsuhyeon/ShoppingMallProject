@@ -9,18 +9,20 @@ const path = require("path");
 const port = 8000;
 const bcrypt = require("bcrypt");
 const { rejects } = require("assert");
-dotenv.config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 dotenv.config();
-
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
 app.use(express.static(path.join(__dirname + "/images")));
-app.use(express.static(path.join(__dirname, "/images/사무용품")));
-app.use(express.static(path.join(__dirname, "/images/서적")));
+app.use(express.static(path.join(__dirname, "/images/도서")));
 app.use(express.static(path.join(__dirname, "/images/스포츠")));
+app.use(express.static(path.join(__dirname, "/images/사무용품")));
+app.use(express.static(path.join(__dirname, "/images/반려동물용품")));
+app.use(express.static(path.join(__dirname, "/images/인테리어")));
+
+// + 더  카테고리 추가
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
@@ -128,83 +130,94 @@ app.post("/register", async (req, res) => {
   }
 });
 
-/*=================   상품   =====================*/
+/*=================   main - 상품 데이터 불러오기   =====================*/
 
-// 상품 목록을 가져오는 엔드포인트
-app.get("/product", (req, res) => {
-  const sqlQuery = "SELECT * FROM bluewave.product;"; // 상품 목록 조회 쿼리
+// 상품 데이터를 가져오는 API 엔드포인트
+app.get("/shop", (req, res) => {
+  const sqlQuery = "SELECT * FROM bluewave.product;";
   connection.query(sqlQuery, (err, result) => {
     if (err) {
       console.error("상품을 가져오는 중 오류 발생:", err);
       res.status(500).send("상품을 가져오는 중 오류 발생");
       return;
     }
-    res.json(result); // JSON 형태로 상품 목록 응답
+    res.json(result);
   });
 });
 
-// 특정 상품을 가져오는 엔드포인트
-app.get("/product/:id", (req, res) => {
-  const productId = req.params.id;
-  const sqlQuery = "SELECT * FROM bluewave.product WHERE product_id = ?;"; // 특정 상품 조회 쿼리
-  connection.query(sqlQuery, [productId], (err, result) => {
+/*=================   상품   =====================*/
+
+// 주소 수정필요
+// 상품 목록을 가져오는 엔드포인트
+app.get("/product", (req, res) => {
+  const sqlQuery = "SELECT * FROM bluewave.product;";
+  connection.query(sqlQuery, (err, result) => {
     if (err) {
-      console.error("상품을 가져오는 중 오류 발생:", err);
-      res.status(500).send("상품을 가져오는 중 오류 발생");
+      console.error("Error fetching products:", err);
+      res.status(500).send("Error fetching products");
       return;
     }
-    if (result.length === 0) {
-      res.status(404).send("상품을 찾을 수 없습니다.");
-      return;
-    }
-    res.json(result[0]); // JSON 형태로 특정 상품 응답
+    res.json(result);
   });
 });
 
-// 카테고리에 속하는 상품 목록 조회 엔드포인트 (서브카테고리가 있는 경우)
-app.get(
-  "/categories/:categoryId/subcategories/:subCategoryId/products",
-  (req, res) => {
-    const categoryId = req.params.categoryId;
-    const subCategoryId = req.params.subCategoryId;
-    const sqlQuery = `
+app.get("/product/:categoryId", (req, res) => {
+  const { categoryId } = req.params;
+  const sqlQuery = `
     SELECT p.* 
     FROM product p
-    WHERE p.sub_category_id = ?;
-  `;
-
-    connection.query(sqlQuery, [subCategoryId], (err, results) => {
-      if (err) {
-        console.error("상품 목록 조회 오류:", err);
-        res.status(500).json({ error: "상품 목록 조회 오류" });
-        return;
-      }
-      res.json(results); // JSON 형태로 상품 목록 응답
-    });
-  }
-);
-
-// 카테고리에 속하는 상품 목록 조회 엔드포인트 (서브카테고리가 없는 경우)
-app.get("/categories/:categoryId/products", (req, res) => {
-  const categoryId = req.params.categoryId;
-  const sqlQuery = `
-    SELECT *
-    FROM product
-    WHERE category_id = ?;
+    WHERE p.category_id = ?
   `;
 
   connection.query(sqlQuery, [categoryId], (err, results) => {
     if (err) {
-      console.error("상품 목록 조회 오류:", err);
-      res.status(500).json({ error: "상품 목록 조회 오류" });
+      console.error("Error fetching products by category:", err);
+      res.status(500).json({ error: "Error fetching products by category" });
       return;
     }
-    res.json(results); // JSON 형태로 상품 목록 응답
+    res.json(results);
+  });
+});
+
+app.get("/product/:categoryId/:subCategoryId", (req, res) => {
+  const { categoryId, subCategoryId } = req.params;
+  const sqlQuery = `
+    SELECT p.* 
+    FROM product p
+    WHERE p.category_id = ? AND p.sub_category_id = ?;
+  `;
+
+  connection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
+    if (err) {
+      console.error("Error fetching products by subcategory:", err);
+      res.status(500).json({ error: "Error fetching products by subcategory" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// 특정 상품을 가져오는 엔드포인트
+app.get("/product/:categoryId/:subCategoryId/:id", (req, res) => {
+  const productId = req.params.id;
+  const sqlQuery = "SELECT * FROM bluewave.product WHERE product_id = ?;";
+
+  connection.query(sqlQuery, [productId], (err, result) => {
+    if (err) {
+      console.error("Error fetching product details:", err);
+      res.status(500).send("Error fetching product details");
+      return;
+    }
+    if (result.length === 0) {
+      res.status(404).send("Product not found");
+      return;
+    }
+    res.json(result[0]);
   });
 });
 
 // product_id에 해당하는 상품 옵션 조회 엔드포인트
-app.get("/product/:id/options", (req, res) => {
+app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   const productId = req.params.id; // URL의 params에서 product_id 가져오기
 
   // MySQL에서 product_id에 해당하는 상품 옵션 데이터 조회 쿼리
