@@ -43,10 +43,16 @@
     letter-spacing: -.16px;
     margin: 0 5px;
     border: none;
+    height: 52px;
+    cursor: pointer;
 }
 .pass_btn{
     background-color: #2764e6;
 }
 .fail_btn{
     background-color: #ebebeb;
+}
+.btn_area{
+    display: flex;
+    justify-content: space-evenly;
 }
