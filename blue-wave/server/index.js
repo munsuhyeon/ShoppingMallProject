@@ -8,7 +8,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const port = 8000;
 const bcrypt = require("bcrypt");
-const { rejects } = require("assert");
+const { reject } = require("assert");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -24,25 +24,23 @@ app.use(express.static(path.join(__dirname, "/images/인테리어")));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use("/img", express.static(path.join(__dirname, "img")));
 
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
 
-const PromiseConnection = mysqlPromise.createPool({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_DATABASE,
-  port: DB_PORT,
+var connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT,
 });
-
-// MySQL 연결
-PromiseConnection.getConnection()
-  .then((connection) => {
-    console.log("Connected to MySQL as id " + connection.threadId);
-    connection.release();
-  })
-  .catch((err) => console.error("MySQL 접속에러: " + err.stack));
+connection.connect((err) => {
+  if (err) {
+    console.error(" MySQL 접속에러: " + err.stack);
+    return;
+  }
+  console.log("Connected to MySQL as id " + connection.threadId);
+});
 
 /*=================   회원가입   =====================*/
 app.post("/register", async (req, res) => {
@@ -63,8 +61,8 @@ app.post("/register", async (req, res) => {
     // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
     // DB에 저장 전 id  중복체크
     const checkIdSql = "SELECT user_id FROM user where user_id = ?";
-    const idResult = await new Promise((resolve, rejects) => {
-      PromiseConnection.query(checkIdSql, [userId], (err, result) => {
+    const idResult = await new Promise((resolve, reject) => {
+      connection.query(checkIdSql, [userId], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -79,7 +77,7 @@ app.post("/register", async (req, res) => {
     // 이메일 저장 전 중복 체크
     const checkEmailSql = "SELECT user_email FROM user where user_email = ?";
     const emailResult = await new Promise((resolve, reject) => {
-      PromiseConnection.query(checkEmailSql, [userEmail], (err, result) => {
+      connection.query(checkEmailSql, [userEmail], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -99,7 +97,7 @@ app.post("/register", async (req, res) => {
     const registerSql =
       "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail) values(?,?,?,?,?,?,?)";
     await new Promise((resolve, reject) => {
-      PromiseConnection.query(
+      connection.query(
         registerSql,
         [
           userId,
@@ -138,7 +136,7 @@ app.post("/register", async (req, res) => {
 // 상품 데이터를 가져오는 API 엔드포인트
 app.get("/shop", (req, res) => {
   const sqlQuery = "SELECT * FROM bluewave.product;";
-  PromiseConnection.query(sqlQuery, (err, result) => {
+  connection.query(sqlQuery, (err, result) => {
     if (err) {
       console.error("상품을 가져오는 중 오류 발생:", err);
       res.status(500).send("상품을 가져오는 중 오류 발생");
@@ -154,7 +152,7 @@ app.get("/shop", (req, res) => {
 // 상품 목록을 가져오는 엔드포인트
 app.get("/product", (req, res) => {
   const sqlQuery = "SELECT * FROM bluewave.product;";
-  PromiseConnection.query(sqlQuery, (err, result) => {
+  connection.query(sqlQuery, (err, result) => {
     if (err) {
       console.error("Error fetching products:", err);
       res.status(500).send("Error fetching products");
@@ -172,7 +170,7 @@ app.get("/product/:categoryId", (req, res) => {
     WHERE p.category_id = ?
   `;
 
-  PromiseConnection.query(sqlQuery, [categoryId], (err, results) => {
+  connection.query(sqlQuery, [categoryId], (err, results) => {
     if (err) {
       console.error("Error fetching products by category:", err);
       res.status(500).json({ error: "Error fetching products by category" });
@@ -190,7 +188,7 @@ app.get("/product/:categoryId/:subCategoryId", (req, res) => {
     WHERE p.category_id = ? AND p.sub_category_id = ?;
   `;
 
-  PromiseConnection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
+  connection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
     if (err) {
       console.error("Error fetching products by subcategory:", err);
       res.status(500).json({ error: "Error fetching products by subcategory" });
@@ -205,7 +203,7 @@ app.get("/product/:categoryId/:subCategoryId/:id", (req, res) => {
   const productId = req.params.id;
   const sqlQuery = "SELECT * FROM bluewave.product WHERE product_id = ?;";
 
-  PromiseConnection.query(sqlQuery, [productId], (err, result) => {
+  connection.query(sqlQuery, [productId], (err, result) => {
     if (err) {
       console.error("Error fetching product details:", err);
       res.status(500).send("Error fetching product details");
@@ -227,7 +225,7 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   const sql =
     "SELECT option_name, option_price FROM bluewave.option WHERE product_id = ?;";
 
-    PromiseConnection.query(sql, [productId], (err, results) => {
+    connection.query(sql, [productId], (err, results) => {
     if (err) {
       console.error("상품 옵션 조회 오류:", err);
       res.status(500).json({ error: "상품 옵션 조회 오류" });
@@ -276,7 +274,7 @@ app.post("/reqOrder", async (req, res, next) => {
           article.total_count ,
           article.p_name
         ];
-        await PromiseConnection.query(insertOrderQuery, [[data]]);
+        await connection.query(insertOrderQuery, [[data]]);
       })
     );
 
