@@ -5,7 +5,7 @@ dotenv.config();
 const JWT_SECRET  = process.env.JWT_SECRET;
 
 const generateAccessToken = (payload) => {
-    const token = jwt.sign(payload,process.env.JWT_SECRET, {expiresIn:'1h'});
+    const token = jwt.sign(payload,process.env.JWT_SECRET, {expiresIn:'65s'});
     return token;
 };
 const generateRefreshToken = (payload) => {

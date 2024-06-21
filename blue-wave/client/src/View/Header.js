@@ -10,24 +10,39 @@ const Header = () => {
   // 1. 일정 시간이 지나면 자동 로그아웃 시키려면 남은 로그아웃 시간과 로그아웃 타이머를 관리해야 합니다.
   // 시간 데이터 상태를 관리하는 useState기능을 활용하였습니다.
   const [logoutTimer, setLogoutTimer] = useState(null); // 로그아웃 타이머를 관리하는 state
-  const [timeLeft, setTimeLeft] = useState(3600); // 남은 시간을 초 단위로 관리하는 state. 초기값은 1시간 입니다
+  //const [timeLeft, setTimeLeft] = useState(3600); // 남은 시간을 초 단위로 관리하는 state. 초기값은 1시간 입니다
+  const [timeLeft, setTimeLeft] = useState(65);
+
+  //============= 테스트
+  const test = parseInt(localStorage.getItem('test'));
+  const [tokenTime, setTokenTime] = useState(test);
+  const tokenTimer = () => {
+    const timer = setTimeout(tokenTime);
+    setTokenTime(timer);
+  };
 
   // 2. 초기 시간을 배분하고 1시간이 지나면
   // setTimeout 내장 함수를 이용하여 기존에 있는 handleLogout로 유저를 로그아웃 시킵니다
   const resetLogoutTimer = () => {
     clearLogoutTimer();
-    setTimeLeft(3600); // 타이머를 1시간으로 초기화
-    const timer = setTimeout(handleLogout, 3600000); // 1시간 후에 handleLogout 호출
+    //setTimeLeft(3600); // 타이머를 1시간으로 초기화
+    setTimeLeft(65); // 테스트를 위해 1분30초로 초기화
+    //const timer = setTimeout(handleLogout, 3600000); // 1시간 후에 handleLogout 호출
+    const timer = setTimeout(handleLogout, 120000); // 2분 후에 handleLogout 호출
     setLogoutTimer(timer);
   };
 
   const checkTokenExpiration = () => {
-    const expirationTime = localStorage.getItem("accessTokenExpiration"); //토큰만료시간
+    console.log("토큰만료체크")
+    const expirationTime = parseInt(localStorage.getItem("accessTokenExpiration")); //토큰만료시간
+    console.log(Date.now());
     if(expirationTime && Date.now() > expirationTime - 60000){
+      console.log("만료 1분전")
       verifyToken().then(() => {
         // 만료 시간 설정 (예: 1시간 후)
-        const newExpirationTime = Date.now() + 3600 * 1000;
-        localStorage.setItem("accessTokenExpiration",newExpirationTime);
+        //const newExpirationTime = Date.now() + 3600 * 1000;
+        const newExpirationTime = Date.now() + 65 * 1000; // 테스트
+        localStorage.setItem("newTest",newExpirationTime);
         resetLogoutTimer();
       }).catch(() => {
         handleLogout();
@@ -42,7 +57,10 @@ const Header = () => {
       const intervalId = setInterval(() => {
         setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
       }, 1000);
-      return () => clearInterval(intervalId);
+      const intervalId2 = setInterval(() => {
+        setTokenTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
+      }, 1000);
+      return () => clearInterval(intervalId,intervalId2);
     }
   }, [loggedIn]);
 
@@ -57,6 +75,7 @@ const Header = () => {
 
       // 로그인 상태를 감지할 때 로그아웃 타이머를 초기화 해야합니다
       resetLogoutTimer(); // 로그인 상태라면 로그아웃 타이머 초기화
+      checkTokenExpiration(); // 로그인 상태에서 토큰 만료 시간 체크
     }
 
     // 5. 사용자 활동을 감지하여 로그아웃 타이머를 리셋
@@ -91,20 +110,14 @@ const Header = () => {
 
   // 로그아웃 시 세션 스토리지에서 로그인 상태 제거
   const handleLogout = () => {
-    sessionStorage.removeItem("loggedIn");
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("accessTokenExpiration");
     setLoggedIn(false); // 로그인 상태를 false로 설정
     // axios 헤더에서 Authorization 제거
     delete axios.defaults.headers.common['authorization'];
     navigate("/"); //로그아웃 후 메인 페이지로 이동
     window.location.reload(); // 페이지를 새로 고침
   };
-
-  // accessToken갱신
-  const newAccessToken = async () => {
-    try{
-      const response = await axios.post('http://localhost:8000/')
-    }
-  }
 
 
     return(
@@ -126,6 +139,7 @@ const Header = () => {
                   <li><a onClick={handleLogout}>로그아웃</a></li>
                   <li><a href="회원가입.html">마이페이지</a></li>
                   <li>자동 로그아웃까지 남은 시간: {formatTime(timeLeft)}</li>
+                  <li>토큰만료시간: {formatTime(tokenTime)}</li>
                   </>
                 
                 ) : 

@@ -162,16 +162,32 @@ app.post('/api/login', async (req,res) => {
             const accessToken = generateAccessToken(payload);
             const refreshToken = generateRefreshToken(payload);
             
-            // refreshToken DB에 저장
-            // const refreshTokenSql = "UPDATE user SET token = ? WHERE user_id = ?";
-            // await new Promise((resolve, reject) => {
-            //     connection.query(refreshTokenSql, [refreshToken,userId], (err, result) => {
-            //         if(err) reject(err);
-            //         else resolve(result);
-            //     });
-            // });
+            
+            const verified = jwt.verify(accessToken, JWT_SECRET);
+            console.log("====================")
+            console.log(verified)
+            console.log("====================")
+            let decodedExp = verified.exp;
+            console.log("만료시간  :::    ", decodedExp);
+            console.log("생성시간  :::    ", verified.iat);
+            // jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
+            //     if (err) {
+            //         console.error('토큰 검증 오류:', err);
+            //         // 토큰이 유효하지 않은 경우 처리
+            //       } else {
+            //         console.log(decoded); // 디코딩된 페이로드 출력
+            //         console.log("만료 시간 출력 ::::    ",new Date(decoded.exp * 1000)); // 만료 시간 출력 (UTC 기준)
+            //         decodedExp = new Date(decoded.exp * 1000);
+            //       }
+
+            // })
 
             // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
+            console.log({
+                success: true,
+                message: '로그인 성공',
+                token: decodedExp,
+            });
             return res.status(200)
                 .cookie('refresh_token', refreshToken, {
                     httpOnly: true,
@@ -182,7 +198,8 @@ app.post('/api/login', async (req,res) => {
                 .header('authorization', accessToken)
                 .json({
                     success: true,
-                    message: '로그인 성공'
+                    message: '로그인 성공',
+                    tokenExp: decodedExp,
                 });
         }
     } catch(err){
@@ -232,9 +249,6 @@ app.post('/api/refresh-token'), (req,res) => {
         // refersh토큰이 만료되었거나 유효하지 않은 경우
         return res.status(403);
     }
-    const payload = jwt.verify(refreshToken, JWT_SECRET)
-    // const payload = { "userId" : findUserResult[0].user_id };
-    const accessToken = generateAccessToken(payload);
 }
 
 /*=================   리뷰   =====================*/

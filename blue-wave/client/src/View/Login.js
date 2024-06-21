@@ -15,20 +15,41 @@ const Login = () => {
         try{
             const response = await axios.post('http://localhost:8000/api/login', { ...data }, { withCredentials: true })
             if(response.data.success){
-                //axios.defaults.headers.common을 사용하여 헤더를 설정하면, 
-                //API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정된다
-                //이는 요청마다 헤더를 반복해서 설정할 필요가 없어져 코드가 간단해지고 일관성이 유지됩니다.
-                const accessToken = response.headers['authorization']; 
+                alert(JSON.stringify(response.data))
+                const accessToken = response.headers['authorization'];
                 axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`;
-                console.log("Authorization header set:   ", axios.defaults.headers.common['authorization']); // 헤더 로그 출력
+                console.log("Authorization header set:   ", axios.defaults.headers.common['authorization']);
                 localStorage.setItem("loggedIn", true);
-                const expirationTime = Date.now() + 3600 * 1000; //api요청 헤더에 저장한 토큰의 만료시간
-                localStorage.setItem("accessTokenExpiration", expirationTime);
+                const decodedExp = response.data.tokenExp;
+                alert("클라이언트 페이지에서 서버에서 받은 토큰만료시간 확인",decodedExp)
+                localStorage.setItem("test", decodedExp);
+                //localStorage.setItem("accessTokenExpiration", decodedExp);
                 navigate('/');
-            } else {
+                window.location.reload();
+            }else{
                 setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
                 setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
             }
+            console.log(response.data)
+            // if(response.data.success){
+            //     //axios.defaults.headers.common을 사용하여 헤더를 설정하면, 
+            //     //API 요청하는 콜마다 헤더에 accessToken 담아 보내도록 설정된다
+            //     //이는 요청마다 헤더를 반복해서 설정할 필요가 없어져 코드가 간단해지고 일관성이 유지됩니다.
+            //     const accessToken = response.headers['authorization']; 
+            //     axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`;
+            //     console.log("Authorization header set:   ", axios.defaults.headers.common['authorization']); // 헤더 로그 출력
+            //     localStorage.setItem("loggedIn", true);
+                
+            //     const decodedExp = response.data.token.decodedExp;
+            //     alert("response   ::   ", response.data.success)
+            //     const expirationTime = Date.now() + 65 * 1000; //api요청 헤더에 저장한 토큰의 만료시간
+            //     localStorage.setItem("accessTokenExpiration", decodedExp);
+            //     navigate('/');
+            //     window.location.reload(); // 페이지를 리로드하여 변경된 상태를 반영합니다.
+            // } else {
+            //     setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
+            //     setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
+            // }
         } catch(error){
             if(error.response){
                 console.error(
