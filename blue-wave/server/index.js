@@ -22,25 +22,28 @@ app.use(express.static(path.join(__dirname, "/images/사무용품")));
 app.use(express.static(path.join(__dirname, "/images/반려동물용품")));
 app.use(express.static(path.join(__dirname, "/images/인테리어")));
 
-// + 더  카테고리 추가
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+app.use("/img", express.static(path.join(__dirname, "img")));
 
-// 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT } = process.env;
 
-var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT,
+const PromiseConnection = mysqlPromise.createPool({
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,
+  port: DB_PORT,
 });
-connection.connect((err) => {
-  if (err) {
-    console.error(" MySQL 접속에러: " + err.stack);
-    return;
-  }
-  console.log("Connected to MySQL as id " + connection.threadId);
-});
+
+// MySQL 연결
+PromiseConnection.getConnection()
+  .then((connection) => {
+    console.log("Connected to MySQL as id " + connection.threadId);
+    connection.release();
+  })
+  .catch((err) => console.error("MySQL 접속에러: " + err.stack));
+
 /*=================   회원가입   =====================*/
 app.post("/register", async (req, res) => {
   // 클라이언트에서 받은 회원가입 정보
@@ -61,7 +64,7 @@ app.post("/register", async (req, res) => {
     // DB에 저장 전 id  중복체크
     const checkIdSql = "SELECT user_id FROM user where user_id = ?";
     const idResult = await new Promise((resolve, rejects) => {
-      connection.query(checkIdSql, [userId], (err, result) => {
+      PromiseConnection.query(checkIdSql, [userId], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -76,7 +79,7 @@ app.post("/register", async (req, res) => {
     // 이메일 저장 전 중복 체크
     const checkEmailSql = "SELECT user_email FROM user where user_email = ?";
     const emailResult = await new Promise((resolve, reject) => {
-      connection.query(checkEmailSql, [userEmail], (err, result) => {
+      PromiseConnection.query(checkEmailSql, [userEmail], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -96,7 +99,7 @@ app.post("/register", async (req, res) => {
     const registerSql =
       "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail) values(?,?,?,?,?,?,?)";
     await new Promise((resolve, reject) => {
-      connection.query(
+      PromiseConnection.query(
         registerSql,
         [
           userId,
@@ -135,7 +138,7 @@ app.post("/register", async (req, res) => {
 // 상품 데이터를 가져오는 API 엔드포인트
 app.get("/shop", (req, res) => {
   const sqlQuery = "SELECT * FROM bluewave.product;";
-  connection.query(sqlQuery, (err, result) => {
+  PromiseConnection.query(sqlQuery, (err, result) => {
     if (err) {
       console.error("상품을 가져오는 중 오류 발생:", err);
       res.status(500).send("상품을 가져오는 중 오류 발생");
@@ -151,7 +154,7 @@ app.get("/shop", (req, res) => {
 // 상품 목록을 가져오는 엔드포인트
 app.get("/product", (req, res) => {
   const sqlQuery = "SELECT * FROM bluewave.product;";
-  connection.query(sqlQuery, (err, result) => {
+  PromiseConnection.query(sqlQuery, (err, result) => {
     if (err) {
       console.error("Error fetching products:", err);
       res.status(500).send("Error fetching products");
@@ -169,7 +172,7 @@ app.get("/product/:categoryId", (req, res) => {
     WHERE p.category_id = ?
   `;
 
-  connection.query(sqlQuery, [categoryId], (err, results) => {
+  PromiseConnection.query(sqlQuery, [categoryId], (err, results) => {
     if (err) {
       console.error("Error fetching products by category:", err);
       res.status(500).json({ error: "Error fetching products by category" });
@@ -187,7 +190,7 @@ app.get("/product/:categoryId/:subCategoryId", (req, res) => {
     WHERE p.category_id = ? AND p.sub_category_id = ?;
   `;
 
-  connection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
+  PromiseConnection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
     if (err) {
       console.error("Error fetching products by subcategory:", err);
       res.status(500).json({ error: "Error fetching products by subcategory" });
@@ -202,7 +205,7 @@ app.get("/product/:categoryId/:subCategoryId/:id", (req, res) => {
   const productId = req.params.id;
   const sqlQuery = "SELECT * FROM bluewave.product WHERE product_id = ?;";
 
-  connection.query(sqlQuery, [productId], (err, result) => {
+  PromiseConnection.query(sqlQuery, [productId], (err, result) => {
     if (err) {
       console.error("Error fetching product details:", err);
       res.status(500).send("Error fetching product details");
@@ -224,7 +227,7 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   const sql =
     "SELECT option_name, option_price FROM bluewave.option WHERE product_id = ?;";
 
-  connection.query(sql, [productId], (err, results) => {
+    PromiseConnection.query(sql, [productId], (err, results) => {
     if (err) {
       console.error("상품 옵션 조회 오류:", err);
       res.status(500).json({ error: "상품 옵션 조회 오류" });
@@ -236,4 +239,60 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   });
 });
 
-app.listen(port, () => console.log(`${port}번으로 노드 서버 실행`));
+
+
+// 주문 처리 API 엔드포인트
+app.post("/reqOrder", async (req, res, next) => {
+  try {
+    const { orderSheet, paymentPersonDB } = req.body;
+    
+    // 주문 정보 삽입 쿼리
+    const insertOrderQuery =
+      "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
+      // 새로운 배열 생성
+      const newOrderSheet = orderSheet.map(order => ({
+        ...order,
+        ...paymentPersonDB
+      }));
+      console.log("===============newOrderSheet=================")
+      console.log(newOrderSheet);
+      console.log("================================")
+
+    await Promise.all(
+      newOrderSheet.map(async (article) => {
+        const data = [
+          article.order_number,
+          article.user_id,
+          article.product_id,
+          article.order_date ,
+          article.name,
+          article.phone ,
+          article.address,
+          article.detailAddress,
+          article.quantity,
+          article.orderAmount,
+          article.email ,
+          article.total_amount ,
+          article.total_count ,
+          article.p_name
+        ];
+        await PromiseConnection.query(insertOrderQuery, [[data]]);
+      })
+    );
+
+    res.status(200).send("주문이 성공적으로 처리되었습니다.");
+  } catch (error) {
+    console.error("주문 처리 중 오류 발생:", error);
+    next(error);
+  }
+});
+
+
+// 포트 리스닝
+app.listen(port, () => {
+  console.log(`${port} 포트에서 서버가 실행되었습니다.`);
+});
+
+
+
+

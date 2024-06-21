@@ -1,16 +1,22 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Register from "./View/Register";
 import Login from "./View/Login";
 import Main from "./View/Main";
 import AllProduct from "./View/AllProduct.js";
 import ProductDetail from "./View/ProductDetail.js";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Cart from './View/Cart.jsx';
+import Payment from './View/Payment.jsx';
+import Paymentcomplete from './Components/View/Paymentcomplete';
+import Product from './View/Product.jsx';
 
 function App() {
+
   return (
     <Router>
       <div className="App">
-        <Switch>
+        <Routes>
           <Route path="/register">
             <Register />
           </Route>
@@ -29,7 +35,11 @@ function App() {
           <Route path="/">
             <Main />
           </Route>
-        </Switch>
+        <Route path="/" element={<Product />} />
+        <Route path="/Cart" element={<Cart />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/paymentcomplete" element={<Paymentcomplete />} />
+        </Routes>
       </div>
     </Router>
   );

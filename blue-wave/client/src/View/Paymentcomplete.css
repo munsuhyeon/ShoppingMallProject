@@ -1,0 +1,122 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+
+.paymentcomplete-body {
+    max-width: 600px;
+    width: 100%;
+    padding-top: 50px;
+    margin: 0 auto;
+
+}
+
+
+
+.body-header {
+    margin-top: 100px;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    align-items: end;
+    text-align: right;
+}
+
+.body-header h2 {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.body-header .page p{ 
+    display: inline;
+
+}
+
+.body-header .page .page-3 {
+    font-weight: bold;
+}
+
+.body-header .page .page-3 span {
+    font-weight: 100;
+}
+
+.body-header span {
+    margin-left: 5px;
+}
+
+
+.payment-complete-info {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+
+.payment-complete-info h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    padding: 10px 20px;
+    background: #51c1f7;
+}
+/* #2764e6 */
+
+.payment-complete-info h3 span:first-child{
+    margin-left: 50px;
+    color: white;
+    font-size: 15px;
+
+}
+
+
+.payment-complete-info ul li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+.payment-complete-info ul li p {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -1.5px;
+}
+.payment-complete-info ul li span {
+    font-size: 18px;
+    letter-spacing: -1.5px;
+}
+
+
+.payment-complete-text {
+    text-align: center;
+}
+
+.payment-product {
+    margin: 0 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.payment-product:last-child {
+    border-bottom: none;
+}
+
+
+.paymentcomplete-body .button {
+    margin: 100px 0;
+    text-align: center;
+}
+
+.paymentcomplete-body .button a {
+    padding: 20px;
+    background-color: #51c1f7;
+    color: white;
+    font-size: 18px;
+    font-weight: 400;
+    border-radius: 5px;
+}
+
+.paymentcomplete-body .button a:hover {
+    background-color: #6ca6f3;
+
+}
