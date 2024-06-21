@@ -1,0 +1,138 @@
+* {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+}
+
+.shopping-basket {
+    max-width: 1280px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.body-header {
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.body-header h2 {
+    font-size: 25px;
+    font-weight: 900;
+}
+
+.body-header .page p{ 
+    display: inline;
+
+}
+
+.body-header .page .page-1 {
+    font-weight: bold;
+}
+
+.body-header .page .page-1 span {
+    font-weight: 100;
+}
+
+.body-header span {
+    margin-left: 5px;
+}
+
+.shopping-basket-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid rgb(209, 221, 226);
+    border-radius: 10px;
+}
+
+.shopping-basket-table .basket-no-change {
+    height: 50px;
+}
+
+.shopping-basket-table .basket-change {
+    border-top: 1px solid rgb(209, 221, 226);
+    
+}
+
+.shopping-basket-table .basket-change .img-option-flex {
+    display: flex;
+}
+
+.shopping-basket-table .basket-change img {
+    height: 50px;
+}
+
+.basket-change td {
+    padding: 30px 16px;
+    text-align: center;
+    
+}
+
+.shopping-basket-table .basket-no-change td {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+.shopping-basket-table .basket-change td {
+    margin:5px;
+
+}
+
+.all-delete {
+    margin-top: 5px;
+    text-align: right;
+
+}
+
+
+
+.all-delete button {
+    background-color:white;
+    border: none;
+    border-radius: 2px;
+    font-size: 14px;
+    font-weight: 200;
+    padding: 5px;
+}
+
+.all-delete button:hover {
+    background-color: rgb(228, 227, 227);
+}
+
+.all-delete button:active {
+    background-color: rgb(170, 170, 170);
+}
+
+
+.payment-button {
+    margin-top: 100px;
+    text-align: center;
+}
+.payment-button button {
+    background-color:#51c1f7 ;
+    padding: 20px 40px;
+    border-radius: 5px;
+    color: white;
+    border: none;
+}
+
+
+
+.payment-button button:hover {
+    
+    background-color: #6ca6f3;
+}
+
+.basket-change .img-option-flex .option p:nth-child(2) {
+    margin-left: 55px;
+}
+
+.plus-button {
+    width: 20px;
+    height: 20px;
+    padding: auto auto;
+}
