@@ -1,120 +1,184 @@
-.Header {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  /* header */
-  header {
-    font-family: Arial, sans-serif;
-    width: 100%;
-    height: auto;
-    margin: 0 auto;
-    padding: 0;
-    border-bottom: 1px solid #fff;
-  }
-  
-  /* header top */
-  .nav_top {
-    background-color: white;
-  }
-  
-  .nav_top_menu {
-    list-style: none;
-    text-align: right;
-    padding: 10px;
-  }
-  
-  .nav_top_menu li {
-    display: inline-block;
-    padding-right: 15px;
-  }
-  .nav_top_menu li a {
-    text-decoration-line: none;
-    margin: 0;
-    color: rgb(49, 48, 48);
-    font-weight: bolder;
-    font-size: 14px;
-  }
-  
-  /* header logo */
-  .container {
-    width: 1200px;
-    margin: 0 auto;
-    justify-content: space-between;
-  }
-  
-  header .container {
-    display: flex;
-  }
-  
-  .logo img {
-    width: 180px;
-    height: auto;
-  }
-  
-  /* header search */
-  .search-bar {
-    display: flex;
-    align-items: center;
-    margin-left: 20px;
-    border: 1px solid #2764e6;
-    border-radius: 4px;
-  }
-  
-  .search-bar input[type="text"] {
-    width: 450px;
-    padding: 10px;
-    border: none;
-    border-radius: 4px 0 0 4px;
-    outline: none;
-    text-align: left;
-  }
-  
-  .search-bar button {
-    padding: 10px;
-    border: none;
-    background-color: #ffffff;
-    color: rgb(161, 161, 161);
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-  }
-  
-  /* header nav_bar */
-  .nav_bar {
-    width: 100%;
-    margin: 0;
-    display: flex;
-    padding: 8px;
-    width: 100%;
-    height: auto;
-    background-color: #ffffff;
-    justify-content: space-between;
-    border-top: 2px solid #6ca6f3;
-    border-bottom: 1px solid #6ca6f3;
-  }
-  
-  .nav_menu {
-    list-style: none;
-    margin: 0;
-    text-align: left;
-    padding: 5px;
-  }
-  
-  .nav_menu li {
-    display: inline-block;
-    padding: 0 10px;
-    cursor: pointer;
-  }
-  
-  .nav_menu li a {
-    font-size: 17px;
-    color: rgb(0, 0, 0);
-    text-decoration: none;
-    text-align: center;
-    padding: 10px 12px;
-    font-weight: normal;
-  }
-  
-  /* body -> 메인화면 자동 이미지 슬라이더 */
-  
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 스크롤바 색깔 */
+*::-webkit-scrollbar {
+  background: #efefef;
+  width: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2764e6;
+  border-radius: 5px;
+}
+
+/* header */
+header {
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  border-bottom: 1px solid #fff;
+  font-style: normal;
+}
+
+/* header top */
+.nav_top {
+  background-color: white;
+}
+
+.nav_top_menu {
+  list-style: none;
+  text-align: right;
+  padding: 10px;
+}
+
+.nav_top_menu li {
+  display: inline-block;
+  padding-right: 15px;
+}
+.nav_top_menu li a {
+  text-decoration-line: none;
+  margin: 0;
+  color: rgb(49, 48, 48);
+  font-weight: bolder;
+  font-size: 14px;
+}
+
+/* header logo */
+.container {
+  width: 1200px;
+  margin: 0 auto;
+  justify-content: space-between;
+}
+
+header .container {
+  display: flex;
+}
+
+.logo img {
+  width: 180px;
+  height: auto;
+}
+
+/* header search */
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
+  border: 1px solid #2764e6;
+  border-radius: 4px;
+}
+
+.search-bar input[type="text"] {
+  width: 450px;
+  padding: 10px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  outline: none;
+  text-align: left;
+}
+
+.search-bar button {
+  padding: 10px;
+  border: none;
+  background-color: #ffffff;
+  color: rgb(161, 161, 161);
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+/* header nav_bar */
+.nav_bar {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  padding: 8px;
+  height: auto;
+  background-color: #ffffff;
+  justify-content: space-between;
+  border-top: 2px solid #6ca6f3;
+  border-bottom: 1px solid #6ca6f3;
+}
+
+.nav_menu {
+  list-style: none;
+  margin: 0;
+  text-align: left;
+  padding: 5px;
+}
+
+.nav_menu li {
+  display: inline-block;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.nav_menu li a {
+  font-size: 17px;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  text-align: center;
+  padding: 10px 12px;
+  font-weight: 400px;
+  transition: color 0.3s;
+}
+
+.nav_menu li a.active {
+  font-weight: bold;
+  color: #000;
+}
+
+.nav_menu li a.inactive {
+  color: #aaa;
+}
+
+/* Dropdown menu */
+.dropdown {
+  position: relative; /* 상대적 위치 설정 */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #dcdcdc;
+  min-width: 200px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  left: 0;
+  padding: 0; /* 패딩 제거하여 테두리가 잘 맞도록 함 */
+  top: 100%; /* 드롭다운 메뉴를 상위 메뉴 아이템의 하단에 정렬 */
+}
+
+.dropdown:hover .dropdown-content {
+  display: block; /* 호버 시 드롭다운 메뉴 표시 */
+}
+
+.dropdown-content li {
+  display: block;
+  padding: 8px 1px;
+  text-align: center;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.dropdown-content li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content li a {
+  color: black;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+}
+
+.dropdown-content li:hover {
+  background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}

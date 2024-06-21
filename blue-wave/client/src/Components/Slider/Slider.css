@@ -1,0 +1,54 @@
+.slider {
+  position: relative;
+  width: 100%;
+  /* 노트북에서는 1518px */
+  /* 컴퓨터에서는 1903px */
+  max-width: 1903px;
+  height: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.slide_list {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.slide_item {
+  min-width: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.slide_img {
+  width: 100%;
+  height: 480px;
+  display: block;
+  object-fit: fill;
+  position: relative;
+  z-index: 0;
+}
+
+.paginations {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pagination-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #d0d0d0b6;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.pagination-dot.active {
+  background-color: #2e2e2e;
+}
