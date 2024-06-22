@@ -1,12 +1,13 @@
 import {useForm} from 'react-hook-form';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import Terms from "../Components/Register/Terms";
 import Modal from 'react-modal';
 import DaumPostcode from 'react-daum-postcode';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
-import { useNavigate } from 'react-router-dom';
+import Header from './Header';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -134,7 +135,6 @@ const Register = () => {
         setIsModalOpen(false);
     };
     const onComplete = (data) => {
-        console.log(data)
         let addr;
         if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
             addr = data.roadAddress;
@@ -150,49 +150,52 @@ const Register = () => {
         }
     }
     return(
-        <div className='Register' style={{margin: '0 auto', maxWidth: '1280px'}}>
-            <div style={{margin: '0 auto', padding: '58px 0 160px',width: '600px'}}>
-            <h1 className="logo_area" style={{textAlign: 'center', marginBottom: '15px'}}>
-                <img src={process.env.PUBLIC_URL + `assets/lettersLogo.png`} alt="bluewave" className="letters_logo" style={{width: '150px',height: 'auto'}}/>
-            </h1>
-            <h2 style={{fontSize: '32px',letterSpacing: '-.48px',paddingBottom: '46px',textAlign: 'center',marginTop: '20px'}}>회원가입</h2>
-            <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <div>
+            <Header />
+            <div className='Register' style={{margin: '0 auto', maxWidth: '1280px'}}>
+                <div style={{margin: '0 auto', padding: '58px 0 160px',width: '600px'}}>
+                    <h1 className="logo_area" style={{textAlign: 'center', marginBottom: '15px'}}>
+                        <img src={process.env.PUBLIC_URL + `assets/lettersLogo.png`} alt="bluewave" className="letters_logo" style={{width: '150px',height: 'auto'}}/>
+                    </h1>
+                    <h2 style={{fontSize: '32px',letterSpacing: '-.48px',paddingBottom: '46px',textAlign: 'center',marginTop: '20px'}}>회원가입</h2>
+                    <form noValidate onSubmit={handleSubmit(onSubmit)}>
 
-                    <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} placeholder={'영문 소문자,숫자 4-16글자'} />
-                    <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"} placeholder={'영문 소문자, 영문 대문자, 숫자 중 2가지 이상 조합  8-16자'} />
-                    <Input type={'password'} id={'comparePassword'} prop={comparePassword} errors={errors} title={"비밀번호 확인"} placeholder={'비밀번호를 한번 더 입력해주세요'} />
-                    <Input type={'text'} id={'userName'} prop={userName} errors={errors} title={"이름"}/>
-                    <Input type={'tel'} id={'userPhone'} prop={userPhone} errors={errors} title={"휴대폰"} placeholder={'숫자만 입력해주세요'} />
-                    <Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"}/>
-                
-                    <div className="input_box">
-                        <label style={{fontSize: '13px', lineHeight: '18px',letterSpacing: '-.07px',fontWeight: '900'}}>주소</label>
-                        <div className="input_item input_address">
-                            <input placeholder='우편번호' id='zonecode' value={zonecode} className='input_txt' {...register('zonecode')} readOnly />
-                            <Button text={"우편번호"} className={'address_btn'} onClick={openModal}/>
-                        </div>
-                    </div>
-                    <Modal isOpen={isModalOpen} ariaHideApp={false} style={{content: { width: '500px',height: '500px', margin: 'auto', overflow: 'hidden'}}}>
-                    <div style={{display:"flex", justifyContent: 'space-between'}}>
-                        <p style={{width: 'calc(100% - 40px)', textAlign: 'left'}}>주소 검색</p>
-                        <img style={{width: '40px', height: '40px', cursor: 'pointer'}} onClick={closeModal} src={process.env.PUBLIC_URL + `assets/close-svgrepo-com.svg`} alt="close"/>
-                    </div>
-                        <DaumPostcode onComplete={onComplete}/>
-                    </Modal>
-                    <div className="input_box">
-                        <div className="input_item">
-                            <input placeholder='기본주소' id="address" value={address} className='input_txt' {...register('address')} readOnly />
-                        </div>
-                    </div>
-                    <div className="input_box">
-                        <div className="input_item">
-                            <input type='text' placeholder='상세주소' id="detailAddress" className={errors.detailAddress ? 'input-error' : 'input_txt'} ref={addrDetailRef} {...register('detailAddress',{required:'필수 입력값입니다'})}/>
-                        </div>
-                        {errors.detailAddress && <p className='errorTxt'>{errors.detailAddress.message}</p>}
-                    </div>
-                    <Terms  setAllChecked={setAllChecked} />
-                <Button text={"가입하기"} className={isValid && allChecked ? 'wide_btn pass_btn' : 'wide_btn fail_btn'} disabled={!isValid || !allChecked || isSubmitting} type='submit'/>
-            </form>
+                            <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} placeholder={'영문 소문자,숫자 4-16글자'} />
+                            <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"} placeholder={'영문 소문자, 영문 대문자, 숫자 중 2가지 이상 조합  8-16자'} />
+                            <Input type={'password'} id={'comparePassword'} prop={comparePassword} errors={errors} title={"비밀번호 확인"} placeholder={'비밀번호를 한번 더 입력해주세요'} />
+                            <Input type={'text'} id={'userName'} prop={userName} errors={errors} title={"이름"}/>
+                            <Input type={'tel'} id={'userPhone'} prop={userPhone} errors={errors} title={"휴대폰"} placeholder={'숫자만 입력해주세요'} />
+                            <Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"}/>
+                        
+                            <div className="input_box">
+                                <label style={{fontSize: '13px', lineHeight: '18px',letterSpacing: '-.07px',fontWeight: '900'}}>주소</label>
+                                <div className="input_item input_address">
+                                    <input placeholder='우편번호' id='zonecode' value={zonecode} className='input_txt' {...register('zonecode')} readOnly />
+                                    <Button text={"우편번호"} className={'address_btn'} onClick={openModal}/>
+                                </div>
+                            </div>
+                            <Modal isOpen={isModalOpen} ariaHideApp={false} style={{content: { width: '500px',height: '500px', margin: 'auto', overflow: 'hidden'}}}>
+                            <div style={{display:"flex", justifyContent: 'space-between'}}>
+                                <p style={{width: 'calc(100% - 40px)', textAlign: 'left'}}>주소 검색</p>
+                                <img style={{width: '40px', height: '40px', cursor: 'pointer'}} onClick={closeModal} src={process.env.PUBLIC_URL + `assets/close-svgrepo-com.svg`} alt="close"/>
+                            </div>
+                                <DaumPostcode onComplete={onComplete}/>
+                            </Modal>
+                            <div className="input_box">
+                                <div className="input_item">
+                                    <input placeholder='기본주소' id="address" value={address} className='input_txt' {...register('address')} readOnly />
+                                </div>
+                            </div>
+                            <div className="input_box">
+                                <div className="input_item">
+                                    <input type='text' placeholder='상세주소' id="detailAddress" className={errors.detailAddress ? 'input-error' : 'input_txt'} ref={addrDetailRef} {...register('detailAddress',{required:'필수 입력값입니다'})}/>
+                                </div>
+                                {errors.detailAddress && <p className='errorTxt'>{errors.detailAddress.message}</p>}
+                            </div>
+                            <Terms  setAllChecked={setAllChecked} />
+                        <Button text={"가입하기"} className={isValid && allChecked ? 'wide_btn pass_btn' : 'wide_btn fail_btn'} disabled={!isValid || !allChecked || isSubmitting} type='submit'/>
+                    </form>
+                </div>
             </div>
         </div>
     );

@@ -1,0 +1,162 @@
+.ProductOptions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* !important; 는 css가 중복적용되지 않기 위해 적어두었습니다 */
+.Right-Option {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid #6ca6f3 !important;
+  background: url("/public/assets/selectarrow.png") center right 20px no-repeat !important;
+  background-size: 20px !important;
+  cursor: pointer;
+}
+
+.Right-Option.active {
+  border-color: #2764e6 !important;
+}
+
+.Right-Option:focus {
+  border: 1px solid #2764e6 !important;
+}
+
+.Right-Option::after {
+  display: block;
+  width: 2px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 35px;
+}
+
+.Right-Option .label {
+  display: flex;
+  align-items: center;
+  width: inherit;
+  height: inherit;
+  border: 0 none;
+  outline: 0 none;
+  padding-left: 15px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.Right-Option .optionList {
+  top: 28px;
+  left: 0;
+  width: 100%;
+  background: rgb(255, 255, 255);
+  color: #353535;
+  list-style-type: none;
+  padding: 0;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+  display: none;
+  overflow-y: auto;
+}
+
+.Right-Option .optionList.active {
+  max-height: 200px;
+  display: block;
+}
+
+.Right-Option .optionItem {
+  border: 1px solid rgb(167, 167, 167);
+  border-bottom-width: 0px;
+  padding: 5px 15px 5px;
+  transition: 0.1s;
+}
+
+.Right-Option .optionItem:hover {
+  font-weight: bold;
+}
+
+.Right-Option .optionItem:last-child {
+  border-bottom-width: 1px;
+}
+
+/* 스크롤 커스텀 */
+.Right-Option .optionList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.Right-Option .optionList::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.Right-Option .optionList::-webkit-scrollbar-thumb {
+  background: #a1a1a1;
+  border-radius: 45px;
+}
+
+.Right-Option .optionList::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 선택된 옵션 목록 */
+
+.SelectedOptions {
+  margin: 20px 0;
+}
+
+.option-box {
+  border-top: 1px solid rgb(173, 173, 173);
+  border-bottom: 1px solid rgb(173, 173, 173);
+  padding: 10px;
+}
+/* +는 형제 요소 중에서 바로 뒤에 오는 요소를 선택하는 CSS 선택자 */
+/* .option-box 요소의 상단 테두리(border-top)를 제거하는 역할 */
+.option-box + .option-box {
+  border-top: 0;
+}
+
+.option-box:last-child {
+  border-bottom: 1px solid rgb(173, 173, 173);
+}
+.option-box p {
+  margin-bottom: 10px;
+}
+
+.option-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option-crease {
+  padding: 0;
+  border: 1px solid rgb(226, 226, 226);
+  background-color: #f7f7f7;
+}
+
+.quantity {
+  width: 30px;
+}
+
+.increase,
+.decrease {
+  border: 0;
+  font-size: 20px;
+  background-color: #eeeeee;
+  width: 30px;
+  height: 100%;
+  color: rgb(44, 44, 44);
+  cursor: pointer;
+}
+
+.increase {
+  margin-left: 15px;
+}
+
+.decrease {
+  margin-right: 15px;
+}
+
+.option-price {
+  font-weight: bold;
+}

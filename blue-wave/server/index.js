@@ -1,9 +1,8 @@
-const express = require("express")
+const express = require("express");
 const app = express();
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const mysql = require("mysql2");
-const mysqlPromise = require("mysql2/promise");
 const dotenv = require("dotenv")
 const path = require("path")
 const bcrypt = require("bcrypt");
@@ -24,32 +23,31 @@ dotenv.config();
 const port = 8000;
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
 app.use(express.static(path.join(__dirname + "/images")));
+app.use(express.static(path.join(__dirname, "/images/도서")));
+app.use(express.static(path.join(__dirname, "/images/스포츠")));
+app.use(express.static(path.join(__dirname, "/images/사무용품")));
+app.use(express.static(path.join(__dirname, "/images/반려동물용품")));
+app.use(express.static(path.join(__dirname, "/images/인테리어")));
+
+// + 더  카테고리 추가
+
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
 
 var connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASWORD,
-    database : process.env.DB_DATABASE,
-    port: process.env.DB_PORT,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT,
 });
-// 프로미스를 지원하는 데이터베이스 연결 풀을 생성합니다. 프로미스 기반 비동기 처리
-const PromiseConnection = mysqlPromise.createPool({
-    host: process.env.DB_HOST,
-    user : process.env.DB_USER,
-    password : process.env.DB_PASWORD,
-    database : process.env.DB_DATABASE,
-    port: process.env.DB_PORT,
-  });
-  
 connection.connect((err) => {
-    if(err){
-        console.error(" MySQL 접속에러: " + err.stack);
-        return;
-    }
-    console.log("Connected to MySQL as id " + connection.threadId);
-})
+  if (err) {
+    console.error(" MySQL 접속에러: " + err.stack);
+    return;
+  }
+  console.log("Connected to MySQL as id " + connection.threadId);
+});
 /*=================   회원가입   =====================*/
 app.post('/api/register', async(req,res) => {
     // 클라이언트에서 받은 회원가입 정보
@@ -124,6 +122,112 @@ app.post('/api/register', async(req,res) => {
         });
     };
 });
+
+/*=================   main - 상품 데이터 불러오기   =====================*/
+
+// 상품 데이터를 가져오는 API 엔드포인트
+app.get("/shop", (req, res) => {
+  const sqlQuery = "SELECT * FROM bluewave.product;";
+  connection.query(sqlQuery, (err, result) => {
+    if (err) {
+      console.error("상품을 가져오는 중 오류 발생:", err);
+      res.status(500).send("상품을 가져오는 중 오류 발생");
+      return;
+    }
+    res.json(result);
+  });
+});
+
+/*=================   상품   =====================*/
+
+// 주소 수정필요
+// 상품 목록을 가져오는 엔드포인트
+app.get("/product", (req, res) => {
+  const sqlQuery = "SELECT * FROM bluewave.product;";
+  connection.query(sqlQuery, (err, result) => {
+    if (err) {
+      console.error("Error fetching products:", err);
+      res.status(500).send("Error fetching products");
+      return;
+    }
+    res.json(result);
+  });
+});
+
+app.get("/product/:categoryId", (req, res) => {
+  const { categoryId } = req.params;
+  const sqlQuery = `
+    SELECT p.* 
+    FROM product p
+    WHERE p.category_id = ?
+  `;
+
+  connection.query(sqlQuery, [categoryId], (err, results) => {
+    if (err) {
+      console.error("Error fetching products by category:", err);
+      res.status(500).json({ error: "Error fetching products by category" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.get("/product/:categoryId/:subCategoryId", (req, res) => {
+  const { categoryId, subCategoryId } = req.params;
+  const sqlQuery = `
+    SELECT p.* 
+    FROM product p
+    WHERE p.category_id = ? AND p.sub_category_id = ?;
+  `;
+
+  connection.query(sqlQuery, [categoryId, subCategoryId], (err, results) => {
+    if (err) {
+      console.error("Error fetching products by subcategory:", err);
+      res.status(500).json({ error: "Error fetching products by subcategory" });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// 특정 상품을 가져오는 엔드포인트
+app.get("/product/:categoryId/:subCategoryId/:id", (req, res) => {
+  const productId = req.params.id;
+  const sqlQuery = "SELECT * FROM bluewave.product WHERE product_id = ?;";
+
+  connection.query(sqlQuery, [productId], (err, result) => {
+    if (err) {
+      console.error("Error fetching product details:", err);
+      res.status(500).send("Error fetching product details");
+      return;
+    }
+    if (result.length === 0) {
+      res.status(404).send("Product not found");
+      return;
+    }
+    res.json(result[0]);
+  });
+});
+
+// product_id에 해당하는 상품 옵션 조회 엔드포인트
+app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
+  const productId = req.params.id; // URL의 params에서 product_id 가져오기
+
+  // MySQL에서 product_id에 해당하는 상품 옵션 데이터 조회 쿼리
+  const sql =
+    "SELECT option_name, option_price FROM bluewave.option WHERE product_id = ?;";
+
+  connection.query(sql, [productId], (err, results) => {
+    if (err) {
+      console.error("상품 옵션 조회 오류:", err);
+      res.status(500).json({ error: "상품 옵션 조회 오류" });
+      return;
+    }
+
+    // 조회된 옵션 데이터 응답
+    res.json(results);
+  });
+});
 /*=================   로그인   =====================*/
 app.post('/api/login', async (req,res) => {
     let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보
@@ -162,25 +266,8 @@ app.post('/api/login', async (req,res) => {
             const accessToken = generateAccessToken(payload);
             const refreshToken = generateRefreshToken(payload);
             
-            
-            const verified = jwt.verify(accessToken, JWT_SECRET);
-            console.log("====================")
-            console.log(verified)
-            console.log("====================")
-            let decodedExp = verified.exp;
-            console.log("만료시간  :::    ", decodedExp);
-            console.log("생성시간  :::    ", verified.iat);
-            // jwt.verify(accessToken, JWT_SECRET, (err, decoded) => {
-            //     if (err) {
-            //         console.error('토큰 검증 오류:', err);
-            //         // 토큰이 유효하지 않은 경우 처리
-            //       } else {
-            //         console.log(decoded); // 디코딩된 페이로드 출력
-            //         console.log("만료 시간 출력 ::::    ",new Date(decoded.exp * 1000)); // 만료 시간 출력 (UTC 기준)
-            //         decodedExp = new Date(decoded.exp * 1000);
-            //       }
-
-            // })
+            const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
+            let decodedExp =  verified.exp - verified.iat; // 생성 - 만료 = 유효시간
 
             // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
             console.log({
@@ -188,18 +275,21 @@ app.post('/api/login', async (req,res) => {
                 message: '로그인 성공',
                 token: decodedExp,
             });
+            // refreshToken을 서버의 쿠키에 저장
+            res.cookie('refreshToken', refreshToken, {
+              httpOnly: true,
+              secure: false, // HTTPS를 사용할 경우 true로 변경
+              maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+              sameSite: 'strict' // 적절한 SameSite 설정을 적용하세요
+            });
+
             return res.status(200)
-                .cookie('refresh_token', refreshToken, {
-                    httpOnly: true,
-                    secure: false,
-                    path: '/',
-                    maxAge: 7 * 24 * 60 * 60 * 1000 // 7일
-                })
                 .header('authorization', accessToken)
                 .json({
                     success: true,
                     message: '로그인 성공',
                     tokenExp: decodedExp,
+                    userId : findUserResult[0].user_id
                 });
         }
     } catch(err){
@@ -210,11 +300,6 @@ app.post('/api/login', async (req,res) => {
             error: err.message
         });
     }
-});
-app.get('/check-cookie', (req, res) => {
-    console.log(req.cookies); // 쿠키 출력
-    const checkCookie = JSON.stringify(req.cookies)
-    res.send('쿠키 확인 완료    ::::::    ' + checkCookie);
 });
 /*=================   토큰 검증   =====================*/
 app.get('/api/verify-token', (req, res) => {
@@ -231,55 +316,36 @@ app.get('/api/verify-token', (req, res) => {
             // 로그인페이지로 이동하기
             return res.status(403).json({message:"토큰 확인 실패"});
         }
-        return res.status(200).json({'userId':userID});
+        return res.status(200).json({valid:true, userId:userID});
     });
 });
 /*=================   refreshToken으로 accessToken 재발급   =====================*/
-app.post('/api/refresh-token'), (req,res) => {
-    const refreshToken = req.cookie('refresh_token');
+app.get('/api/refresh-token', (req,res) => {
+  const refreshToken = req.cookies['refreshToken'];
+
     if(!refreshToken){
+        console.log("refresh토큰 없음")
         // 사용자를 로그인페이지로 이동시키기
-        return res.status(401);
+        return res.status(401).json({ message: 'Unauthorized' });
     }
     try{
         const decoded = jwt.verify(refreshToken, JWT_SECRET);
-        const newAccessToken = generateAccessToken(decoded.userId);
-        return res.status(200).json({newAccessToken});
+        const newAccessToken = generateAccessToken({ "userId" : decoded.userId });
+        return res.status(200).json({newToken : newAccessToken});
     }catch(error){
-        // refersh토큰이 만료되었거나 유효하지 않은 경우
-        return res.status(403);
-    }
-}
-
-/*=================   리뷰   =====================*/
-app.post("/text", async (req,res) => {
-    try{
-        console.log(req.body)
-        let {
-            user_id,
-            product_id,
-            order_id,
-            title,
-            contents,
-            star_rating,
-        } = req.body;
-            
-          const insertQuery = "INSERT INTO review (user_id, product_id, order_id, title, contents, star_rating) VALUES (?, ?, ?, ?, ?, ?)";
-            await new Promise((resolve,reject) => {
-                connection.query(insertQuery,[user_id,product_id,order_id,title,contents,star_rating],(err,result) => {
-                    if(err) reject(err);
-                    else resolve(result);
-                });
-            });
-            return res.json({success:true, message : "리뷰가 등록되었습니다"})
-    } catch(error){
-        console.error("서버에서 오류 발생 : ", error);
-        return res.status(500).json({
-            success: false,
-            message: "리뷰등록 중 오류가 발생하였습니다",
-            error: error.message
-        });
+      // 토큰 검증 실패
+      if (error.name === 'TokenExpiredError') {
+          console.log("토큰 만료");
+          return res.status(403).json({ message: 'Token expired' });
+      } else if (error.name === 'JsonWebTokenError') {
+          console.log("유효하지 않은 토큰");
+          return res.status(403).json({ message: 'Invalid token' });
+      } else {
+          console.log("기타 에러 발생:", error.message);
+          return res.status(500).json({ message: 'Internal server error' });
+      }
     }
 });
-  
-app.listen(port, () => console.log(`${port}번으로 노드 서버 실행`))
+/*==========================================================*/
+app.listen(port,() => console.log(`${port}번으로 서버 실행`))
+
