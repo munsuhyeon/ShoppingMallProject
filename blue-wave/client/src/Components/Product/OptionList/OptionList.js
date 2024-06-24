@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./OptionList.css";
 
+
 const OptionList = ({
   // 전달받은 옵션 목록 배열
   options,
@@ -12,6 +13,11 @@ const OptionList = ({
   // 선택된 옵션 수량을 증가시키는 함수
   increaseOption,
 }) => {
+  
+
+
+
+  console.log(options);
   // 드롭다운 요소의 DOM 노드를 참조하기 위한 useRef hook
   const dropdownRef = useRef(null);
   // 드롭다운의 열림/닫힘 상태를 관리하는 상태 변수
@@ -50,6 +56,11 @@ const OptionList = ({
     }
     setExpandedOptions(false); // 선택 완료 후 드롭다운을 닫기
   };
+
+
+ 
+
+
 
   return (
     <div className="ProductOptions" ref={dropdownRef}>

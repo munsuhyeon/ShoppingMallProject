@@ -4,7 +4,6 @@ import Cartitem from './Cartitem';
 import './Cart.css';
 import Header from './Header';
 
-
 export default function Cart() {
   const navigate = useNavigate();
 
@@ -21,9 +20,16 @@ export default function Cart() {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const handleDelete = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const handleDelete = (index) => {
+    setCartItems((prevCartItems) => {
+      // 새로운 배열을 복사
+      const updatedCartItems = [...prevCartItems];
+      // index 위치에서 한 개의 항목을 삭제
+      updatedCartItems.splice(index, 1);
+      return updatedCartItems;
+    });
   };
+  
 
   const handleDeleteAll = () => {
     setCartItems([]);
@@ -47,8 +53,8 @@ export default function Cart() {
   return (
     <>
     <Header/>
-    
     <div className="shopping-basket">
+      
       <div className="body-header">
         <h2>장바구니</h2>
         <div className="page">
@@ -74,8 +80,8 @@ export default function Cart() {
           </tr>
         </thead>
         <tbody>
-          {cartItems.map((item) => (
-            <Cartitem key={item.id} item={item} onDelete={handleDelete} updateQuantity={updateQuantity} />
+          {cartItems.map((item, index) => (
+            <Cartitem key={`item-${index}`} item={item} onDelete={handleDelete} updateQuantity={updateQuantity} />
           ))}
         </tbody>
       </table>

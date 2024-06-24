@@ -3,6 +3,7 @@ const app = express();
 const cors = require("cors")
 const bodyParser = require("body-parser")
 const mysql = require("mysql2");
+const mysqlPromise = require("mysql2/promise");
 const dotenv = require("dotenv")
 const path = require("path")
 const bcrypt = require("bcrypt");
@@ -23,7 +24,9 @@ app.use(cors({
 }));
 dotenv.config();
 const port = 8000;
+
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
+app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.static(path.join(__dirname + "/images")));
 app.use(express.static(path.join(__dirname, "/images/도서")));
 app.use(express.static(path.join(__dirname, "/images/스포츠")));
@@ -233,172 +236,191 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   });
 });
 
-
+/*=================   주문   =====================*/
 
 // 주문 처리 API 엔드포인트
-app.post("/reqOrder", async (req, res, next) => {
-  try {
-    const { orderSheet, paymentPersonDB } = req.body;
-    
-    // 주문 정보 삽입 쿼리
-    const insertOrderQuery =
-      "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
-      // 새로운 배열 생성
-      const newOrderSheet = orderSheet.map(order => ({
-        ...order,
-        ...paymentPersonDB
-      }));
-      console.log("===============newOrderSheet=================")
-      console.log(newOrderSheet);
-      console.log("================================")
+app.post("/reqOrder", (req, res, next) => {
+  const { orderSheet, paymentPersonDB } = req.body;
 
-    await Promise.all(
-      newOrderSheet.map(async (article) => {
-        const data = [
-          article.order_number,
-          article.user_id,
-          article.product_id,
-          article.order_date ,
-          article.name,
-          article.phone ,
-          article.address,
-          article.detailAddress,
-          article.quantity,
-          article.orderAmount,
-          article.email ,
-          article.total_amount ,
-          article.total_count ,
-          article.p_name
-        ];
-        await connection.query(insertOrderQuery, [[data]]);
-      })
-    );
+  // 주문 정보 삽입 쿼리
+  const insertOrderQuery =
+    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
 
-    res.status(200).send("주문이 성공적으로 처리되었습니다.");
-  } catch (error) {
-    console.error("주문 처리 중 오류 발생:", error);
-    next(error);
-  }
+  // 새로운 배열 생성
+  const newOrderSheet = orderSheet.map(order => ({
+    ...order,
+    ...paymentPersonDB
+  }));
+
+  // console.log("===============newOrderSheet=================");
+  // console.log(newOrderSheet);
+  // console.log("================================");
+
+  // order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name
+  // Promise 배열 생성
+  const queryPromises = newOrderSheet.map(article => {
+    const data = [
+      article.order_number,
+      article.user_id,
+      article.product_id,
+      article.order_date,
+      article.name,
+      article.phone,
+      article.address,
+      article.detailAddress,
+      article.quantity,
+      article.orderAmount,
+      article.email,
+      article.total_amount,
+      article.total_count,
+      article.name
+    ];
+
+    // connection.query 메서드를 사용한 프로미스 반환
+    return new Promise((resolve, reject) => {
+      connection.query(insertOrderQuery, [[data]], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  });
+
+  // 모든 쿼리가 성공적으로 실행될 때까지 기다린 후 응답
+  Promise.all(queryPromises)
+    .then(() => {
+      res.status(200).send("주문이 성공적으로 처리되었습니다.");
+    })
+    .catch(error => {
+      console.error("주문 처리 중 오류 발생:", error);
+      next(error);
+    });
 });
-
 /*=================   로그인   =====================*/
 app.post('/api/login', async (req,res) => {
-    let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보
-    try{
-        // 전달받은 아이디로 아이디와 비밀번호 찾기
-        const findIdSql = "SELECT user_id,user_pw FROM user WHERE user_id = ?";
+  let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보
+  try{
+      // 전달받은 아이디로 아이디와 비밀번호 찾기
+      const findIdSql = "SELECT user_id,user_pw FROM user WHERE user_id = ?";
 
-        const findUserResult = await new Promise((resolve, reject) => {
-            connection.query(findIdSql,[userId], (err,result) => {
-                if(err) reject(err);
-                else resolve(result);
-            })
-        });
-        // 일치하는 아이디가 없다면 클라이언트에 에러메세지 전달
-        if(findUserResult.length === 0){
-            return res.status(401).json({
-                success: false,
-                message: "all wrong"
-            })
-        };
+      const findUserResult = await new Promise((resolve, reject) => {
+          connection.query(findIdSql,[userId], (err,result) => {
+              if(err) reject(err);
+              else resolve(result);
+          })
+      });
+      // 일치하는 아이디가 없다면 클라이언트에 에러메세지 전달
+      if(findUserResult.length === 0){
+          return res.status(401).json({
+              success: false,
+              message: "all wrong"
+          })
+      };
 
-        // 일치하는 아이디가 있다면 쿼리문의 결과값에서 유저 비밀번호 추출
-        const dbPassword = findUserResult[0].user_pw;
+      // 일치하는 아이디가 있다면 쿼리문의 결과값에서 유저 비밀번호 추출
+      const dbPassword = findUserResult[0].user_pw;
 
-        // 사용자가 입력한 비밀번호와 일치하는지 체크 (입력한 비밀번호, DB에 저장된 비밀번호)
-        const isMatch = await bcrypt.compare(userPassword,dbPassword);
-        if(!isMatch){
-            // 입력한 비밀번호가 틀리다면
-            return res.status(401).json({
-                sucess: false,
-                message: "wrong password"
-            })
-        } else {
-            // 입력한 비밀번호가 맞다면 토큰을 생성
-            const payload = { "userId" : findUserResult[0].user_id };
-            const accessToken = generateAccessToken(payload);
-            const refreshToken = generateRefreshToken(payload);
-            
-            const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
-            let decodedExp =  verified.exp - verified.iat; // 생성 - 만료 = 유효시간
+      // 사용자가 입력한 비밀번호와 일치하는지 체크 (입력한 비밀번호, DB에 저장된 비밀번호)
+      const isMatch = await bcrypt.compare(userPassword,dbPassword);
+      if(!isMatch){
+          // 입력한 비밀번호가 틀리다면
+          return res.status(401).json({
+              sucess: false,
+              message: "wrong password"
+          })
+      } else {
+          // 입력한 비밀번호가 맞다면 토큰을 생성
+          const payload = { "userId" : findUserResult[0].user_id };
+          const accessToken = generateAccessToken(payload);
+          const refreshToken = generateRefreshToken(payload);
+          
+          const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
+          let decodedExp =  verified.exp - verified.iat; // 생성 - 만료 = 유효시간
 
-            // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
-            console.log({
-                success: true,
-                message: '로그인 성공',
-                token: decodedExp,
-            });
-            // refreshToken을 서버의 쿠키에 저장
-            res.cookie('refreshToken', refreshToken, {
-              httpOnly: true,
-              secure: false, // HTTPS를 사용할 경우 true로 변경
-              maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-              sameSite: 'strict' // 적절한 SameSite 설정을 적용하세요
-            });
+          // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
+          console.log({
+              success: true,
+              message: '로그인 성공',
+              token: decodedExp,
+          });
+          // refreshToken을 서버의 쿠키에 저장
+          res.cookie('refreshToken', refreshToken, {
+            httpOnly: true,
+            secure: false, // HTTPS를 사용할 경우 true로 변경
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+            sameSite: 'strict' // 적절한 SameSite 설정을 적용하세요
+          });
 
-            return res.status(200)
-                .header('authorization', accessToken)
-                .json({
-                    success: true,
-                    message: '로그인 성공',
-                    tokenExp: decodedExp,
-                    userId : findUserResult[0].user_id
-                });
-        }
-    } catch(err){
-        console.error("서버에서 오류 발생 : ", err);
-        return res.status(500).json({
-            success: false,
-            message: "로그인 중 오류가 발생하였습니다",
-            error: err.message
-        });
-    }
+          return res.status(200)
+              .header('authorization', accessToken)
+              .json({
+                  success: true,
+                  message: '로그인 성공',
+                  tokenExp: decodedExp,
+                  userId : findUserResult[0].user_id
+              });
+      }
+  } catch(err){
+      console.error("서버에서 오류 발생 : ", err);
+      return res.status(500).json({
+          success: false,
+          message: "로그인 중 오류가 발생하였습니다",
+          error: err.message
+      });
+  }
 });
 /*=================   토큰 검증   =====================*/
 app.get('/api/verify-token', (req, res) => {
-    const authHeader = req.headers.authorization;
-    // Bearer이 붙어있어서 띄어쓰기로 토큰을 구분한다
-    const token = authHeader && authHeader.split(' ')[1];
-    if (!token) {
-        // 로그인페이지로 이동하기
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+  const authHeader = req.headers.authorization;
+  // Bearer이 붙어있어서 띄어쓰기로 토큰을 구분한다
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+      // 로그인페이지로 이동하기
+      return res.status(401).json({ message: 'Unauthorized' });
+  }
 
-    jwt.verify(token, JWT_SECRET, (err, userID) => {
-        if(err){
-            // 로그인페이지로 이동하기
-            return res.status(403).json({message:"토큰 확인 실패"});
-        }
-        return res.status(200).json({valid:true, userId:userID});
-    });
+  jwt.verify(token, JWT_SECRET, (err, userID) => {
+      if(err){
+          // 로그인페이지로 이동하기
+          return res.status(403).json({message:"토큰 확인 실패"});
+      }
+      return res.status(200).json({valid:true, userId:userID});
+  });
 });
 /*=================   refreshToken으로 accessToken 재발급   =====================*/
 app.get('/api/refresh-token', (req,res) => {
-  const refreshToken = req.cookies['refreshToken'];
+const refreshToken = req.cookies['refreshToken'];
 
-    if(!refreshToken){
-        console.log("refresh토큰 없음")
-        // 사용자를 로그인페이지로 이동시키기
-        return res.status(401).json({ message: 'Unauthorized' });
+  if(!refreshToken){
+      console.log("refresh토큰 없음")
+      // 사용자를 로그인페이지로 이동시키기
+      return res.status(401).json({ message: 'Unauthorized' });
+  }
+  try{
+      const decoded = jwt.verify(refreshToken, JWT_SECRET);
+      const newAccessToken = generateAccessToken({ "userId" : decoded.userId });
+      return res.status(200).json({newToken : newAccessToken});
+  }catch(error){
+    // 토큰 검증 실패
+    if (error.name === 'TokenExpiredError') {
+        console.log("토큰 만료");
+        return res.status(403).json({ message: 'Token expired' });
+    } else if (error.name === 'JsonWebTokenError') {
+        console.log("유효하지 않은 토큰");
+        return res.status(403).json({ message: 'Invalid token' });
+    } else {
+        console.log("기타 에러 발생:", error.message);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-    try{
-        const decoded = jwt.verify(refreshToken, JWT_SECRET);
-        const newAccessToken = generateAccessToken({ "userId" : decoded.userId });
-        return res.status(200).json({newToken : newAccessToken});
-    }catch(error){
-      // 토큰 검증 실패
-      if (error.name === 'TokenExpiredError') {
-          console.log("토큰 만료");
-          return res.status(403).json({ message: 'Token expired' });
-      } else if (error.name === 'JsonWebTokenError') {
-          console.log("유효하지 않은 토큰");
-          return res.status(403).json({ message: 'Invalid token' });
-      } else {
-          console.log("기타 에러 발생:", error.message);
-          return res.status(500).json({ message: 'Internal server error' });
-      }
-    }
+  }
 });
-/*==========================================================*/
-app.listen(port,() => console.log(`${port}번으로 서버 실행`))
+/*======================포트 리스닝=============================*/
+app.listen(port, () => {
+  console.log(`${port} 포트에서 서버가 실행되었습니다.`);
+});
+
+
+
 

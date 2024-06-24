@@ -1,51 +1,57 @@
-import { useState } from "react";
-import PayButton from '../UI/PayButton'
+import React, { useState } from 'react';
+import PayButton from '../UI/PayButton';
 
+const Cartitem = ({ index ,item, onDelete, updateQuantity }) => {
+  const [quantity, setQuantity] = useState(item.quantity);
 
-export default function Cartitem({item, onDelete, updateQuantity}) {
-    const [quantity, setQuantity] = useState(item.quantity)
-    
+  const onIncrease = () => {
+    const newQuantity = quantity + 1;
+    setQuantity(newQuantity);
+    updateQuantity(item.id, newQuantity);
+  };
 
-    function onIncrease()  {
-      const newQuantity = quantity + 1
-      setQuantity(newQuantity)
+  const onDecrease = () => {
+    if (quantity > 1) {
+      const newQuantity = quantity - 1;
+      setQuantity(newQuantity);
       updateQuantity(item.id, newQuantity);
-      }
-      
-      function onDecrease()  {
-        if(quantity > 1){
-          const newQuantity = quantity - 1
-          setQuantity(newQuantity)
-          updateQuantity(item.id, newQuantity);
-        }
     }
-    // 상품명 옵션 가격 수량 주문금액 
+  };
 
-     const orderTotal = quantity * item.price
+  // 상품 가격을 숫자로 변환하여 계산
+  const price = parseInt(item.price);
+  const orderTotal = quantity * price;
 
-    return (
+  return (
     <tr className="basket-change">
       <td className="img-option-flex">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQisS2JAdJHBnxB9YblQPyWAMESVA4qDcxnng&s"
+          src={item.image}
           alt=""
         />
         <div className="option">
-          <p>{item.name}</p>
+          <p>{item.p_name}</p>
           <p>{item.option}</p>
         </div>
       </td>
       <td>{item.price}</td>
       <td>0</td>
       <td>
-        <PayButton className="plus-button" onClick={onIncrease}>+</PayButton>{quantity}
-        <PayButton className="plus-button" onClick={onDecrease}>-</PayButton>
+        <PayButton className="plus-button" onClick={onIncrease}>
+          +
+        </PayButton>
+        {quantity}
+        <PayButton className="plus-button" onClick={onDecrease}>
+          -
+        </PayButton>
       </td>
       <td>{orderTotal}</td>
       <td>
-      <PayButton onClick={() => onDelete(item.id)}>삭제하기</PayButton>
+        <PayButton onClick={() => onDelete(index)}>삭제하기</PayButton>
       </td>
       <td>배송비 무료</td>
     </tr>
   );
-}
+};
+
+export default Cartitem;
