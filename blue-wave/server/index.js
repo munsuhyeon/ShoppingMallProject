@@ -7,6 +7,7 @@ const dotenv = require("dotenv")
 const path = require("path")
 const bcrypt = require("bcrypt");
 const cookieParser = require('cookie-parser');
+const axios = require('axios');
 const jwt = require("jsonwebtoken") // npm install jsonwebtoken
 const {generateAccessToken, generateRefreshToken} = require("./middleware/Token.js");
 

@@ -11,7 +11,8 @@ import Main from "./View/Main";
 import AllProduct from "./View/AllProduct.js";
 import ProductDetail from "./View/ProductDetail.js";
 import BackToTop from "./Components/BackToTop/BackToTop.js";
-
+import KakaoLogin from "./View/KakaoLogin.js";
+import './App.css'
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -33,6 +34,7 @@ const App = () => {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/kakaoLogin" element={<KakaoLogin />} />
           <Route
             path="/product/:categoryId/:subCategoryId/:id"
             element={<ProductDetail />}

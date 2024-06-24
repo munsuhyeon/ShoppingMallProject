@@ -2,7 +2,7 @@ import {useForm} from 'react-hook-form';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Header
  from './Header';
 const Login = () => {
@@ -65,7 +65,7 @@ const Login = () => {
     const userPassword = register('userPassword',{
         required : "필수 입력값입니다",
     });
-
+    
     return(
         <div className="Login">
             <Header />
@@ -76,8 +76,10 @@ const Login = () => {
                 <form noValidate onSubmit={handleSubmit(onSubmit)}>
                     <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} />
                     <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"}/>
-                    <div className="btn_area">
-                        <Button text={"로그인"} className={'wide_btn'} type='submit'/>
+                    <div className="btn_area" style={{display:'block'}}>
+                        <Button text={"로그인"} className={'join_btn'} type='submit'/>
+                        <Button text={"카카오 로그인"} className={'sns_btn kakao'} img={<img src={process.env.PUBLIC_URL + `assets/snsLogin/kakao-svgrepo-com.svg`} className="logo_social" type='button'/>}/>
+                        <Button text={"네이버 로그인"} className={'sns_btn naver'} img={<img src={process.env.PUBLIC_URL + `assets/snsLogin/naver-svgrepo-com_wh.svg`} className="logo_social" />}/>
                     </div>
                 </form>
             </div>
