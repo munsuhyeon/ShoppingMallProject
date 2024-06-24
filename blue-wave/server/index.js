@@ -6,9 +6,10 @@ const mysql = require("mysql2");
 const dotenv = require("dotenv")
 const path = require("path")
 const bcrypt = require("bcrypt");
+const { reject } = require("assert");
 const cookieParser = require('cookie-parser');
 const axios = require('axios');
-const jwt = require("jsonwebtoken") // npm install jsonwebtoken
+const jwt = require("jsonwebtoken")
 const {generateAccessToken, generateRefreshToken} = require("./middleware/Token.js");
 
 // 미들웨어 설정
@@ -30,7 +31,8 @@ app.use(express.static(path.join(__dirname, "/images/사무용품")));
 app.use(express.static(path.join(__dirname, "/images/반려동물용품")));
 app.use(express.static(path.join(__dirname, "/images/인테리어")));
 
-// + 더  카테고리 추가
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
@@ -49,79 +51,80 @@ connection.connect((err) => {
   }
   console.log("Connected to MySQL as id " + connection.threadId);
 });
+
 /*=================   회원가입   =====================*/
 app.post('/api/register', async(req,res) => {
-    // 클라이언트에서 받은 회원가입 정보
-    let{
-        userId,
-        userPassword,
-        userName,
-        userPhone,
-        userEmail,
-        zonecode,
-        address,
-        detailAddress
-    } = req.body;
+  // 클라이언트에서 받은 회원가입 정보
+  let{
+      userId,
+      userPassword,
+      userName,
+      userPhone,
+      userEmail,
+      zonecode,
+      address,
+      detailAddress
+  } = req.body;
 
-    try{
-        // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
-        // DB에 저장 전 id  중복체크
-        const checkIdSql = "SELECT user_id FROM user where user_id = ?"
-        const idResult = await new Promise((resolve,reject) => {
-            connection.query(checkIdSql, [userId], (err, result) => {
-                if(err) reject(err);
-                else resolve(result)
-            });
-        });
-        if(idResult.length > 0){
-            return res.status(200).json({
-                success: false,
-                message: "이미 등록된 아이디입니다"
-            });
-        }
+  try{
+      // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
+      // DB에 저장 전 id  중복체크
+      const checkIdSql = "SELECT user_id FROM user where user_id = ?"
+      const idResult = await new Promise((resolve,reject) => {
+          connection.query(checkIdSql, [userId], (err, result) => {
+              if(err) reject(err);
+              else resolve(result)
+          });
+      });
+      if(idResult.length > 0){
+          return res.status(200).json({
+              success: false,
+              message: "이미 등록된 아이디입니다"
+          });
+      }
 
-        // 이메일 저장 전 중복 체크
-        const checkEmailSql = "SELECT user_email FROM user where user_email = ?"
-        const emailResult = await new Promise((resolve, reject) => {
-            connection.query(checkEmailSql, [userEmail], (err,result) => {
-                if(err) reject(err);
-                else resolve(result);
-            })
-        });
-        if(emailResult.length > 0){
-            return res.status(200).json({
-                success: false,
-                message: "이미 존재하는 이메일 아이디입니다"
-            });
-        }
-        // 비밀번호 암호화
-        const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
-        const hash = await bcrypt.hash(userPassword, salt);
-        userPassword = hash;
+      // 이메일 저장 전 중복 체크
+      const checkEmailSql = "SELECT user_email FROM user where user_email = ?"
+      const emailResult = await new Promise((resolve, reject) => {
+          connection.query(checkEmailSql, [userEmail], (err,result) => {
+              if(err) reject(err);
+              else resolve(result);
+          })
+      });
+      if(emailResult.length > 0){
+          return res.status(200).json({
+              success: false,
+              message: "이미 존재하는 이메일 아이디입니다"
+          });
+      }
+      // 비밀번호 암호화
+      const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
+      const hash = await bcrypt.hash(userPassword, salt);
+      userPassword = hash;
 
-        // 회원정보 DB에 저장
-        const registerSql = "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail) values(?,?,?,?,?,?,?)";
-        await new Promise((resolve,reject) => {
-            connection.query(registerSql,[userId,userPassword,userName,userEmail,userPhone,address,detailAddress],(err,result) => {
-                if(err) reject(err);
-                else resolve(result);
-            });
-        });
+      // 회원정보 DB에 저장
+      const registerSql = "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail) values(?,?,?,?,?,?,?)";
+      await new Promise((resolve,reject) => {
+          connection.query(registerSql,[userId,userPassword,userName,userEmail,userPhone,address,detailAddress],(err,result) => {
+              if(err) reject(err);
+              else resolve(result);
+          });
+      });
 
-        // 회원가입이 성공한 경우 클라이언트에게 응답을 보낸다
-        console.log("사용자가 성공적으로 등록")
-        return res.status(200).json({
-            success:true,
-            message: "회원가입이 등록되었습니다"
-        });
-    } catch (err) {
-        console.error("서버에서 오류 발생 : ", err);
-        return res.status(500).json({
-            success: false,
-            message: "회원가입 중 오류가 발생하였습니다",
-            error: err.message
-        });
-    };
+      // 회원가입이 성공한 경우 클라이언트에게 응답을 보낸다
+      console.log("사용자가 성공적으로 등록")
+      return res.status(200).json({
+          success:true,
+          message: "회원가입이 등록되었습니다"
+      });
+  } catch (err) {
+      console.error("서버에서 오류 발생 : ", err);
+      return res.status(500).json({
+          success: false,
+          message: "회원가입 중 오류가 발생하였습니다",
+          error: err.message
+      });
+  };
 });
 
 /*=================   main - 상품 데이터 불러오기   =====================*/
@@ -218,7 +221,7 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   const sql =
     "SELECT option_name, option_price FROM bluewave.option WHERE product_id = ?;";
 
-  connection.query(sql, [productId], (err, results) => {
+    connection.query(sql, [productId], (err, results) => {
     if (err) {
       console.error("상품 옵션 조회 오류:", err);
       res.status(500).json({ error: "상품 옵션 조회 오류" });
@@ -229,6 +232,55 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
     res.json(results);
   });
 });
+
+
+
+// 주문 처리 API 엔드포인트
+app.post("/reqOrder", async (req, res, next) => {
+  try {
+    const { orderSheet, paymentPersonDB } = req.body;
+    
+    // 주문 정보 삽입 쿼리
+    const insertOrderQuery =
+      "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
+      // 새로운 배열 생성
+      const newOrderSheet = orderSheet.map(order => ({
+        ...order,
+        ...paymentPersonDB
+      }));
+      console.log("===============newOrderSheet=================")
+      console.log(newOrderSheet);
+      console.log("================================")
+
+    await Promise.all(
+      newOrderSheet.map(async (article) => {
+        const data = [
+          article.order_number,
+          article.user_id,
+          article.product_id,
+          article.order_date ,
+          article.name,
+          article.phone ,
+          article.address,
+          article.detailAddress,
+          article.quantity,
+          article.orderAmount,
+          article.email ,
+          article.total_amount ,
+          article.total_count ,
+          article.p_name
+        ];
+        await connection.query(insertOrderQuery, [[data]]);
+      })
+    );
+
+    res.status(200).send("주문이 성공적으로 처리되었습니다.");
+  } catch (error) {
+    console.error("주문 처리 중 오류 발생:", error);
+    next(error);
+  }
+});
+
 /*=================   로그인   =====================*/
 app.post('/api/login', async (req,res) => {
     let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보

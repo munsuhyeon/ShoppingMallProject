@@ -2,9 +2,9 @@ import {useForm} from 'react-hook-form';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import axios from "axios";
-import { Link, useNavigate } from 'react-router-dom';
-import Header
- from './Header';
+import {useNavigate } from 'react-router-dom';
+import Header from './Header';
+
 const Login = () => {
     const navigate = useNavigate();
     const {register,
@@ -13,6 +13,7 @@ const Login = () => {
         setError,
         reset
         } = useForm({mode:'onSubmit'});
+
     const onSubmit = async (data) => {
         try{
             const response = await axios.post('http://localhost:8000/api/login', { ...data }, { withCredentials: true })
@@ -31,10 +32,11 @@ const Login = () => {
 
                 navigate('/');
                 window.location.reload();
-            }else{
-                setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
-                setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
-            }
+             }
+            // else{
+            //     setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
+            //     setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
+            // }
             console.log(response.data)
         } catch(error){
             if(error.response){
@@ -44,9 +46,9 @@ const Login = () => {
                     error.response.data
                 );
                 if (error.response.data.message.includes("all wrong")){
-                    setError("userId", {type: "manual", message: "틀린 아이디입니다"});
+                    setError("userId", {type: 'manual',message: "틀린 아이디입니다"});
                 } else if(error.response.data.message.includes("wrong password")){
-                    setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
+                    setError("userPassword", {type: 'manual',message: "비밀번호가 틀립니다"});
                 }
                 
             }else if(error.request){
@@ -56,7 +58,7 @@ const Login = () => {
                 console.error("요청 설정 중 오류 :::  ", error.message)
                 alert("요청 설정 중 오류가 발생했습니다");
             }
-            reset();
+            //reset();
         }
     };
     const userId = register('userId',{
@@ -67,21 +69,21 @@ const Login = () => {
     });
     
     return(
-        <div className="Login">
+        <div>
             <Header />
-            <div style={{margin: '0 auto', padding: '58px 0 160px',width: '600px'}}>
-                <h1 className="logo_area" style={{textAlign: 'center', marginBottom: '15px'}}>
-                    <img src={process.env.PUBLIC_URL + `assets/lettersLogo.png`} alt="bluewave" className="letters_logo" style={{width: '150px',height: 'auto'}}/>
-                </h1>
-                <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                    <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} />
-                    <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"}/>
-                    <div className="btn_area" style={{display:'block'}}>
-                        <Button text={"로그인"} className={'join_btn'} type='submit'/>
-                        <Button text={"카카오 로그인"} className={'sns_btn kakao'} img={<img src={process.env.PUBLIC_URL + `assets/snsLogin/kakao-svgrepo-com.svg`} className="logo_social" type='button'/>}/>
-                        <Button text={"네이버 로그인"} className={'sns_btn naver'} img={<img src={process.env.PUBLIC_URL + `assets/snsLogin/naver-svgrepo-com_wh.svg`} className="logo_social" />}/>
-                    </div>
-                </form>
+            <div className="Login" style={{display:'flex', flexDirection:'column',justifyContent:'center',alignItems:'center',height:'80vh'}}>
+                <div style={{margin: '0 auto',width: '600px'}}>
+                    <h1 className="logo_area" style={{textAlign: 'center', marginBottom: '15px',textAlignLast:'center'}}>
+                        <img src={process.env.PUBLIC_URL + `assets/lettersLogo.png`} alt="bluewave" className="letters_logo" style={{width: '150px',height: 'auto'}}/>
+                    </h1>
+                    <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                        <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} />
+                        <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"}/>
+                        <div className="btn_area" style={{display:'block'}}>
+                            <Button text={"로그인"} className={'join_btn'} type='submit'/>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     )

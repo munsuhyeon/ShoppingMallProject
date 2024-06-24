@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation} from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch } from "react-icons/fa";
 import "./Header.css";
 import AuthTimer from "../Components/Register/AuthTimer";
 import { handleLogout, formatTime } from "../Utils/Utils";
+import { AuthContext } from "../Utils/AuthContext";
 
 const Header = () => {
   const location = useLocation();
@@ -31,12 +32,7 @@ const Header = () => {
     }
   }, [activeItem]);
   // ================  로그인 인증  ================
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const storedLoggedIn = localStorage.getItem("loggedIn");
-    setLoggedIn(storedLoggedIn === "true");
-  }, []);
+  const { loggedIn } = useContext(AuthContext);
 
   return (
     <header>
