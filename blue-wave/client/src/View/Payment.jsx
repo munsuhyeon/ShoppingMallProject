@@ -105,16 +105,17 @@ export default function Payment() {
 
     const reqOrderSheet = cartItems.map((data) => ({
       ...data,
-      order_id: 1,
       order_number: createOrderNumber,
       user_id: 1,
-      product_id: 1,
+      product_id: data.id,
       order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
       order_count: data.quantity,
       total_amount: totalPrice,
       total_count: cartItems.length,
-      p_name: data.name,
+      p_name: data.p_name,
     }));
+
+    
 
     try {
       const response = await axios.post("http://localhost:8000/reqOrder", {
@@ -215,7 +216,7 @@ export default function Payment() {
           // 채널 키 설정
           channelKey: channelKey,
           paymentId: `payment-${uuidv4()}`,
-          orderName: `${cartItems[0].name} 외 ${cartItems.length - 1} 건`,
+          orderName: `${cartItems[0].p_name} 외 ${cartItems.length - 1} 건`,
           totalAmount: totalProductAmount(),
           currency: "CURRENCY_KRW",
           payMethod: payMethod,
@@ -227,7 +228,7 @@ export default function Payment() {
           storeId: REACT_APP_PortOne_StoreId,
           channelKey: channelKey,
           paymentId: `payment-${uuidv4()}`,
-          orderName: `${cartItems[0].name} 외 ${cartItems.length - 1} 건`,
+          orderName: `${cartItems[0].p_name} 외 ${cartItems.length - 1} 건`,
           totalAmount: totalProductAmount(),
           currency: "CURRENCY_KRW",
           payMethod: payMethod,
@@ -352,10 +353,11 @@ export default function Payment() {
             <div>
               {paymentMethods.map((paymentData, index) => (
                 <MultiPayment
-                  key={index}
-                  paymentData={paymentData}
+                 key={`payment-${index}`} // 고유한 key prop 추가
+                 paymentData={paymentData}
                   setSelectedPaymentMethod={setSelectedPaymentMethod}
-                />
+                 index={index} // index prop 추가
+              />
               ))}
             </div>
           </div>

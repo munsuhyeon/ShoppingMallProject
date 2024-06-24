@@ -2,7 +2,6 @@ import "./App.css";
 import Cart from "./View/Cart.jsx";
 import Payment from "./View/Payment.jsx";
 import Paymentcomplete from "./View/Paymentcomplete";
-import Product from "./View/Product.jsx";
 import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
@@ -47,7 +46,6 @@ const App = () => {
           />
           <Route path="/product/:categoryId" element={<AllProduct />} />
           <Route path="/" element={<Main />} />
-          <Route path="/ProductTest" element={<Product />} />
           <Route path="/Cart" element={<Cart />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/paymentcomplete" element={<Paymentcomplete />} />

@@ -15,6 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 dotenv.config();
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
+app.use("/img", express.static(path.join(__dirname, "img")));
+
 app.use(express.static(path.join(__dirname + "/images")));
 app.use(express.static(path.join(__dirname, "/images/도서")));
 app.use(express.static(path.join(__dirname, "/images/스포츠")));
@@ -240,49 +242,64 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
 
 
 // 주문 처리 API 엔드포인트
-app.post("/reqOrder", async (req, res, next) => {
-  try {
-    const { orderSheet, paymentPersonDB } = req.body;
-    
-    // 주문 정보 삽입 쿼리
-    const insertOrderQuery =
-      "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
-      // 새로운 배열 생성
-      const newOrderSheet = orderSheet.map(order => ({
-        ...order,
-        ...paymentPersonDB
-      }));
-      console.log("===============newOrderSheet=================")
-      console.log(newOrderSheet);
-      console.log("================================")
+app.post("/reqOrder", (req, res, next) => {
+  const { orderSheet, paymentPersonDB } = req.body;
 
-    await Promise.all(
-      newOrderSheet.map(async (article) => {
-        const data = [
-          article.order_number,
-          article.user_id,
-          article.product_id,
-          article.order_date ,
-          article.name,
-          article.phone ,
-          article.address,
-          article.detailAddress,
-          article.quantity,
-          article.orderAmount,
-          article.email ,
-          article.total_amount ,
-          article.total_count ,
-          article.p_name
-        ];
-        await connection.query(insertOrderQuery, [[data]]);
-      })
-    );
+  // 주문 정보 삽입 쿼리
+  const insertOrderQuery =
+    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
 
-    res.status(200).send("주문이 성공적으로 처리되었습니다.");
-  } catch (error) {
-    console.error("주문 처리 중 오류 발생:", error);
-    next(error);
-  }
+  // 새로운 배열 생성
+  const newOrderSheet = orderSheet.map(order => ({
+    ...order,
+    ...paymentPersonDB
+  }));
+
+  console.log("===============newOrderSheet=================");
+  console.log(newOrderSheet);
+  console.log("================================");
+
+  // order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name
+  // Promise 배열 생성
+  const queryPromises = newOrderSheet.map(article => {
+    const data = [
+      article.order_number,
+      article.user_id,
+      article.product_id,
+      article.order_date,
+      article.name,
+      article.phone,
+      article.address,
+      article.detailAddress,
+      article.quantity,
+      article.orderAmount,
+      article.email,
+      article.total_amount,
+      article.total_count,
+      article.name
+    ];
+
+    // connection.query 메서드를 사용한 프로미스 반환
+    return new Promise((resolve, reject) => {
+      connection.query(insertOrderQuery, [[data]], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  });
+
+  // 모든 쿼리가 성공적으로 실행될 때까지 기다린 후 응답
+  Promise.all(queryPromises)
+    .then(() => {
+      res.status(200).send("주문이 성공적으로 처리되었습니다.");
+    })
+    .catch(error => {
+      console.error("주문 처리 중 오류 발생:", error);
+      next(error);
+    });
 });
 
 
