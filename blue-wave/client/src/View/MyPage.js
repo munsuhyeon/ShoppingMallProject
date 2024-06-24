@@ -1,9 +1,18 @@
+import Header from "./Header";
+import NavBar from "../Components/MyPage/NavBar";
+import UserInfo from "../Components/MyPage/UserInfo";
+import "./MyPage.css";
 
 const MyPage = () => {
     return(
         <div className="MyPage">
             <Header />
-            <h1>마이페이지</h1>
+            <div className="wrapper">
+                <NavBar/>
+                <main>
+                    <UserInfo/>
+                </main>
+            </div>
         </div>
     )
 };

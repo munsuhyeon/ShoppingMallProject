@@ -14,6 +14,7 @@ import BackToTop from "./Components/BackToTop/BackToTop.js";
 import { AuthProvider, AuthContext } from "./Utils/AuthContext.js";
 import ProtectedRoutes from "./Utils/ProtectedRoutes.js";
 import NotAuthRoutes from "./Utils/NotAuthRoutes.js";
+import MyPage from "./View/MyPage.js";
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
 const ScrollToTop = () => {
@@ -30,6 +31,7 @@ const ScrollToTop = () => {
 const AppRoutes  = () => {
   // 로그인 유무 확인하기
   const { loggedIn } = useContext(AuthContext);
+  
   return (
     <Routes>
 
@@ -38,6 +40,7 @@ const AppRoutes  = () => {
       <Route path="/Cart" element={<Cart />} />
       <Route path="/payment" element={<Payment />} />
       <Route path="/paymentcomplete" element={<Paymentcomplete />} />
+      <Route path="/myPage" element={<MyPage/>} />
     </Route>
     
 

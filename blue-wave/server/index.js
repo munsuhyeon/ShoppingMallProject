@@ -399,6 +399,33 @@ app.get('/api/refresh-token', (req,res) => {
       }
     }
 });
+/*=================   회원정보 가져오기   =====================*/
+app.get('/api/userInfo', async (req,res) => {
+  const userId = req.headers.user_id;
+  console.log("유저 아이디2  ::  ", userId);
+  try{
+    const userInfoSql = "SELECT * FROM user WHERE user_id = ?"
+    const userInfo = await new Promise((resolve,reject) => {
+      connection.query(userInfoSql, [userId], (err, result) => {
+          if(err) reject(err);
+          else resolve(result)
+      });
+  });
+  if(userInfo.length > 0){
+    return res.status(200).json({
+      data: userInfo
+  });
+  }
+  } catch(err){
+    console.error("서버에서 오류 발생 : ", err);
+      return res.status(500).json({
+          success: false,
+          message: "회원정보 조회 중 오류 발생",
+          error: err.message
+      });
+  }
+
+})
 /*==========================================================*/
 app.listen(port,() => console.log(`${port}번으로 서버 실행`))
 
