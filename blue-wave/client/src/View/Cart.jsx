@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cartitem from './Cartitem';
 import './Cart.css';
-
+import Header from './Header';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -51,7 +51,10 @@ export default function Cart() {
 
 
   return (
+    <>
+    <Header/>
     <div className="shopping-basket">
+      
       <div className="body-header">
         <h2>장바구니</h2>
         <div className="page">
@@ -89,5 +92,6 @@ export default function Cart() {
         <button onClick={handleOrder}>주문하기</button>
       </div>
     </div>
+    </>
   );
 }

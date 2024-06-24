@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { Link, useLocation} from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch } from "react-icons/fa";
 import "./Header.css";
+import AuthTimer from "../Components/Register/AuthTimer";
+import { handleLogout, formatTime } from "../Utils/Utils";
+import { AuthContext } from "../Utils/AuthContext";
 
 const Header = () => {
   const location = useLocation();
@@ -28,6 +31,8 @@ const Header = () => {
       activeLink.classList.remove("inactive");
     }
   }, [activeItem]);
+  // ================  로그인 인증  ================
+  const { loggedIn } = useContext(AuthContext);
 
   return (
     <header>
@@ -40,12 +45,25 @@ const Header = () => {
         <div className="nav_container">
           <div className="nav_top">
             <ul className="nav_top_menu">
-              <li>
-                <a href="로그인.html">로그인</a>
-              </li>
-              <li>
-                <Link to="/register">회원가입</Link>
-              </li>
+              {loggedIn ? (
+              <>
+                <li>
+                  <Link to="/" onClick={handleLogout}>로그아웃 <AuthTimer/> </Link>
+                </li>
+                <li>
+                  <Link to="/register">마이페이지</Link>
+                </li>
+                
+              </>) : (
+              <>
+                <li>
+                  <Link to="/login">로그인</Link>
+                </li>
+                <li>
+                  <Link to="/register">회원가입</Link>
+                </li>
+              </>)}
+              
               <li className={activeItem === "/mypage" ? "active" : ""}>
                 <Link to="/mypage">
                   <FaUser />
