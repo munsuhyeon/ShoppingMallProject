@@ -10,8 +10,7 @@ const Login = () => {
     const {register,
         handleSubmit,
         formState : {errors, isValid, isSubmitting},
-        setError,
-        reset
+        setError
         } = useForm({mode:'onSubmit'});
 
     const onSubmit = async (data) => {
@@ -33,10 +32,6 @@ const Login = () => {
                 navigate('/');
                 window.location.reload();
              }
-            // else{
-            //     setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
-            //     setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
-            // }
             console.log(response.data)
         } catch(error){
             if(error.response){
@@ -58,7 +53,6 @@ const Login = () => {
                 console.error("요청 설정 중 오류 :::  ", error.message)
                 alert("요청 설정 중 오류가 발생했습니다");
             }
-            //reset();
         }
     };
     const userId = register('userId',{
