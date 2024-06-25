@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cartitem from './Cartitem';
 import './Cart.css';
-import Header from './Header';
+//import Header from './Header';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -40,10 +40,10 @@ export default function Cart() {
   };
 
   // 새로운 updateQuantity 함수 추가
-  const updateQuantity = (id, newQuantity) => {
+  const updateQuantity = (id, option, newQuantity) => {
     setCartItems((prevCartItems) =>
       prevCartItems.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
+        item.id === id && item.option === option ? { ...item, quantity: newQuantity } : item
       )
     );
   };
@@ -52,7 +52,7 @@ export default function Cart() {
 
   return (
     <>
-    <Header/>
+    {/*<Header/>*/}
     <div className="shopping-basket">
       
       <div className="body-header">
