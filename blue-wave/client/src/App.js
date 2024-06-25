@@ -15,6 +15,7 @@ import { AuthProvider, AuthContext } from "./Utils/AuthContext.js";
 import ProtectedRoutes from "./Utils/ProtectedRoutes.js";
 import NotAuthRoutes from "./Utils/NotAuthRoutes.js";
 import MyPage from "./View/MyPage.js";
+import SearchResults from './View/SearchResults';
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
 const ScrollToTop = () => {
@@ -56,7 +57,7 @@ const AppRoutes  = () => {
     <Route path="/product/:categoryId/:subCategoryId/:id" element={<ProductDetail />} />
     <Route path="/product/:categoryId/:subCategoryId" element={<AllProduct />} />
     <Route path="/product/:categoryId" element={<AllProduct />} />
-
+    <Route path="/search" element={<SearchResults />} />
     {/* 정의되지 않은 경로일 경우 로그인 페이지로 리다이렉션 */}
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>

@@ -236,7 +236,75 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   });
 });
 
-/*=================   주문   =====================*/
+/*=================   검색   =====================*/
+// 검색어 삽입 및 상품 조회
+app.post('/search', (req, res) => {
+  const { term } = req.body;
+  if (!term) {
+      return res.status(400).send('Search term is required');
+  }
+
+  const insertQuery = 'INSERT INTO search (user_id, key_word, search_date) VALUES (?, ?, NOW())';
+  console.log(`Executing query: ${insertQuery} with values: [1, ${term}]`);
+  connection.query(insertQuery, [1, term], (err, results) => {
+      if (err) {
+          console.error('검색어 삽입 오류:', err);
+          return res.status(500).send(err.message);
+      }
+
+      const searchQuery = 'SELECT product_id, category_id, sub_category_id, p_name, p_description, p_price, main_image FROM product WHERE p_name LIKE ?';
+      console.log(`Executing query: ${searchQuery} with value: ${term}`);
+      connection.query(searchQuery, [`%${term}%`], (err, productResults) => {
+          if (err) {
+              console.error('상품 조회 오류:', err);
+              return res.status(500).send(err.message);
+          }
+
+          if (productResults.length === 0) {
+              return res.status(404).send('Product not found');
+          }
+
+          res.status(201).send(productResults);
+      });
+  });
+});
+
+// 검색 기록 조회
+app.get('/search', (req, res) => {
+  const query = 'SELECT * FROM search ORDER BY search_date DESC LIMIT 10';
+  console.log(`Executing query: ${query}`);
+  connection.query(query, (err, results) => {
+      if (err) {
+          console.error('검색 기록중 오류발생:', err);
+          return res.status(500).send(err.message);
+      }
+      res.status(200).send(results);
+  });
+});
+
+// 기록 삭제
+app.delete('/search', (req, res) => {
+  const deleteQuery = 'DELETE FROM search';
+  const resetAutoDeleteQuery = 'ALTER TABLE search AUTO_INCREMENT = 1';
+  
+  console.log(`Executing query: ${deleteQuery}`);
+  connection.query(deleteQuery, (err, results) => {
+      if (err) {
+          console.error('모든 검색어 삭제 오류:', err);
+          return res.status(500).send(err.message);
+      }
+
+      console.log(`Executing query: ${resetAutoDeleteQuery}`);
+      connection.query(resetAutoDeleteQuery, (err, results) => {
+          if (err) {
+              console.error('재설정 오류 :', err);
+              return res.status(500).send(err.message);
+          }
+          res.status(200).send('모든 검색 삭제 하였습니다');
+      });
+  });
+});
+
 
 // 주문 처리 API 엔드포인트
 app.post("/reqOrder", (req, res, next) => {

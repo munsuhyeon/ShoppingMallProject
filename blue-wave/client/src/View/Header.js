@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation} from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { FaUser, FaShoppingCart } from "react-icons/fa";
+import Search from "../Components/Search/Search"
 import "./Header.css";
 import AuthTimer from "../Components/Register/AuthTimer";
 import { handleLogout, formatTime } from "../Utils/Utils";
@@ -77,10 +81,7 @@ const Header = () => {
             </ul>
           </div>
           <div className="search-bar">
-            <input type="text" placeholder="찾고 싶은 상품을 검색해보세요!" />
-            <button type="button">
-              <FaSearch />
-            </button>
+          <Search />
           </div>
         </div>
       </div>
