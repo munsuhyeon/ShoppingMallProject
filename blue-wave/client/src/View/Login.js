@@ -22,10 +22,12 @@ const Login = () => {
                 const decodedExp = response.data.tokenExp;
                 const userId = response.data.userId;
                 const userName = response.data.userName;
+                const tokenIat = response.data.tokenIat;
 
                 axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`;
 
                 localStorage.setItem("tokenExp", decodedExp); // 로컬스토리지에 access토큰 만료시간 저장 
+                localStorage.setItem("tokenIat", tokenIat); // 토큰 생성시간
                 localStorage.setItem("accessToken", accessToken); // 토큰 저장
                 localStorage.setItem("userId", userId); // 로그인한 회원 아이디 저장
                 localStorage.setItem("userName", userName);

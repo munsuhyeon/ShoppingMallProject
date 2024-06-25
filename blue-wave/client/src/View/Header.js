@@ -2,9 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation} from "react-router-dom";
 import { FaUser, FaShoppingCart, FaSearch } from "react-icons/fa";
 import "./Header.css";
-import AuthTimer from "../Components/Register/AuthTimer";
-import { handleLogout, formatTime } from "../Utils/Utils";
-import { AuthContext } from "../Utils/AuthContext";
+import { handleLogout } from "../Utils/Utils";
+import { AuthContext} from "../Utils/AuthContext";
+import AuthTimer from "../Components/Register/AuthTimer"
 
 const Header = () => {
   const location = useLocation();
@@ -33,7 +33,7 @@ const Header = () => {
   }, [activeItem]);
   // ================  로그인 인증  ================
   const { loggedIn } = useContext(AuthContext);
-
+ 
   return (
     <header>
       <div className="container">
@@ -48,7 +48,7 @@ const Header = () => {
               {loggedIn ? (
               <>
                 <li>
-                  <Link to="/" onClick={handleLogout}>로그아웃 <AuthTimer/> </Link>
+                  <Link to="/" onClick={handleLogout}>로그아웃 <AuthTimer/></Link>
                 </li>
                 <li>
                   <Link to="/myPage">마이페이지</Link>
