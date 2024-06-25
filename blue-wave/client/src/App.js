@@ -15,6 +15,7 @@ import Main from "./View/Main";
 import AllProduct from "./View/AllProduct.js";
 import ProductDetail from "./View/ProductDetail.js";
 import BackToTop from "./Components/BackToTop/BackToTop.js";
+import SearchResults from './View/SearchResults';
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
 const ScrollToTop = () => {
@@ -49,6 +50,7 @@ const App = () => {
           <Route path="/Cart" element={<Cart />} />
           <Route path="/payment" element={<Payment />} />
           <Route path="/paymentcomplete" element={<Paymentcomplete />} />
+          <Route path="/search" element={<SearchResults />} />
         </Routes>
         <BackToTop />
       </div>
