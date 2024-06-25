@@ -428,6 +428,8 @@ app.post('/api/login', async (req,res) => {
           const refreshToken = generateRefreshToken(payload);
           
           const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
+          const tokenIat = verified.iat;
+          const tokenExp = verified.exp;
           let decodedExp =  verified.exp - verified.iat; // 생성 - 만료 = 유효시간
 
           // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
@@ -449,7 +451,8 @@ app.post('/api/login', async (req,res) => {
               .json({
                   success: true,
                   message: '로그인 성공',
-                  tokenExp: decodedExp,
+                  tokenExp: tokenExp,
+                  tokenIat: tokenIat,
                   userId : findUserResult[0].user_id,
                   userName : findUserResult[0].user_name
               });

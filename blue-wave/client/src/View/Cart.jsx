@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cartitem from './Cartitem';
 import './Cart.css';
-//import Header from './Header';
+import { AuthContext } from '../Utils/AuthContext';
+import Header from './Header';
 
 export default function Cart() {
+
   const navigate = useNavigate();
 
   // 처음 로드될 때 로컬 스토리지에서 장바구니 데이터를 불러옵니다
@@ -52,7 +54,7 @@ export default function Cart() {
 
   return (
     <>
-    {/*<Header/>*/}
+    <Header/>
     <div className="shopping-basket">
       
       <div className="body-header">

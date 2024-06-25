@@ -3,16 +3,13 @@ import React, { useEffect, useState } from "react";
 import { handleLogout, formatTime} from "../../Utils/Utils";
 
 const AuthTimer = () => {
-    const token = parseInt(localStorage.getItem('tokenExp')); // 로컬스토리지에 저장한 토큰의 유효시간
+    const tokenExp = parseInt(localStorage.getItem('tokenExp')); // 로컬스토리지에 저장한 토큰의 유효시간
+    const tokenIat = parseInt(localStorage.getItem('tokenIat'));
+    const currentTime = Math.floor(Date.now() / 1000); // 현재 시간을 초 단위로 계산
+    const initialTokenTime  = tokenExp ? (tokenExp - currentTime) : 0; // 토큰 유효시간 초기화
     const [loggedIn, setLoggedIn] = useState(false); // 로그인 유무 초기값은 false
-    const [tokenTime, setTokenTime] = useState(token); // 토큰 유효시간에서 1초씩 차감하기 위해 유효시간으로 초기화
+    const [tokenTime, setTokenTime] = useState(initialTokenTime ); // 토큰 유효시간에서 1초씩 차감하기 위해 유효시간으로 초기화
     const [logoutTime, setLogoutTime] = useState(3600); // 로그아웃 시간 1시간 초기화 
-
-    // 로그아웃 타이머 초기화
-    const resetLogoutTimer = () => {
-        clearLogoutTimer();
-        setLogoutTime(3600);
-    };
 
     // 토큰 만료 시간 확인 및 처리
     const checkTokenExpiration = async () => {
@@ -32,7 +29,7 @@ const AuthTimer = () => {
                             const newToken = refreshResponse.data.newToken;
                             localStorage.removeItem("accessToken"); // 기존 토큰 삭제
                             localStorage.setItem('accessToken', newToken);
-                            setTokenTime(token); // 타이머 초기화
+                            setTokenTime(initialTokenTime ); // 타이머 초기화
                             console.log("토큰 갱신 성공")
                         }
                     } catch (error) {
@@ -46,14 +43,6 @@ const AuthTimer = () => {
             }
         };
     }
-
-    // 유저가 활동할 때마다 로그아웃 타이머 초기화
-    const resetTimer = () => {
-        resetLogoutTimer();
-        if (tokenTime === 60 && logoutTime > tokenTime) {
-            checkTokenExpiration();
-        }
-    };
 
     useEffect(() => {
         if (loggedIn) {
@@ -85,24 +74,19 @@ const AuthTimer = () => {
         const storedLoggedIn = localStorage.getItem('loggedIn');
         if (storedLoggedIn) {
             setLoggedIn(true);
-            resetLogoutTimer(); // 유저의 활동 타이머 초기화
+            setLogoutTime(70); // 유저의 활동 타이머 초기화
             checkTokenExpiration();
         }
 
-        window.addEventListener("mousemove", resetTimer);
-        window.addEventListener("keypress", resetTimer);
+        window.addEventListener("mousemove", setLogoutTime(3600));
+        window.addEventListener("keypress", setLogoutTime(3600));
 
         return () => {
-            window.removeEventListener("mousemove", resetTimer);
-            window.removeEventListener("keypress", resetTimer);
-            clearLogoutTimer();
+            window.removeEventListener("mousemove", setLogoutTime(3600));
+            window.removeEventListener("keypress", setLogoutTime(3600));
+            setLogoutTime(0);
         };
     }, [setLoggedIn]);
-
-    // 로그아웃 타이머 클리어 함수
-    const clearLogoutTimer = () => {
-        setLogoutTime(0);
-    };
 
     return (
         <>
