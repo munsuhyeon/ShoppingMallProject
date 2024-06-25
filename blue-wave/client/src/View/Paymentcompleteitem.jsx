@@ -3,7 +3,7 @@ export default function Paymentcompleteitem({cartCompleteData}) {
     const{p_name,option,quantity} = cartCompleteData;
     return (
         <>
-          <ul class="payment-product">
+          <ul className="payment-product">
             <li>
               <p>결제상품명</p>
               <span>{p_name}</span>

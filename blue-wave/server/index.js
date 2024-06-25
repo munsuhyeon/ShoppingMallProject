@@ -252,9 +252,9 @@ app.post("/reqOrder", (req, res, next) => {
     ...paymentPersonDB
   }));
 
-  // console.log("===============newOrderSheet=================");
-  // console.log(newOrderSheet);
-  // console.log("================================");
+  //  console.log("===============newOrderSheet=================");
+  //  console.log(newOrderSheet);
+  //  console.log("================================");
 
   // order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name
   // Promise 배열 생성
@@ -273,7 +273,7 @@ app.post("/reqOrder", (req, res, next) => {
       article.email,
       article.total_amount,
       article.total_count,
-      article.name
+      article.p_name
     ];
 
     // connection.query 메서드를 사용한 프로미스 반환
@@ -281,8 +281,10 @@ app.post("/reqOrder", (req, res, next) => {
       connection.query(insertOrderQuery, [[data]], (err, result) => {
         if (err) {
           reject(err);
+          console.log("insertOrderQuery  ::  " + err)
         } else {
           resolve(result);
+          console.log("insertOrderQuery  ::  " + result)
         }
       });
     });

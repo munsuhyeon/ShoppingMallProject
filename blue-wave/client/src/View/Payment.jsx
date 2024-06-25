@@ -1,4 +1,4 @@
-import { useState , useEffect } from "react";
+import { useState , useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paymentitem from "./Paymentitem";
 import "./Payment.css";
@@ -7,8 +7,10 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid"; // 랜덤 코드 생성 라이브러리
 import OrderButton from "../UI/OrderButton";
 import MultiPayment from "../Utils/Multipayment";
+import { AuthContext } from "../Utils/AuthContext"
 
 export default function Payment() {
+  const { userId } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const { cartItems } = location.state || { cartItems: [] };
@@ -91,9 +93,10 @@ export default function Payment() {
 
   const handleOrder = async () => {
     const date = new Date();
-    const userInfo = { userid: "1" }; // Replace with actual user info
+    
+    //const userInfo = { userid: "1" }; // Replace with actual user info
     const createOrderNumber =
-      String(userInfo.userid) +
+      String(userId) +
       String(date.getFullYear()) +
       String(date.getMonth() + 1).padStart(2, "0") +
       String(date.getDate()).padStart(2, "0") +
@@ -106,7 +109,7 @@ export default function Payment() {
     const reqOrderSheet = cartItems.map((data) => ({
       ...data,
       order_number: createOrderNumber,
-      user_id: 1,
+      user_id: userId,
       product_id: data.id,
       order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
       order_count: data.quantity,
@@ -126,7 +129,7 @@ export default function Payment() {
       if (response.status === 200) {
         setPaymentItems([]); 
         localStorage.removeItem("cartItems"); 
-        alert("주문이 완료되었습니다.");
+        //alert("주문이 완료되었습니다.");
         navigate("/Paymentcomplete",{ state: {orderNumber: createOrderNumber, cartItems, paymentPerson} });
       } else {
         alert("주문에 실패했습니다. 다시 시도해주세요.");
@@ -242,7 +245,8 @@ export default function Payment() {
       }
 
       if (payResponse.transactionType === "PAYMENT") {
-        await handleOrder();
+         handleOrder();
+        //await handleOrder();
       }
     } catch (error) {
       alert("결제 과정에서 오류가 발생했습니다. 다시 시도해주세요.");
