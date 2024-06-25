@@ -106,9 +106,9 @@ app.post('/api/register', async(req,res) => {
       userPassword = hash;
 
       // 회원정보 DB에 저장
-      const registerSql = "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail) values(?,?,?,?,?,?,?)";
+      const registerSql = "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail, zone_code) values(?,?,?,?,?,?,?,?)";
       await new Promise((resolve,reject) => {
-          connection.query(registerSql,[userId,userPassword,userName,userEmail,userPhone,address,detailAddress],(err,result) => {
+          connection.query(registerSql,[userId,userPassword,userName,userEmail,userPhone,address,detailAddress,zonecode],(err,result) => {
               if(err) reject(err);
               else resolve(result);
           });
@@ -302,8 +302,8 @@ app.post("/reqOrder", (req, res, next) => {
 app.post('/api/login', async (req,res) => {
   let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보
   try{
-      // 전달받은 아이디로 아이디와 비밀번호 찾기
-      const findIdSql = "SELECT user_id,user_pw FROM user WHERE user_id = ?";
+      // 전달받은 아이디로 아이디와 비밀번호, 유저이름 찾기
+      const findIdSql = "SELECT user_id,user_pw,user_name FROM user WHERE user_id = ?";
 
       const findUserResult = await new Promise((resolve, reject) => {
           connection.query(findIdSql,[userId], (err,result) => {
@@ -359,7 +359,8 @@ app.post('/api/login', async (req,res) => {
                   success: true,
                   message: '로그인 성공',
                   tokenExp: decodedExp,
-                  userId : findUserResult[0].user_id
+                  userId : findUserResult[0].user_id,
+                  userName : findUserResult[0].user_name
               });
       }
   } catch(err){
@@ -416,11 +417,124 @@ const refreshToken = req.cookies['refreshToken'];
     }
   }
 });
-/*======================포트 리스닝=============================*/
-app.listen(port, () => {
-  console.log(`${port} 포트에서 서버가 실행되었습니다.`);
+/*=================   회원정보 가져오기   =====================*/
+app.get('/api/userInfo', async (req,res) => {
+  const userId = req.headers.user_id;
+  try{
+    const userInfoSql = "SELECT * FROM user WHERE user_id = ?"
+    const userInfo = await new Promise((resolve,reject) => {
+      connection.query(userInfoSql, [userId], (err, result) => {
+          if(err) reject(err);
+          else resolve(result)
+      });
+  });
+  if (userInfo.length > 0) {
+    return res.status(200).json({
+      success: true,
+      data: userInfo
+    });
+  } else {
+    return res.status(404).json({
+      success: false,
+      message: "회원정보를 찾을 수 없습니다"
+    });
+  }
+  } catch(err){
+    console.error("서버에서 오류 발생 : ", err);
+      return res.status(500).json({
+          success: false,
+          message: "회원정보 조회 중 오류 발생",
+          error: err.message
+      });
+  }
 });
+/*=================   회원정보 수정   =====================*/
+app.post('/api/updateUser', async (req,res) => {
+  console.log(req.body);
+  let{
+    userId,
+    userPassword,
+    userName,
+    userPhone,
+    userEmail,
+    zonecode,
+    address,
+    detailAddress
+  } = req.body;
 
+  try{
 
+  // 이메일 저장 전 중복 체크
+  const checkEmailSql = "SELECT COUNT(*) AS count FROM user WHERE user_email = ? AND user_id != ?"
+  const emailResult = await new Promise((resolve, reject) => {
+      connection.query(checkEmailSql, [userEmail, userId], (err,result) => {
+          if(err){
+            reject(err);
+          } 
+          else{
+            if (result.length > 0 && result[0].count !== 0) {
+              // 중복된 이메일이 존재할 경우
+              return res.status(401).json({
+                  success: false,
+                  message: "duplicate email"
+              });
+          } else {
+              // 중복된 이메일이 없는 경우, 여기서는 resolve를 호출하여 다음 작업을 진행합니다.
+              resolve(result);
+          }
+          } 
+      })
+  });
 
+  // 비밀번호 암호화
+  if(userPassword !== ''){ // 새로운 비밀번호를 입력한 경우
+    const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
+    const hash = await bcrypt.hash(userPassword, salt);
+    userPassword = hash;
+    // 회원정보 DB에 저장
+    const updateUserSql = "UPDATE user SET user_pw = ?, user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
+    await new Promise((resolve,reject) => {
+        connection.query(updateUserSql,[userPassword,userEmail,userPhone,address,detailAddress,zonecode,userId],(err,result) => {
+            if(err){
+              reject(err);
+              console.error("쿼리 실행 중 오류 발생:", err);
+            } 
+            else{
+              resolve(result);
+            } 
+        });
+    });
+  } else{ // 새로운 비밀번호를 입력하지않은 경우
+    // 회원정보 DB에 저장 
+    const updateUserSql = "UPDATE user SET user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
+    await new Promise((resolve,reject) => {
+        connection.query(updateUserSql,[userEmail,userPhone,address,detailAddress,zonecode,userId],(err,result) => {
+          if(err){
+            reject(err);
+            console.error("쿼리 실행 중 오류 발생:", err);
+          }
+          else{
+            resolve(result);
+          } 
+        });
+    });
+  }  
+  // 성공 응답
+  return res.status(200).json({
+    success: true,
+    message: "회원정보가 성공적으로 수정되었습니다"
+  });
+
+  } catch(err){
+    console.error("서버에서 오류 발생 : ", err);
+      return res.status(500).json({
+          success: false,
+          message: "회원정보 수정중 오류가 발생하였습니다",
+          error: err.message
+      });
+  }
+  
+})
+/*==========================================================*/
+app.listen(port,() => console.log(`${port}번으로 서버 실행`))
 

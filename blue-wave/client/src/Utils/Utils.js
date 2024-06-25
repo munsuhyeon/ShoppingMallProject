@@ -3,6 +3,7 @@ export const handleLogout = () => {
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("userId");
+    localStorage.removeItem("userName");
     localStorage.removeItem("tokenExp");
     window.location.href = "/";
     window.location.reload();

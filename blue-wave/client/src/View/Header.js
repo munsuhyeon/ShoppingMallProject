@@ -51,7 +51,7 @@ const Header = () => {
                   <Link to="/" onClick={handleLogout}>로그아웃 <AuthTimer/> </Link>
                 </li>
                 <li>
-                  <Link to="/register">마이페이지</Link>
+                  <Link to="/myPage">마이페이지</Link>
                 </li>
                 
               </>) : (
