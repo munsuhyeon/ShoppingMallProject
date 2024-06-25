@@ -1,7 +1,7 @@
 import "./Paymentcomplete.css";
 import { useLocation } from "react-router-dom";
 import Paymentcompleteitem from "./Paymentcompleteitem";
-
+import Header from "./Header";
 
 export default function Paymentcomplete() {
   const location = useLocation();
@@ -10,7 +10,10 @@ export default function Paymentcomplete() {
   const { orderNumber } = location.state || { orderNumber: ''};
 
   return (
+    <>
+    <Header/>
     <div className="paymentcomplete-body">
+      
       <div className="body-header">
         <div className="page">
           <p className="page-1">
@@ -75,5 +78,6 @@ export default function Paymentcomplete() {
         <a href="#">주문 목록으로 가기</a>
       </div>
     </div>
+    </>
   );
 }
