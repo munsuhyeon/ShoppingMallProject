@@ -236,17 +236,38 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   });
 });
 
+
+
+
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401); // 토큰이 없으면 인증 실패
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+      if (err) return res.sendStatus(403); // 유효하지 않은 토큰
+
+      req.user = user; // 사용자 정보를 req.user에 저장
+      next();
+  });
+};
+
+
+
 /*=================   검색   =====================*/
 // 검색어 삽입 및 상품 조회
-app.post('/search', (req, res) => {
+app.post('/search', authenticateToken, (req, res) => {
   const { term } = req.body;
   if (!term) {
       return res.status(400).send('Search term is required');
   }
 
+  const userId = req.user.userId; // 사용자 ID 가져오기
+
   const insertQuery = 'INSERT INTO search (user_id, key_word, search_date) VALUES (?, ?, NOW())';
-  console.log(`Executing query: ${insertQuery} with values: [1, ${term}]`);
-  connection.query(insertQuery, [1, term], (err, results) => {
+  console.log(`Executing query: ${insertQuery} with values: [${userId}, ${term}]`);
+  connection.query(insertQuery, [userId, term], (err, results) => {
       if (err) {
           console.error('검색어 삽입 오류:', err);
           return res.status(500).send(err.message);
