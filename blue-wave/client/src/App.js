@@ -1,9 +1,9 @@
 import "./App.css";
-import React, { useEffect, useContext} from "react";
-import {BrowserRouter as Router, Route, Routes, useLocation, Navigate} from "react-router-dom";
 import Cart from "./View/Cart.jsx";
 import Payment from "./View/Payment.jsx";
 import Paymentcomplete from "./View/Paymentcomplete";
+import React, { useEffect, useContext} from "react";
+import {BrowserRouter as Router, Route, Routes, useLocation, Navigate} from "react-router-dom";
 import Register from "./View/Register";
 import CompleteRegister from "./View/CompleteRegister.js"
 import Login from "./View/Login";

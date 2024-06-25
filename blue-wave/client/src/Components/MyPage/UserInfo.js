@@ -9,50 +9,56 @@ import { AuthContext } from "../../Utils/AuthContext";
 
 const UserInfo = () => {
     const { userId } = useContext(AuthContext);
-
-    // 비동기 함수로 defaultValues를 설정합니다.
-    const defaultValues = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8000/api/userInfo`, {
-                headers: { user_id: `${userId}` }
-            });
-            const userData = response.data.data[0];
-            return {
-                userId: userData.user_id,
-                userPassword: '',
-                comparePassword: '',
-                userName: userData.user_name || '',
-                userPhone: userData.user_phone || '',
-                userEmail: userData.user_email || '',
-                address: userData.address || '',
-                detailAddress: userData.detail_address || '',
-                zonecode: userData.zonecode || '',
-            };
-        } catch (error) {
-            console.error('Error fetching user data:', error);
-            return {};
-        }
-    };
+    const [userData, setUserData] = useState({
+        userId: '',
+        userPassword: '',
+        comparePassword: '',
+        userName: '',
+        userPhone: '',
+        userEmail: '',
+        address: '',
+        detailAddress: '',
+        zonecode: ''
+    });
 
     const { register,
         handleSubmit,
         formState: { errors },
         setValue,
-        watch
-    } = useForm({ defaultValues: {} }); // 초기 defaultValues를 빈 객체로 설정합니다.
+        watch,
+        setError,
+        reset
+    } = useForm({mode:'onBlur'}); 
+
+    // 비동기 함수로 defaultValues를 설정합니다.
+    const fetchDefaultValues = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/userInfo`, {
+                headers: { user_id: `${userId}` }
+            });
+            const userData = response.data.data[0];
+            console.log(userData)
+            const defaultValues = {
+                userId: userData.user_id,
+                userPassword: '',
+                comparePassword: '',
+                userName: userData.user_name,
+                userPhone: userData.user_phone,
+                userEmail: userData.user_email,
+                address: userData.address,
+                detailAddress: userData.address_detail,
+                zonecode: userData.zone_code
+            };
+            setUserData(defaultValues); // setState를 사용하여 상태에 값을 설정합니다.
+            reset(defaultValues); // reset을 사용하여 폼 필드에 값을 설정합니다.
+        } catch (error) {
+            console.error('회원정보 데이터 불러오기 에러:', error);
+        }
+    };
 
     useEffect(() => {
-        // 비동기 함수를 호출하여 defaultValues를 설정합니다.
-        const fetchDefaultValues = async () => {
-            const values = await defaultValues();
-            // setValue를 사용하여 폼 필드에 값을 설정합니다.
-            Object.keys(values).forEach(key => {
-                setValue(key, values[key]);
-            });
-        };
-
         fetchDefaultValues();
-    }, [userId, setValue]);
+    }, [userId]);
 
     const { detailAddress, address, zonecode } = watch();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,6 +72,52 @@ const UserInfo = () => {
         setIsModalOpen(false);
     };
 
+    const userPhone = register('userPhone',{
+        required : "필수 입력값입니다",
+        minLength : {
+            value : 9,
+            message : "잘못된 번호입니다. 다시 입력해 주십시오."
+        },
+        maxLength : {
+            value: 12,
+            message : "잘못된 번호입니다. 다시 입력해 주십시오."
+        },
+        validate: (value) => {
+            // 정규 표현식으로 추가적인 패턴 검사
+            const mobilePattern = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;
+            const telPattern = /^(070|02|0[3-9]{1}[0-9]{1})[0-9]{3,4}[0-9]{4}$/;
+            
+            if (!mobilePattern.test(value) && !telPattern.test(value)) {
+                return "잘못된 번호입니다. 다시 입력해 주십시오.";
+            }
+            return true;
+        }
+    });
+    const userEmail = register('userEmail',{
+        required : "필수 입력값입니다",
+        pattern : {
+            value : /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i,
+            message : "유효하지 않은 이메일 형식입니다"
+        }
+    });
+    const userPassword = register('userPassword',{
+        minLength : {
+            value: 8,
+            message : "최소 8글자 이상 입력해주세요"
+        },
+        maxLength : {
+            value : 16,
+            message : "최대 16글자만 입력가능합니다"
+        },
+        pattern : {
+            value : /^(?=(?:.*[a-z])(?:.*[A-Z])|(?:.*[a-z])(?:.*[0-9])|(?:.*[A-Z])(?:.*[0-9]))[a-zA-Z0-9]+$/,
+            message : "영문 소문자, 영문 대문자, 숫자 중 2가지 이상 조합해주세요"
+        }
+    });
+    const comparePassword = register('comparePassword',{
+        validate : (value) => value === watch('userPassword') || "입력하신 비밀번호와 일치하지 않습니다"
+    });
+
     const onComplete = (data) => {
         let addr;
         if (data.userSelectedType === 'R') {
@@ -78,9 +130,37 @@ const UserInfo = () => {
         setIsModalOpen(false);
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         // 제출할 때 실행되는 코드
-        console.log(data);
+        await axios.post('http://localhost:8000/api/updateUser',{
+            ...data
+        })
+        .then((response) => {
+            console.log("서버 응답 :::   ", response.data);
+            if(response.data.message === "duplicate email"){
+                setError("userEmail", {message: "중복된 이메일입니다"});
+            } else if(response.status === 200){
+                alert(response.data.message);
+                window.location.reload();
+            }
+        })
+        .catch((error) => {
+            if(error.response){
+                console.error(
+                    "서버 응답 오류 ::: ",
+                    error.response.status,
+                    error.response.data
+                );
+                alert(error.response.data.message || "서버 응답 중 오류가 발생하였습니다")
+            }else if(error.request){
+                console.error("서버 응답이 없음 :::  ", error.request);
+                alert("서버 응답이 없습니다");
+            }else{
+                console.error("요청 설정 중 오류 :::  ", error.message)
+                alert("요청 설정 중 오류가 발생했습니다");
+            }
+            reset();
+        });
     };
 
     return (
@@ -95,30 +175,30 @@ const UserInfo = () => {
                 <div className="form_area">
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <div className="edit_pw_area">
-                            <Input type={'text'} id={'userId'} {...register('userId')} errors={errors} title={"아이디"} placeholder={'영문 소문자,숫자 4-16글자'} />
-                            <Input type={'password'} id={'userPassword'} {...register('userPassword')} errors={errors} title={"비밀번호"} placeholder={'영문 소문자, 영문 대문자, 숫자 중 2가지 이상 조합  8-16자'} />
-                            <Input type={'password'} id={'comparePassword'} {...register('comparePassword')} errors={errors} title={"비밀번호 확인"} placeholder={'비밀번호를 한번 더 입력해주세요'} />
-                            <Input type={'text'} id={'userName'} {...register('userName')} errors={errors} title={"이름"} />
-                            <Input type={'tel'} id={'userPhone'} {...register('userPhone')} errors={errors} title={"휴대폰"} placeholder={'숫자만 입력해주세요'} />
-                            <Input type={'email'} id={'userEmail'} {...register('userEmail')} errors={errors} title={"이메일"} />
-
+                        <Input type={'text'} id={'userId'} prop={register('userId')} errors={errors} title={"아이디"} placeholder={'영문 소문자,숫자 4-16글자'} readOnly={true}/>
+                            <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"} placeholder={'영문 소문자, 영문 대문자, 숫자 중 2가지 이상 조합  8-16자'} />
+                            <Input type={'password'} id={'comparePassword'} prop={comparePassword} errors={errors} title={"비밀번호 확인"} placeholder={'비밀번호를 한번 더 입력해주세요'} />
+                            <Input type={'text'} id={'userName'} prop={register('userName')} errors={errors} title={"이름"} readOnly={true}/>
+                            <Input type={'tel'} id={'userPhone'} prop={userPhone} errors={errors} title={"휴대폰"} placeholder={'숫자만 입력해주세요'} />
+                            <Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"}/>
+                        
                             <div className="input_box">
-                                <label style={{ fontSize: '13px', lineHeight: '18px', letterSpacing: '-.07px', fontWeight: '900' }}>주소</label>
+                                <label style={{fontSize: '13px', lineHeight: '18px',letterSpacing: '-.07px',fontWeight: '900'}}>주소</label>
                                 <div className="input_item input_address">
-                                    <input placeholder='우편번호' id='zonecode' value={zonecode} className='input_txt' readOnly />
-                                    <Button text={"우편번호"} className={'address_btn'} onClick={openModal} />
+                                    <input placeholder='우편번호' id='zonecode' value={zonecode} className='input_txt' {...register('zonecode')} readOnly />
+                                    <Button text={"우편번호"} className={'address_btn'} onClick={openModal}/>
                                 </div>
                             </div>
-                            <Modal isOpen={isModalOpen} ariaHideApp={false} style={{ content: { width: '500px', height: '500px', margin: 'auto', overflow: 'hidden' } }}>
-                                <div style={{ display: "flex", justifyContent: 'space-between' }}>
-                                    <p style={{ width: 'calc(100% - 40px)', textAlign: 'left' }}>주소 검색</p>
-                                    <img style={{ width: '40px', height: '40px', cursor: 'pointer' }} onClick={closeModal} src={process.env.PUBLIC_URL + `assets/close-svgrepo-com.svg`} alt="close" />
-                                </div>
-                                <DaumPostcode onComplete={onComplete} />
+                            <Modal isOpen={isModalOpen} ariaHideApp={false} style={{content: { width: '500px',height: '500px', margin: 'auto', overflow: 'hidden'}}}>
+                            <div style={{display:"flex", justifyContent: 'space-between'}}>
+                                <p style={{width: 'calc(100% - 40px)', textAlign: 'left'}}>주소 검색</p>
+                                <img style={{width: '40px', height: '40px', cursor: 'pointer'}} onClick={closeModal} src={process.env.PUBLIC_URL + `assets/close-svgrepo-com.svg`} alt="close"/>
+                            </div>
+                                <DaumPostcode onComplete={onComplete}/>
                             </Modal>
                             <div className="input_box">
                                 <div className="input_item">
-                                    <input placeholder='기본주소' id="address" value={address} className='input_txt' readOnly />
+                                    <input placeholder='기본주소' id="address" value={address} className='input_txt' {...register('address')} readOnly />
                                 </div>
                             </div>
                             <div className="input_box">
@@ -128,7 +208,7 @@ const UserInfo = () => {
                                 {errors.detailAddress && <p className='errorTxt'>{errors.detailAddress.message}</p>}
                             </div>
                             <div className="btn_area">
-                                <button type="submit" className="profile_btn submit">회원정보수정</button>
+                                <Button text={"회원정보수정"} className={"wide_btn"} type='submit'/>
                             </div>
                         </div>
                     </form>

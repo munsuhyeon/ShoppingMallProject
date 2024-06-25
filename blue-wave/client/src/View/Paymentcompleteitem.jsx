@@ -1,12 +1,12 @@
 
 export default function Paymentcompleteitem({cartCompleteData}) {
-    const{name,option,quantity} = cartCompleteData;
+    const{p_name,option,quantity} = cartCompleteData;
     return (
         <>
           <ul class="payment-product">
             <li>
               <p>결제상품명</p>
-              <span>{name}</span>
+              <span>{p_name}</span>
             </li>
             <li>
               <p>옵션</p>

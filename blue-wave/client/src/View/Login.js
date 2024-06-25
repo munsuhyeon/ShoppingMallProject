@@ -10,8 +10,7 @@ const Login = () => {
     const {register,
         handleSubmit,
         formState : {errors, isValid, isSubmitting},
-        setError,
-        reset
+        setError
         } = useForm({mode:'onSubmit'});
 
     const onSubmit = async (data) => {
@@ -22,21 +21,19 @@ const Login = () => {
                 const accessToken = response.headers['authorization'];
                 const decodedExp = response.data.tokenExp;
                 const userId = response.data.userId;
+                const userName = response.data.userName;
 
                 axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`;
 
                 localStorage.setItem("tokenExp", decodedExp); // 로컬스토리지에 access토큰 만료시간 저장 
                 localStorage.setItem("accessToken", accessToken); // 토큰 저장
                 localStorage.setItem("userId", userId); // 로그인한 회원 아이디 저장
+                localStorage.setItem("userName", userName);
                 localStorage.setItem("loggedIn", true); // 로그인 유무 true로 저장
 
                 navigate('/');
                 window.location.reload();
              }
-            // else{
-            //     setError("userId", {type: "manual", message: "존재하지 않는 아이디입니다"});
-            //     setError("userPassword", {type: "manual", message: "비밀번호가 틀립니다"});
-            // }
             console.log(response.data)
         } catch(error){
             if(error.response){
@@ -58,7 +55,6 @@ const Login = () => {
                 console.error("요청 설정 중 오류 :::  ", error.message)
                 alert("요청 설정 중 오류가 발생했습니다");
             }
-            //reset();
         }
     };
     const userId = register('userId',{

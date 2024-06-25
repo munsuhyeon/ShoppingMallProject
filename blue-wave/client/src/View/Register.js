@@ -110,9 +110,15 @@ const Register = () => {
             value: 12,
             message : "잘못된 번호입니다. 다시 입력해 주십시오."
         },
-        pattern : {
-            value : /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/,
-            message : "잘못된 번호입니다. 다시 입력해 주십시오."
+        validate: (value) => {
+            // 정규 표현식으로 추가적인 패턴 검사
+            const mobilePattern = /^(01[016789]{1})[0-9]{3,4}[0-9]{4}$/;
+            const telPattern = /^(070|02|0[3-9]{1}[0-9]{1})[0-9]{3,4}[0-9]{4}$/;
+            
+            if (!mobilePattern.test(value) && !telPattern.test(value)) {
+                return "잘못된 번호입니다. 다시 입력해 주십시오.";
+            }
+            return true;
         }
     });
     const userEmail = register('userEmail',{
