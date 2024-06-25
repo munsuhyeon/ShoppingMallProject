@@ -7,14 +7,14 @@ const Cartitem = ({ index ,item, onDelete, updateQuantity }) => {
   const onIncrease = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    updateQuantity(item.id, newQuantity);
+    updateQuantity(item.id, item.option,newQuantity);
   };
 
   const onDecrease = () => {
     if (quantity > 1) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      updateQuantity(item.id, newQuantity);
+      updateQuantity(item.id, item.option,newQuantity);
     }
   };
 
