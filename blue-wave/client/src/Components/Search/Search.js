@@ -15,12 +15,21 @@ const Search = () => {
     useEffect(() => {
         const fetchSearchHistory = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/search`);
+                const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 토큰 가져오기
+                const response = await axios.get(`http://localhost:8000/search`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}` // 헤더에 토큰 포함
+                    }
+                });
                 console.log('Fetched search history:', response.data); // 데이터를 제대로 받아오는지 확인
                 setSearchHistory(response.data); // 검색 기록 상태 업데이트
             } catch (err) {
-                console.error('검색 기록을 가져올 수 없습니다:', err); // 에러 메시지 상태 업데이트
-                setError(err.message);
+                if (err.response && err.response.status === 403) {
+                    alert('로그인이 필요합니다. 로그인 후 다시 시도해주세요.'); // 로그인 필요 알림창
+                } else {
+                    console.error('검색 기록을 가져올 수 없습니다:', err); // 에러 메시지 상태 업데이트
+                    setError(err.message);
+                }
             }
         };
 
@@ -36,22 +45,33 @@ const Search = () => {
     const handleSearch = async (event) => {
         event.preventDefault(); // 기본 폼 제출 방지
         try {
-            // 1. 검색어 삽입 및 상품 조회
-            const response = await axios.post(`http://localhost:8000/search`, { term: searchTerm });
+            const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 토큰 가져오기
+            const response = await axios.post(`http://localhost:8000/search`, { term: searchTerm }, {
+                headers: {
+                    'Authorization': `Bearer ${token}` // 헤더에 토큰 포함
+                }
+            });
             
             if (response.data.length === 0) {
-                alert('검색결과 상품이 없습니다.\n다시검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                alert('검색결과 상품이 없습니다.\n다시 검색해주세요.'); // 사용자 정의 경고 메시지 설정
                 setNoResults(true); // 검색 결과 없음 상태 업데이트
             } else {
                 setNoResults(false); // 검색 결과 있음 상태 업데이트
                 setSearchTerm(''); // 검색어 입력란 초기화
-                const historyResponse = await axios.get(`http://localhost:8000/search`); // 업데이트 내용 가져오기
+                const historyResponse = await axios.get(`http://localhost:8000/search`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}` // 헤더에 토큰 포함
+                    }
+                }); // 업데이트 내용 가져오기
                 setSearchHistory(historyResponse.data); // 검색 기록 상태 업데이트
                 navigate(`/search?query=${searchTerm}`);
             }
         } catch (err) {
             if (err.response && err.response.status === 404) {
-                alert('검색결과 상품이 없습니다.\n다시검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                alert('검색결과 상품이 없습니다.\n다시 검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                setNoResults(true); // 검색 결과 없음 상태 업데이트
+            } else if (err.response && err.response.status === 403) {
+                alert('로그인이 필요합니다. 로그인 후 다시 시도해주세요.'); // 로그인 필요 알림창
                 setNoResults(true); // 검색 결과 없음 상태 업데이트
             } else {
                 console.error('검색 중 오류 발생:', err); // 에러 메시지 상태 업데이트
@@ -63,10 +83,15 @@ const Search = () => {
     // 검색 기록 클릭 시 처리
     const handleSearchHistoryClick = async (term) => {
         try {
-            const response = await axios.post(`http://localhost:8000/search`, { term });
+            const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 토큰 가져오기
+            const response = await axios.post(`http://localhost:8000/search`, { term }, {
+                headers: {
+                    'Authorization': `Bearer ${token}` // 헤더에 토큰 포함
+                }
+            });
             
             if (response.data.length === 0) {
-                alert('검색결과 상품이 없습니다.\n다시검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                alert('검색결과 상품이 없습니다.\n다시 검색해주세요.'); // 사용자 정의 경고 메시지 설정
                 setNoResults(true); // 검색 결과 없음 상태 업데이트
             } else {
                 setNoResults(false); // 검색 결과 있음 상태 업데이트
@@ -74,7 +99,10 @@ const Search = () => {
             }
         } catch (err) {
             if (err.response && err.response.status === 404) {
-                alert('검색결과 상품이 없습니다.\n다시검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                alert('검색결과 상품이 없습니다.\n다시 검색해주세요.'); // 사용자 정의 경고 메시지 설정
+                setNoResults(true); // 검색 결과 없음 상태 업데이트
+            } else if (err.response && err.response.status === 403) {
+                alert('로그인이 필요합니다. 로그인 후 다시 시도해주세요.'); // 로그인 필요 알림창
                 setNoResults(true); // 검색 결과 없음 상태 업데이트
             } else {
                 console.error('검색 중 오류 발생:', err); // 에러 메시지 상태 업데이트
@@ -86,7 +114,12 @@ const Search = () => {
     // 전체 삭제
     const handleDeleteAll = async () => {
         try {
-            await axios.delete(`http://localhost:8000/search`); // 모든 검색 기록 삭제
+            const token = localStorage.getItem('accessToken'); // 로컬 스토리지에서 토큰 가져오기
+            await axios.delete(`http://localhost:8000/search`, {
+                headers: {
+                    'Authorization': `Bearer ${token}` // 헤더에 토큰 포함
+                }
+            }); // 모든 검색 기록 삭제
             setSearchHistory([]); // 검색 기록 상태 초기화
         } catch (err) {
             console.error('전체 삭제 오류:', err); // 에러 메시지 상태 업데이트
