@@ -117,7 +117,7 @@
   text-align: center;
 }
 .payment-button button {
-  background-color: #51c1f7;
+  background-color: #2764e6;
   padding: 10px 40px;
   border-radius: 5px;
   color: white;
@@ -126,9 +126,9 @@
   font-size: 18px;
 }
 
-.payment-button button:hover {
+/*.payment-button button:hover {
   background-color: #6ca6f3;
-}
+}*/
 
 /* .basket-change .img-option-flex .option p:nth-child(2) {
   margin-left: 55px;

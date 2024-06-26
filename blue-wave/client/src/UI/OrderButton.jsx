@@ -1,8 +1,8 @@
 import React from 'react';
 
-const OrderButton = ({ processPayment }) => {
+const OrderButton = ({ onClick  }) => {
   return (
-    <button type="submit" onClick={processPayment}>
+    <button type="submit" onClick={onClick }>
       결제하기
     </button>
   );

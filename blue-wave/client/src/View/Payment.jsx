@@ -16,8 +16,7 @@ export default function Payment() {
   const { cartItems } = location.state || { cartItems: [] };
 
   const { REACT_APP_PortOne_StoreId } = process.env;
-  const { REACT_APP_PortOne_ChannelKey, REACT_APP_PortOne_Kakao_ChannelKey } =
-    process.env;
+  const { REACT_APP_PortOne_ChannelKey, REACT_APP_PortOne_Kakao_ChannelKey } = process.env;
 
   const paymentMethods = [
     {
@@ -56,9 +55,15 @@ export default function Payment() {
     requestMessage: "",
   });
   const [isScriptsLoaded, setIsScriptsLoaded] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
-    paymentMethods[0]
-  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
+  // 체크박스 상태를 관리하는 useState 설정
+  const [checkboxes, setCheckboxes] = useState({
+    checkbox1: false,
+    checkbox2: false,
+    checkbox3: false,
+    checkbox4: false,
+  });
+  const [radioSelected, setRadioSelected] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -70,6 +75,20 @@ export default function Payment() {
       ...prev,
       [name]: value.trim(),
     }));
+  };
+
+  // 체크박스 상태를 업데이트하는 함수
+  const handleCheckboxChange = (name, isChecked) => {
+    setCheckboxes((prev) => ({
+      ...prev,
+      [name]: isChecked,
+    }));
+  };
+
+  // 결제방식 라디오버튼을 관리하는 함수
+  const handleRadioChange = (paymentData) => {
+    setSelectedPaymentMethod(paymentData)
+    setRadioSelected(true);
   };
 
   const formatDateForMySQL = (date) => {
@@ -259,6 +278,33 @@ export default function Payment() {
     }
   };
 
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // 배송정보 입력 검사
+    if (!paymentPerson.name || !paymentPerson.phone || !paymentPerson.email|| !paymentPerson.address || !paymentPerson.detailAddress) {
+      alert("배송정보를 입력해주세요.");
+      return;
+    }
+    // 이메일 형식 검사
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    if (!emailRegex.test(paymentPerson.email)) {
+      alert("올바른 이메일 주소를 입력해주세요.");
+      return;
+    }
+    // 모든 체크박스가 true인지 확인
+    const allChecked = checkboxes.checkbox1 && checkboxes.checkbox2 && checkboxes.checkbox3 && checkboxes.checkbox4;
+    if (!allChecked) {
+      alert("약관에 동의해주세요");
+      return false;
+    }
+    if (!radioSelected) {
+      alert("결제 방법을 선택해주세요.");
+      return;
+    }
+    processPayment(); // 결제 처리 함수 호출
+  };
+
   return (
     <div className="payment-body">
       <div className="payment-body-header">
@@ -273,13 +319,7 @@ export default function Payment() {
           <p className="page-3">주문완료</p>
         </div>
       </div>
-      <form
-        className="info-payment-flex"
-        onSubmit={(e) => {
-          e.preventDefault();
-          processPayment();
-        }}
-      >
+      <form className="info-payment-flex" onSubmit={handleSubmit}>
         <div className="info-part">
           <h2>배송정보</h2>
           <div className="orderer-info">
@@ -305,7 +345,7 @@ export default function Payment() {
                 <input
                   type="tel"
                   name="phone"
-                  placeholder="전화번호를 입력해주세요"
+                  placeholder="숫자만 입력해주세요"
                   value={paymentPerson.phone || ""}
                   onChange={handleInputChange}
                   required
@@ -372,14 +412,15 @@ export default function Payment() {
                   paymentData={paymentData}
                   setSelectedPaymentMethod={setSelectedPaymentMethod}
                   index={index} // index prop 추가
+                  onChange={handleRadioChange}
                 />
               ))}
             </div>
           </div>
           <div className="final-payment">
-            <FinalPayment totalPrice={totalPrice} />
+            <FinalPayment totalPrice={totalPrice} handleCheckboxChange={handleCheckboxChange} checkboxes={checkboxes}/>
             <div className="button">
-              <OrderButton processPayment={processPayment} />
+              <OrderButton onClick ={handleSubmit} />
             </div>
           </div>
         </div>
