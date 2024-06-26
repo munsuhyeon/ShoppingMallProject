@@ -29,17 +29,17 @@
     justify-content: space-between;
 }
 
+.results a {
+    width: calc(33.33% - 24px);
+}
 .Card {
-    width: 30%;
     margin-bottom: 20px;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
-    margin: 12px;
 }
-
 .Card:hover {
     transform: scale(1.05);
 }

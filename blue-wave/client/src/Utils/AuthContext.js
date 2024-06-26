@@ -15,14 +15,9 @@ export const AuthProvider = ({children}) => {
       // 로컬 스토리지에서 저장된 로그인 정보를 읽어와 상태를 설정
       const storedLoggedIn = localStorage.getItem("loggedIn");
         if (storedLoggedIn === "true") {
-          const storedUserId = localStorage.getItem("userId");
-          const storedUserName = localStorage.getItem("userName");
-          setUserId(storedUserId);
-          setUserName(storedUserName)
-        } else {
-          setUserId(null);
-          setUserName(null);
-        }
+          setUserId(localStorage.getItem("userId"));
+          setUserName(localStorage.getItem("userName"))
+        } 
       }, []);
       return (
         <AuthContext.Provider value={{ loggedIn, setLoggedIn, userId, userName }}>

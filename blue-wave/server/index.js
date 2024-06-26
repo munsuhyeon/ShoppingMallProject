@@ -252,88 +252,139 @@ const authenticateToken = (req, res, next) => {
       next();
   });
 };
+/*=================   검색 수정.ver   =====================*/
 
-
-
-/*=================   검색   =====================*/
-// 검색어 삽입 및 상품 조회
-app.post('/search', authenticateToken, (req, res) => {
-  const { term } = req.body;
-  if (!term) {
-      return res.status(400).send('Search term is required');
+// 입력한 검색어를 DB에서 조회하는 기능
+app.get('/api/search', async (req,res) => {
+  const term = req.query.term;
+  try{
+    const searchSql = "SELECT * FROM product WHERE p_name LIKE ?"
+    const searchTerm = '%' + term + '%'
+      const searchResult = await new Promise((resolve,reject) => {
+          connection.query(searchSql, [searchTerm], (err, result) => {
+              if(err){
+                reject(err);
+                console.log(err)
+              } 
+              else{
+                resolve(result)
+                console.log(result)
+              } 
+          });
+      });
+      if(searchResult.length > 0){
+        return res.status(200).json({result:searchResult})
+      } else {
+        return res.status(404).json({result: "Product not found"});
+      }
+  }catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '서버에서 오류 발생' });
   }
+});
+// 로그인한 유저가 입력한 검색어 DB에 저장하는 기능
+app.post('/api/search', async (req,res) => {
+  const userId = req.body.userId;
+  const searchTerm = req.body.searchTerm;
 
-  const userId = req.user.userId; // 사용자 ID 가져오기
-
-  const insertQuery = 'INSERT INTO search (user_id, key_word, search_date) VALUES (?, ?, NOW())';
-  console.log(`Executing query: ${insertQuery} with values: [${userId}, ${term}]`);
-  connection.query(insertQuery, [userId, term], (err, results) => {
-      if (err) {
-          console.error('검색어 삽입 오류:', err);
-          return res.status(500).send(err.message);
-      }
-
-      const searchQuery = 'SELECT product_id, category_id, sub_category_id, p_name, p_description, p_price, main_image FROM product WHERE p_name LIKE ?';
-      console.log(`Executing query: ${searchQuery} with value: ${term}`);
-      connection.query(searchQuery, [`%${term}%`], (err, productResults) => {
-          if (err) {
-              console.error('상품 조회 오류:', err);
-              return res.status(500).send(err.message);
-          }
-
-          if (productResults.length === 0) {
-              return res.status(404).send('Product not found');
-          }
-
-          res.status(201).send(productResults);
+  try {
+    const updateSearchSql = "INSERT INTO search (user_id, key_word) VALUES (?, ?)";
+    const updateResult = await new Promise((resolve, reject) => {
+      connection.query(updateSearchSql, [userId, searchTerm], (err, result) => {
+        if (err) {
+          reject(err);
+          console.error(err);
+        } else {
+          resolve(result);
+          console.log(result);
+        }
       });
-  });
-});
+    });
 
-// 검색 기록 조회
-app.get('/search', (req, res) => {
-  const query = 'SELECT * FROM search ORDER BY search_date DESC LIMIT 10';
-  console.log(`Executing query: ${query}`);
-  connection.query(query, (err, results) => {
-      if (err) {
-          console.error('검색 기록중 오류발생:', err);
-          return res.status(500).send(err.message);
-      }
-      res.status(200).send(results);
-  });
+    console.log("쿼리결과   ::   " + updateResult.affectedRows);
+    if (updateResult.affectedRows > 0) {
+      return res.status(200).json({ message: 'Search log updated successfully' });
+    } else {
+      return res.status(500).json({ error: 'Failed to update search log' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '서버에서 오류 발생' });
+  }
 });
-
-// 기록 삭제
-app.delete('/search', (req, res) => {
-  const deleteQuery = 'DELETE FROM search';
-  const resetAutoDeleteQuery = 'ALTER TABLE search AUTO_INCREMENT = 1';
+// 유저의 검색기록 가져오기
+app.get('/api/allSearch', async (req,res) => {
+  const userId = req.query.userId;
+  try{
+    allSearchSql = "SELECT * FROM search WHERE user_id = ?";
+    const allSearchResult = await new Promise((resolve, reject) => {
+      connection.query(allSearchSql, [userId], (err, result) => {
+        if (err) {
+          reject(err);
+          console.error(err);
+        } else {
+          resolve(result);
+          console.log(result);
+        }
+      });
+    });
+    return res.status(200).json({result:allSearchResult});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: '서버에서 오류 발생' });
+  }
+});
+// 전체 검색기록 삭제
+app.delete('/api/allSearch', async (req, res) => {
+  const userId = req.query.userId;
+  const deleteSearchSql = "DELETE FROM search WHERE user_id = ?";
   
-  console.log(`Executing query: ${deleteQuery}`);
-  connection.query(deleteQuery, (err, results) => {
-      if (err) {
-          console.error('모든 검색어 삭제 오류:', err);
-          return res.status(500).send(err.message);
-      }
-
-      console.log(`Executing query: ${resetAutoDeleteQuery}`);
-      connection.query(resetAutoDeleteQuery, (err, results) => {
-          if (err) {
-              console.error('재설정 오류 :', err);
-              return res.status(500).send(err.message);
-          }
-          res.status(200).send('모든 검색 삭제 하였습니다');
+  try {
+    const deleteResult = await new Promise((resolve, reject) => {
+      connection.query(deleteSearchSql, [userId], (err, result) => {
+        if (err) {
+          res.status(500).json({ error: '검색기록 삭제 중 오류 발생' });
+          return reject(err);
+        }
+        resolve(result);
       });
-  });
+    });
+    res.status(200).json({ message: 'success' });
+  } catch (error) {
+    console.error('검색기록 삭제 중 오류 발생:', error);
+  }
 });
-
-
+// 선택한 검색기록 삭제하고 유저의 검색기록 다시 조회해서 반환
+app.delete('/api/search', async(req,res) => {
+  const userId = req.query.userId;
+  const seasrchId = req.query.searchId;
+  const deleteSql = "DELETE FROM search WHERE user_id = ? AND search_id = ?"
+  const allSearchSql = "SELECT * FROM search WHERE user_id = ?";
+  try {
+    await new Promise((resolve, reject) => {
+      connection.query(deleteSql, [userId,seasrchId], (err, result) => {
+        if (err) {
+          console.error('검색기록 삭제 중 오류 발생:', err);
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
+     res.status(200).json({message:success});
+  } catch (error) {
+    // 오류 발생 시 콘솔에 로그 남기고 클라이언트에 500 에러 응답
+    console.error('검색기록 삭제 중 오류 발생:', error);
+    res.status(500).json({ error: '서버 오류 발생' });
+  }
+})
+/*=================   주문   =====================*/
 // 주문 처리 API 엔드포인트
 app.post("/reqOrder", (req, res, next) => {
   const { orderSheet, paymentPersonDB } = req.body;
 
   // 주문 정보 삽입 쿼리
   const insertOrderQuery =
-    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
+    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, user_email, main_image, payment, total_count, p_name) VALUES ?";
 
   // 새로운 배열 생성
   const newOrderSheet = orderSheet.map(order => ({
@@ -341,11 +392,6 @@ app.post("/reqOrder", (req, res, next) => {
     ...paymentPersonDB
   }));
 
-  //  console.log("===============newOrderSheet=================");
-  //  console.log(newOrderSheet);
-  //  console.log("================================");
-
-  // order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name
   // Promise 배열 생성
   const queryPromises = newOrderSheet.map(article => {
     const data = [
@@ -360,6 +406,7 @@ app.post("/reqOrder", (req, res, next) => {
       article.quantity,
       article.orderAmount,
       article.email,
+      article.main_image,
       article.total_amount,
       article.total_count,
       article.p_name

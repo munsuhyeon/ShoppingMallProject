@@ -116,6 +116,7 @@ export default function Payment() {
       total_amount: totalPrice,
       total_count: cartItems.length,
       p_name: data.p_name,
+      main_image: data.image 
     }));
 
     

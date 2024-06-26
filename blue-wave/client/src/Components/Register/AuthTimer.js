@@ -11,6 +11,7 @@ const AuthTimer = () => {
     const [tokenTime, setTokenTime] = useState(initialTokenTime ); // 토큰 유효시간에서 1초씩 차감하기 위해 유효시간으로 초기화
     const [logoutTime, setLogoutTime] = useState(3600); // 로그아웃 시간 1시간 초기화 
 
+
     // 토큰 만료 시간 확인 및 처리
     const checkTokenExpiration = async () => {
         if(tokenTime === 60){ // 로그인 후 화면이 처음 렌더링하면 실행되지 않게 조건추가
@@ -74,7 +75,7 @@ const AuthTimer = () => {
         const storedLoggedIn = localStorage.getItem('loggedIn');
         if (storedLoggedIn) {
             setLoggedIn(true);
-            setLogoutTime(70); // 유저의 활동 타이머 초기화
+            setLogoutTime(3600); // 유저의 활동 타이머 초기화
             checkTokenExpiration();
         }
 

@@ -27,6 +27,7 @@ const ScrollToTop = () => {
   return null;
 };
 
+
 const AppRoutes = () => {
   const { loggedIn } = useContext(AuthContext);
   return (

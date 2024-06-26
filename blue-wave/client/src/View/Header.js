@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Link, useLocation} from "react-router-dom";
 import { FaUser, FaShoppingCart } from "react-icons/fa";
-import Search from "../Components/Search/Search"
+import Search from "../Components/Search/Search.js"
 import "./Header.css";
 import { handleLogout } from "../Utils/Utils";
 import { AuthContext} from "../Utils/AuthContext";

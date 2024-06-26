@@ -6,7 +6,7 @@
 .search_dropdown {
     position: absolute;
     left:0;
-    background-color: #ffffffdb;
+    background-color: #ffffff;
     border: 1px solid #ccc;
     max-height: 150px;
     overflow-y: auto;
@@ -23,6 +23,7 @@
 .search_dropdown h3 {
     margin: 10px;
     font-size: 13px;
+    color:#858282;
 }
 
 .search_dropdown span {
@@ -53,4 +54,19 @@
     color: black;
 }
 
-
+.keyword_wrapper{
+    display: flex;
+    justify-content: space-between;
+}
+.closeImg{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.handleDeleteAll{
+    color:#858282;
+    float: right;
+}
+.dropdownKeyword{
+    cursor: pointer;
+}
