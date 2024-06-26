@@ -75,17 +75,17 @@ export default function Payment() {
   const formatDateForMySQL = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
     return (
-      date.getUTCFullYear() +
+      date.getFullYear() +
       "-" +
-      pad(date.getUTCMonth() + 1) +
+      pad(date.getMonth() + 1) +
       "-" +
-      pad(date.getUTCDate()) +
+      pad(date.getDate()) +
       " " +
-      pad(date.getUTCHours()) +
+      pad(date.getHours()) +
       ":" +
-      pad(date.getUTCMinutes()) +
+      pad(date.getMinutes()) +
       ":" +
-      pad(date.getUTCSeconds())
+      pad(date.getSeconds())
     );
   };
 
@@ -109,17 +109,18 @@ export default function Payment() {
       "-" +
       String(cartItems[0].id);
 
-    const reqOrderSheet = cartItems.map((data) => ({
-      ...data,
-      order_number: createOrderNumber,
-      user_id: userId,
-      product_id: data.id,
-      order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
-      order_count: data.quantity,
-      total_amount: totalPrice,
-      total_count: cartItems.length,
-      p_name: data.p_name,
-    }));
+      const reqOrderSheet = cartItems.map((data) => ({
+        ...data,
+        order_number: createOrderNumber,
+        user_id: userId,
+        product_id: data.id,
+        order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
+        order_count: data.quantity,
+        total_amount: totalPrice,
+        total_count: cartItems.length,
+        p_name: data.p_name,
+        main_image: data.image 
+      }));
 
     try {
       const response = await axios.post("http://localhost:8000/reqOrder", {

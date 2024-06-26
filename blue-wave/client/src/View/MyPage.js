@@ -1,13 +1,22 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Header from "./Header";
 import NavBar from "../Components/MyPage/NavBar";
 import UserInfo from "../Components/MyPage/UserInfo";
 import Review from './Review'
-import OrderSheet from './OrderSheet';
+import OrderSheet from '../Components/MyPage/OrderSheet';
 import "./MyPage.css";
 
 const MyPage = () => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const initialMenu = queryParams.get('menu') || 'UserInfo';
+
     const [activeMenu, setActiveMenu] = useState('UserInfo'); // 활성 메뉴 상태 관리
+
+    useEffect(() => {
+        setActiveMenu(initialMenu);
+    }, [initialMenu]);
 
     return(
         <div className="MyPage">

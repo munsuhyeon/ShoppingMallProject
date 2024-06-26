@@ -1,6 +1,7 @@
 import "./Paymentcomplete.css";
-import { useLocation } from "react-router-dom";
+import { useLocation,Link } from "react-router-dom";
 import Paymentcompleteitem from "./Paymentcompleteitem";
+
 
 export default function Paymentcomplete() {
   const location = useLocation();
@@ -75,7 +76,7 @@ export default function Paymentcomplete() {
         </div>
 
         <div className="button">
-          <a href="#">주문 목록으로 가기</a>
+        <Link to="/mypage?menu=OrderSheet" className="btn">주문 목록으로 가기</Link>
         </div>
       </div>
     </>

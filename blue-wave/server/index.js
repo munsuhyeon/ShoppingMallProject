@@ -352,8 +352,7 @@ app.post("/reqOrder", (req, res, next) => {
 
   // 주문 정보 삽입 쿼리
   const insertOrderQuery =
-    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, main_image, payment, total_count, p_name) VALUES ?";
-
+    "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, user_email, main_image, payment, total_count, p_name) VALUES ?";
   // 새로운 배열 생성
   const newOrderSheet = orderSheet.map((order) => ({
     ...order,
@@ -379,9 +378,10 @@ app.post("/reqOrder", (req, res, next) => {
       article.quantity,
       article.orderAmount,
       article.email,
+      article.main_image,
       article.total_amount,
       article.total_count,
-      article.p_name,
+      article.p_name
     ];
 
     // connection.query 메서드를 사용한 프로미스 반환
@@ -408,6 +408,54 @@ app.post("/reqOrder", (req, res, next) => {
       next(error);
     });
 });
+
+
+/*=================   로그인   =====================*/
+
+// 주문 데이터를 가져오는 API 엔드포인트
+app.get("/api/orders", async (req, res) => {
+  const months = parseInt(req.query.months, 10);
+  let sqlQuery;
+  let queryParams = [];
+
+  if (months === 0) {
+    sqlQuery = `
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date
+      FROM bluewave.order
+      WHERE DATE(order_date) = CURDATE()
+    `;
+  } else {
+    sqlQuery = `
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date
+      FROM bluewave.order
+      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    `;
+    queryParams = [months];
+  }
+
+  try {
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).send("Error fetching orders");
+  }
+});
+
+
+
+
+
+
 /*=================   로그인   =====================*/
 app.post("/api/login", async (req, res) => {
   let { userId, userPassword } = req.body; // 클라이언트에서 받은 로그인정보
