@@ -35,7 +35,7 @@ const DataProvider = ({ children }) => {
         // 데이터베이스에서 가져온 데이터를 섹션에 매핑
         data.forEach((product) => {
           // 여러 카테고리 ID를 처리하기 위한 배열 정의
-          const validCategoryIds = [1]; // 예시로 3과 4를 포함하는 경우
+          const validCategoryIds = [1, 2]; // 예시로 3과 4를 포함하는 경우
 
           // product의 카테고리 ID가 validCategoryIds 배열에 포함되어 있는지 확인
           if (validCategoryIds.includes(product.category_id)) {
@@ -70,13 +70,15 @@ const DataProvider = ({ children }) => {
             title: "가전은 역시 <span>LG</span>",
             description:
               'BLUE WAVE 구매 고객님께만 드리는 <br /> <span class="p1_1"> 최대 20% + 5% 추가 혜택</span>',
+            link: "/product/2/3",
           },
           {
             id: "banner2",
-            imgSrc: "assets/banner/카메라2.png",
+            imgSrc: "assets/banner/인테리어1.png",
             alt: "디지털 카메라",
-            title: "감성의 순간을 선명하게 담아내다",
+            title: "깔끔하고 모던한 인테리어",
             description: "",
+            link: "/product/1",
           },
         ];
 

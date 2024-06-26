@@ -1,6 +1,7 @@
 .Product-Section {
   width: 1200px;
   margin: 80px auto 120px;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 /* 맨 위 주문섹션에 이미지와 주문(배송정보, 옵션) 분리 */

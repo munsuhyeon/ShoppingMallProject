@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // FixedAd2 컴포넌트 정의
 const FixedAd2 = ({ ad }) => (
@@ -22,7 +23,7 @@ const FixedAd2 = ({ ad }) => (
               {ad.pTag && <p className="p_tag">{ad.pTag}</p>}
             </>
           )}
-          <a href="#">구매하기</a>
+          <Link to={ad.link}>구매하기</Link>
         </div>
       </div>
     </div>

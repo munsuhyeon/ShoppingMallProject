@@ -1,27 +1,32 @@
 const express = require("express");
 const app = express();
-const cors = require("cors")
-const bodyParser = require("body-parser")
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const mysqlPromise = require("mysql2/promise");
-const dotenv = require("dotenv")
-const path = require("path")
+const dotenv = require("dotenv");
+const path = require("path");
 const bcrypt = require("bcrypt");
 const { reject } = require("assert");
-const cookieParser = require('cookie-parser');
-const axios = require('axios');
-const jwt = require("jsonwebtoken")
-const {generateAccessToken, generateRefreshToken} = require("./middleware/Token.js");
+const cookieParser = require("cookie-parser");
+const axios = require("axios");
+const jwt = require("jsonwebtoken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("./middleware/Token.js");
 
 // 미들웨어 설정
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:false}))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({
-    origin: 'http://localhost:3000', // origin 옵션은 허용할 출처(도메인)를 지정
+app.use(
+  cors({
+    origin: "http://localhost:3000", // origin 옵션은 허용할 출처(도메인)를 지정
     credentials: true, // credentials: true는 자격 증명(쿠키, 인증 헤더 등)을 포함한 요청을 허용할지 여부를 지정
-    exposedHeaders: ['Authorization']
-}));
+    exposedHeaders: ["Authorization"],
+  })
+);
 dotenv.config();
 const port = 8000;
 
@@ -33,12 +38,14 @@ app.use(express.static(path.join(__dirname, "/images/스포츠")));
 app.use(express.static(path.join(__dirname, "/images/사무용품")));
 app.use(express.static(path.join(__dirname, "/images/반려동물용품")));
 app.use(express.static(path.join(__dirname, "/images/인테리어")));
+app.use(express.static(path.join(__dirname, "/images/디지털")));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } =
+  process.env;
 
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -56,78 +63,92 @@ connection.connect((err) => {
 });
 
 /*=================   회원가입   =====================*/
-app.post('/api/register', async(req,res) => {
+app.post("/api/register", async (req, res) => {
   // 클라이언트에서 받은 회원가입 정보
-  let{
-      userId,
-      userPassword,
-      userName,
-      userPhone,
-      userEmail,
-      zonecode,
-      address,
-      detailAddress
+  let {
+    userId,
+    userPassword,
+    userName,
+    userPhone,
+    userEmail,
+    zonecode,
+    address,
+    detailAddress,
   } = req.body;
 
-  try{
-      // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
-      // DB에 저장 전 id  중복체크
-      const checkIdSql = "SELECT user_id FROM user where user_id = ?"
-      const idResult = await new Promise((resolve,reject) => {
-          connection.query(checkIdSql, [userId], (err, result) => {
-              if(err) reject(err);
-              else resolve(result)
-          });
+  try {
+    // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
+    // DB에 저장 전 id  중복체크
+    const checkIdSql = "SELECT user_id FROM user where user_id = ?";
+    const idResult = await new Promise((resolve, reject) => {
+      connection.query(checkIdSql, [userId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
       });
-      if(idResult.length > 0){
-          return res.status(200).json({
-              success: false,
-              message: "이미 등록된 아이디입니다"
-          });
-      }
-
-      // 이메일 저장 전 중복 체크
-      const checkEmailSql = "SELECT user_email FROM user where user_email = ?"
-      const emailResult = await new Promise((resolve, reject) => {
-          connection.query(checkEmailSql, [userEmail], (err,result) => {
-              if(err) reject(err);
-              else resolve(result);
-          })
-      });
-      if(emailResult.length > 0){
-          return res.status(200).json({
-              success: false,
-              message: "이미 존재하는 이메일 아이디입니다"
-          });
-      }
-      // 비밀번호 암호화
-      const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
-      const hash = await bcrypt.hash(userPassword, salt);
-      userPassword = hash;
-
-      // 회원정보 DB에 저장
-      const registerSql = "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail, zone_code) values(?,?,?,?,?,?,?,?)";
-      await new Promise((resolve,reject) => {
-          connection.query(registerSql,[userId,userPassword,userName,userEmail,userPhone,address,detailAddress,zonecode],(err,result) => {
-              if(err) reject(err);
-              else resolve(result);
-          });
-      });
-
-      // 회원가입이 성공한 경우 클라이언트에게 응답을 보낸다
-      console.log("사용자가 성공적으로 등록")
+    });
+    if (idResult.length > 0) {
       return res.status(200).json({
-          success:true,
-          message: "회원가입이 등록되었습니다"
+        success: false,
+        message: "이미 등록된 아이디입니다",
       });
+    }
+
+    // 이메일 저장 전 중복 체크
+    const checkEmailSql = "SELECT user_email FROM user where user_email = ?";
+    const emailResult = await new Promise((resolve, reject) => {
+      connection.query(checkEmailSql, [userEmail], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
+    });
+    if (emailResult.length > 0) {
+      return res.status(200).json({
+        success: false,
+        message: "이미 존재하는 이메일 아이디입니다",
+      });
+    }
+    // 비밀번호 암호화
+    const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
+    const hash = await bcrypt.hash(userPassword, salt);
+    userPassword = hash;
+
+    // 회원정보 DB에 저장
+    const registerSql =
+      "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail, zone_code) values(?,?,?,?,?,?,?,?)";
+    await new Promise((resolve, reject) => {
+      connection.query(
+        registerSql,
+        [
+          userId,
+          userPassword,
+          userName,
+          userEmail,
+          userPhone,
+          address,
+          detailAddress,
+          zonecode,
+        ],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+
+    // 회원가입이 성공한 경우 클라이언트에게 응답을 보낸다
+    console.log("사용자가 성공적으로 등록");
+    return res.status(200).json({
+      success: true,
+      message: "회원가입이 등록되었습니다",
+    });
   } catch (err) {
-      console.error("서버에서 오류 발생 : ", err);
-      return res.status(500).json({
-          success: false,
-          message: "회원가입 중 오류가 발생하였습니다",
-          error: err.message
-      });
-  };
+    console.error("서버에서 오류 발생 : ", err);
+    return res.status(500).json({
+      success: false,
+      message: "회원가입 중 오류가 발생하였습니다",
+      error: err.message,
+    });
+  }
 });
 
 /*=================   main - 상품 데이터 불러오기   =====================*/
@@ -224,7 +245,7 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   const sql =
     "SELECT option_name, option_price FROM bluewave.option WHERE product_id = ?;";
 
-    connection.query(sql, [productId], (err, results) => {
+  connection.query(sql, [productId], (err, results) => {
     if (err) {
       console.error("상품 옵션 조회 오류:", err);
       res.status(500).json({ error: "상품 옵션 조회 오류" });
@@ -236,20 +257,17 @@ app.get("/product/:categoryId/:subCategoryId/:id/options", (req, res) => {
   });
 });
 
-
-
-
 const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (token == null) return res.sendStatus(401); // 토큰이 없으면 인증 실패
 
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-      if (err) return res.sendStatus(403); // 유효하지 않은 토큰
+    if (err) return res.sendStatus(403); // 유효하지 않은 토큰
 
-      req.user = user; // 사용자 정보를 req.user에 저장
-      next();
+    req.user = user; // 사용자 정보를 req.user에 저장
+    next();
   });
 };
 /*=================   검색 수정.ver   =====================*/
@@ -385,15 +403,14 @@ app.post("/reqOrder", (req, res, next) => {
   // 주문 정보 삽입 쿼리
   const insertOrderQuery =
     "INSERT INTO `order` (order_number, user_id, product_id, order_date, order_name, order_phone, order_addr, order_addr_detail, order_count, total_amount, user_email, main_image, payment, total_count, p_name) VALUES ?";
-
   // 새로운 배열 생성
-  const newOrderSheet = orderSheet.map(order => ({
+  const newOrderSheet = orderSheet.map((order) => ({
     ...order,
-    ...paymentPersonDB
+    ...paymentPersonDB,
   }));
 
   // Promise 배열 생성
-  const queryPromises = newOrderSheet.map(article => {
+  const queryPromises = newOrderSheet.map((article) => {
     const data = [
       article.order_number,
       article.user_id,
@@ -417,10 +434,10 @@ app.post("/reqOrder", (req, res, next) => {
       connection.query(insertOrderQuery, [[data]], (err, result) => {
         if (err) {
           reject(err);
-          console.log("insertOrderQuery  ::  " + err)
+          console.log("insertOrderQuery  ::  " + err);
         } else {
           resolve(result);
-          console.log("insertOrderQuery  ::  " + result)
+          console.log("insertOrderQuery  ::  " + result);
         }
       });
     });
@@ -431,168 +448,215 @@ app.post("/reqOrder", (req, res, next) => {
     .then(() => {
       res.status(200).send("주문이 성공적으로 처리되었습니다.");
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("주문 처리 중 오류 발생:", error);
       next(error);
     });
 });
+
+
 /*=================   로그인   =====================*/
-app.post('/api/login', async (req,res) => {
-  let {userId, userPassword} = req.body; // 클라이언트에서 받은 로그인정보
-  try{
-      // 전달받은 아이디로 아이디와 비밀번호, 유저이름 찾기
-      const findIdSql = "SELECT user_id,user_pw,user_name FROM user WHERE user_id = ?";
 
-      const findUserResult = await new Promise((resolve, reject) => {
-          connection.query(findIdSql,[userId], (err,result) => {
-              if(err) reject(err);
-              else resolve(result);
-          })
+// 주문 데이터를 가져오는 API 엔드포인트
+app.get("/api/orders", async (req, res) => {
+  const months = parseInt(req.query.months, 10);
+  let sqlQuery;
+  let queryParams = [];
+
+  if (months === 0) {
+    sqlQuery = `
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date
+      FROM bluewave.order
+      WHERE DATE(order_date) = CURDATE()
+    `;
+  } else {
+    sqlQuery = `
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date
+      FROM bluewave.order
+      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    `;
+    queryParams = [months];
+  }
+
+  try {
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
       });
-      // 일치하는 아이디가 없다면 클라이언트에 에러메세지 전달
-      if(findUserResult.length === 0){
-          return res.status(401).json({
-              success: false,
-              message: "all wrong"
-          })
-      };
+    });
 
-      // 일치하는 아이디가 있다면 쿼리문의 결과값에서 유저 비밀번호 추출
-      const dbPassword = findUserResult[0].user_pw;
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).send("Error fetching orders");
+  }
+});
 
-      // 사용자가 입력한 비밀번호와 일치하는지 체크 (입력한 비밀번호, DB에 저장된 비밀번호)
-      const isMatch = await bcrypt.compare(userPassword,dbPassword);
-      if(!isMatch){
-          // 입력한 비밀번호가 틀리다면
-          return res.status(401).json({
-              sucess: false,
-              message: "wrong password"
-          })
-      } else {
-          // 입력한 비밀번호가 맞다면 토큰을 생성
-          const payload = { "userId" : findUserResult[0].user_id };
-          const accessToken = generateAccessToken(payload);
-          const refreshToken = generateRefreshToken(payload);
-          
-          const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
-          const tokenIat = verified.iat;
-          const tokenExp = verified.exp;
-          let decodedExp =  verified.exp - verified.iat; // 생성 - 만료 = 유효시간
 
-          // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
-          console.log({
-              success: true,
-              message: '로그인 성공',
-              token: decodedExp,
-          });
-          // refreshToken을 서버의 쿠키에 저장
-          res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: false, // HTTPS를 사용할 경우 true로 변경
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
-            sameSite: 'strict' // 적절한 SameSite 설정을 적용하세요
-          });
 
-          return res.status(200)
-              .header('authorization', accessToken)
-              .json({
-                  success: true,
-                  message: '로그인 성공',
-                  tokenExp: tokenExp,
-                  tokenIat: tokenIat,
-                  userId : findUserResult[0].user_id,
-                  userName : findUserResult[0].user_name
-              });
-      }
-  } catch(err){
-      console.error("서버에서 오류 발생 : ", err);
-      return res.status(500).json({
-          success: false,
-          message: "로그인 중 오류가 발생하였습니다",
-          error: err.message
+
+
+
+/*=================   로그인   =====================*/
+app.post("/api/login", async (req, res) => {
+  let { userId, userPassword } = req.body; // 클라이언트에서 받은 로그인정보
+  try {
+    // 전달받은 아이디로 아이디와 비밀번호, 유저이름 찾기
+    const findIdSql =
+      "SELECT user_id,user_pw,user_name FROM user WHERE user_id = ?";
+
+    const findUserResult = await new Promise((resolve, reject) => {
+      connection.query(findIdSql, [userId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
       });
+    });
+    // 일치하는 아이디가 없다면 클라이언트에 에러메세지 전달
+    if (findUserResult.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "all wrong",
+      });
+    }
+
+    // 일치하는 아이디가 있다면 쿼리문의 결과값에서 유저 비밀번호 추출
+    const dbPassword = findUserResult[0].user_pw;
+
+    // 사용자가 입력한 비밀번호와 일치하는지 체크 (입력한 비밀번호, DB에 저장된 비밀번호)
+    const isMatch = await bcrypt.compare(userPassword, dbPassword);
+    if (!isMatch) {
+      // 입력한 비밀번호가 틀리다면
+      return res.status(401).json({
+        sucess: false,
+        message: "wrong password",
+      });
+    } else {
+      // 입력한 비밀번호가 맞다면 토큰을 생성
+      const payload = { userId: findUserResult[0].user_id };
+      const accessToken = generateAccessToken(payload);
+      const refreshToken = generateRefreshToken(payload);
+
+      const verified = jwt.verify(accessToken, JWT_SECRET); // { userId: 'star1234', iat: 1719076826, exp: 1719080426 }
+      const tokenIat = verified.iat;
+      const tokenExp = verified.exp;
+      let decodedExp = verified.exp - verified.iat; // 생성 - 만료 = 유효시간
+
+      // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
+      console.log({
+        success: true,
+        message: "로그인 성공",
+        token: decodedExp,
+      });
+      // refreshToken을 서버의 쿠키에 저장
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false, // HTTPS를 사용할 경우 true로 변경
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7일
+        sameSite: "strict", // 적절한 SameSite 설정을 적용하세요
+      });
+
+      return res.status(200).header("authorization", accessToken).json({
+        success: true,
+        message: "로그인 성공",
+        tokenExp: tokenExp,
+        tokenIat: tokenIat,
+        userId: findUserResult[0].user_id,
+        userName: findUserResult[0].user_name,
+      });
+    }
+  } catch (err) {
+    console.error("서버에서 오류 발생 : ", err);
+    return res.status(500).json({
+      success: false,
+      message: "로그인 중 오류가 발생하였습니다",
+      error: err.message,
+    });
   }
 });
 /*=================   토큰 검증   =====================*/
-app.get('/api/verify-token', (req, res) => {
+app.get("/api/verify-token", (req, res) => {
   const authHeader = req.headers.authorization;
   // Bearer이 붙어있어서 띄어쓰기로 토큰을 구분한다
-  const token = authHeader && authHeader.split(' ')[1];
+  const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
-      // 로그인페이지로 이동하기
-      return res.status(401).json({ message: 'Unauthorized' });
+    // 로그인페이지로 이동하기
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, userID) => {
-      if(err){
-          // 로그인페이지로 이동하기
-          return res.status(403).json({message:"토큰 확인 실패"});
-      }
-      return res.status(200).json({valid:true, userId:userID});
+    if (err) {
+      // 로그인페이지로 이동하기
+      return res.status(403).json({ message: "토큰 확인 실패" });
+    }
+    return res.status(200).json({ valid: true, userId: userID });
   });
 });
 /*=================   refreshToken으로 accessToken 재발급   =====================*/
-app.get('/api/refresh-token', (req,res) => {
-const refreshToken = req.cookies['refreshToken'];
+app.get("/api/refresh-token", (req, res) => {
+  const refreshToken = req.cookies["refreshToken"];
 
-  if(!refreshToken){
-      console.log("refresh토큰 없음")
-      // 사용자를 로그인페이지로 이동시키기
-      return res.status(401).json({ message: 'Unauthorized' });
+  if (!refreshToken) {
+    console.log("refresh토큰 없음");
+    // 사용자를 로그인페이지로 이동시키기
+    return res.status(401).json({ message: "Unauthorized" });
   }
-  try{
-      const decoded = jwt.verify(refreshToken, JWT_SECRET);
-      const newAccessToken = generateAccessToken({ "userId" : decoded.userId });
-      return res.status(200).json({newToken : newAccessToken});
-  }catch(error){
+  try {
+    const decoded = jwt.verify(refreshToken, JWT_SECRET);
+    const newAccessToken = generateAccessToken({ userId: decoded.userId });
+    return res.status(200).json({ newToken: newAccessToken });
+  } catch (error) {
     // 토큰 검증 실패
-    if (error.name === 'TokenExpiredError') {
-        console.log("토큰 만료");
-        return res.status(403).json({ message: 'Token expired' });
-    } else if (error.name === 'JsonWebTokenError') {
-        console.log("유효하지 않은 토큰");
-        return res.status(403).json({ message: 'Invalid token' });
+    if (error.name === "TokenExpiredError") {
+      console.log("토큰 만료");
+      return res.status(403).json({ message: "Token expired" });
+    } else if (error.name === "JsonWebTokenError") {
+      console.log("유효하지 않은 토큰");
+      return res.status(403).json({ message: "Invalid token" });
     } else {
-        console.log("기타 에러 발생:", error.message);
-        return res.status(500).json({ message: 'Internal server error' });
+      console.log("기타 에러 발생:", error.message);
+      return res.status(500).json({ message: "Internal server error" });
     }
   }
 });
 /*=================   회원정보 가져오기   =====================*/
-app.get('/api/userInfo', async (req,res) => {
+app.get("/api/userInfo", async (req, res) => {
   const userId = req.headers.user_id;
-  try{
-    const userInfoSql = "SELECT * FROM user WHERE user_id = ?"
-    const userInfo = await new Promise((resolve,reject) => {
+  try {
+    const userInfoSql = "SELECT * FROM user WHERE user_id = ?";
+    const userInfo = await new Promise((resolve, reject) => {
       connection.query(userInfoSql, [userId], (err, result) => {
-          if(err) reject(err);
-          else resolve(result)
+        if (err) reject(err);
+        else resolve(result);
       });
-  });
-  if (userInfo.length > 0) {
-    return res.status(200).json({
-      success: true,
-      data: userInfo
     });
-  } else {
-    return res.status(404).json({
-      success: false,
-      message: "회원정보를 찾을 수 없습니다"
-    });
-  }
-  } catch(err){
+    if (userInfo.length > 0) {
+      return res.status(200).json({
+        success: true,
+        data: userInfo,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "회원정보를 찾을 수 없습니다",
+      });
+    }
+  } catch (err) {
     console.error("서버에서 오류 발생 : ", err);
-      return res.status(500).json({
-          success: false,
-          message: "회원정보 조회 중 오류 발생",
-          error: err.message
-      });
+    return res.status(500).json({
+      success: false,
+      message: "회원정보 조회 중 오류 발생",
+      error: err.message,
+    });
   }
 });
 /*=================   회원정보 수정   =====================*/
-app.post('/api/updateUser', async (req,res) => {
+app.post("/api/updateUser", async (req, res) => {
   console.log(req.body);
-  let{
+  let {
     userId,
     userPassword,
     userName,
@@ -600,82 +664,96 @@ app.post('/api/updateUser', async (req,res) => {
     userEmail,
     zonecode,
     address,
-    detailAddress
+    detailAddress,
   } = req.body;
 
-  try{
-
-  // 이메일 저장 전 중복 체크
-  const checkEmailSql = "SELECT COUNT(*) AS count FROM user WHERE user_email = ? AND user_id != ?"
-  const emailResult = await new Promise((resolve, reject) => {
-      connection.query(checkEmailSql, [userEmail, userId], (err,result) => {
-          if(err){
-            reject(err);
-          } 
-          else{
-            if (result.length > 0 && result[0].count !== 0) {
-              // 중복된 이메일이 존재할 경우
-              return res.status(401).json({
-                  success: false,
-                  message: "duplicate email"
-              });
+  try {
+    // 이메일 저장 전 중복 체크
+    const checkEmailSql =
+      "SELECT COUNT(*) AS count FROM user WHERE user_email = ? AND user_id != ?";
+    const emailResult = await new Promise((resolve, reject) => {
+      connection.query(checkEmailSql, [userEmail, userId], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (result.length > 0 && result[0].count !== 0) {
+            // 중복된 이메일이 존재할 경우
+            return res.status(401).json({
+              success: false,
+              message: "duplicate email",
+            });
           } else {
-              // 중복된 이메일이 없는 경우, 여기서는 resolve를 호출하여 다음 작업을 진행합니다.
-              resolve(result);
+            // 중복된 이메일이 없는 경우, 여기서는 resolve를 호출하여 다음 작업을 진행합니다.
+            resolve(result);
           }
-          } 
-      })
-  });
+        }
+      });
+    });
 
-  // 비밀번호 암호화
-  if(userPassword !== ''){ // 새로운 비밀번호를 입력한 경우
-    const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
-    const hash = await bcrypt.hash(userPassword, salt);
-    userPassword = hash;
-    // 회원정보 DB에 저장
-    const updateUserSql = "UPDATE user SET user_pw = ?, user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
-    await new Promise((resolve,reject) => {
-        connection.query(updateUserSql,[userPassword,userEmail,userPhone,address,detailAddress,zonecode,userId],(err,result) => {
-            if(err){
+    // 비밀번호 암호화
+    if (userPassword !== "") {
+      // 새로운 비밀번호를 입력한 경우
+      const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
+      const hash = await bcrypt.hash(userPassword, salt);
+      userPassword = hash;
+      // 회원정보 DB에 저장
+      const updateUserSql =
+        "UPDATE user SET user_pw = ?, user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
+      await new Promise((resolve, reject) => {
+        connection.query(
+          updateUserSql,
+          [
+            userPassword,
+            userEmail,
+            userPhone,
+            address,
+            detailAddress,
+            zonecode,
+            userId,
+          ],
+          (err, result) => {
+            if (err) {
               reject(err);
               console.error("쿼리 실행 중 오류 발생:", err);
-            } 
-            else{
+            } else {
               resolve(result);
-            } 
-        });
-    });
-  } else{ // 새로운 비밀번호를 입력하지않은 경우
-    // 회원정보 DB에 저장 
-    const updateUserSql = "UPDATE user SET user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
-    await new Promise((resolve,reject) => {
-        connection.query(updateUserSql,[userEmail,userPhone,address,detailAddress,zonecode,userId],(err,result) => {
-          if(err){
-            reject(err);
-            console.error("쿼리 실행 중 오류 발생:", err);
+            }
           }
-          else{
-            resolve(result);
-          } 
-        });
-    });
-  }  
-  // 성공 응답
-  return res.status(200).json({
-    success: true,
-    message: "회원정보가 성공적으로 수정되었습니다"
-  });
-
-  } catch(err){
-    console.error("서버에서 오류 발생 : ", err);
-      return res.status(500).json({
-          success: false,
-          message: "회원정보 수정중 오류가 발생하였습니다",
-          error: err.message
+        );
       });
+    } else {
+      // 새로운 비밀번호를 입력하지않은 경우
+      // 회원정보 DB에 저장
+      const updateUserSql =
+        "UPDATE user SET user_email = ?, user_phone = ?, address = ?, address_detail = ?, zone_code = ? WHERE user_id = ?";
+      await new Promise((resolve, reject) => {
+        connection.query(
+          updateUserSql,
+          [userEmail, userPhone, address, detailAddress, zonecode, userId],
+          (err, result) => {
+            if (err) {
+              reject(err);
+              console.error("쿼리 실행 중 오류 발생:", err);
+            } else {
+              resolve(result);
+            }
+          }
+        );
+      });
+    }
+    // 성공 응답
+    return res.status(200).json({
+      success: true,
+      message: "회원정보가 성공적으로 수정되었습니다",
+    });
+  } catch (err) {
+    console.error("서버에서 오류 발생 : ", err);
+    return res.status(500).json({
+      success: false,
+      message: "회원정보 수정중 오류가 발생하였습니다",
+      error: err.message,
+    });
   }
-  
-})
+});
 /*==========================================================*/
-app.listen(port,() => console.log(`${port}번으로 서버 실행`))
-
+app.listen(port, () => console.log(`${port}번으로 서버 실행`));

@@ -1,4 +1,4 @@
-import { useState , useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Paymentitem from "./Paymentitem";
 import "./Payment.css";
@@ -7,7 +7,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from "uuid"; // 랜덤 코드 생성 라이브러리
 import OrderButton from "../UI/OrderButton";
 import MultiPayment from "../Utils/Multipayment";
-import { AuthContext } from "../Utils/AuthContext"
+import { AuthContext } from "../Utils/AuthContext";
 
 export default function Payment() {
   const { userId } = useContext(AuthContext);
@@ -16,7 +16,8 @@ export default function Payment() {
   const { cartItems } = location.state || { cartItems: [] };
 
   const { REACT_APP_PortOne_StoreId } = process.env;
-  const { REACT_APP_PortOne_ChannelKey, REACT_APP_PortOne_Kakao_ChannelKey } = process.env;
+  const { REACT_APP_PortOne_ChannelKey, REACT_APP_PortOne_Kakao_ChannelKey } =
+    process.env;
 
   const paymentMethods = [
     {
@@ -55,7 +56,9 @@ export default function Payment() {
     requestMessage: "",
   });
   const [isScriptsLoaded, setIsScriptsLoaded] = useState(false);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(paymentMethods[0]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(
+    paymentMethods[0]
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -72,17 +75,17 @@ export default function Payment() {
   const formatDateForMySQL = (date) => {
     const pad = (n) => (n < 10 ? "0" + n : n);
     return (
-      date.getUTCFullYear() +
+      date.getFullYear() +
       "-" +
-      pad(date.getUTCMonth() + 1) +
+      pad(date.getMonth() + 1) +
       "-" +
-      pad(date.getUTCDate()) +
+      pad(date.getDate()) +
       " " +
-      pad(date.getUTCHours()) +
+      pad(date.getHours()) +
       ":" +
-      pad(date.getUTCMinutes()) +
+      pad(date.getMinutes()) +
       ":" +
-      pad(date.getUTCSeconds())
+      pad(date.getSeconds())
     );
   };
 
@@ -93,7 +96,7 @@ export default function Payment() {
 
   const handleOrder = async () => {
     const date = new Date();
-    
+
     //const userInfo = { userid: "1" }; // Replace with actual user info
     const createOrderNumber =
       String(userId) +
@@ -106,32 +109,32 @@ export default function Payment() {
       "-" +
       String(cartItems[0].id);
 
-    const reqOrderSheet = cartItems.map((data) => ({
-      ...data,
-      order_number: createOrderNumber,
-      user_id: userId,
-      product_id: data.id,
-      order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
-      order_count: data.quantity,
-      total_amount: totalPrice,
-      total_count: cartItems.length,
-      p_name: data.p_name,
-      main_image: data.image 
-    }));
-
-    
+      const reqOrderSheet = cartItems.map((data) => ({
+        ...data,
+        order_number: createOrderNumber,
+        user_id: userId,
+        product_id: data.id,
+        order_date: formatDateForMySQL(date), // 포맷된 날짜를 사용
+        order_count: data.quantity,
+        total_amount: totalPrice,
+        total_count: cartItems.length,
+        p_name: data.p_name,
+        main_image: data.image 
+      }));
 
     try {
       const response = await axios.post("http://localhost:8000/reqOrder", {
         orderSheet: reqOrderSheet,
-        paymentPersonDB: paymentPerson, 
+        paymentPersonDB: paymentPerson,
       });
 
       if (response.status === 200) {
-        setPaymentItems([]); 
-        localStorage.removeItem("cartItems"); 
+        setPaymentItems([]);
+        localStorage.removeItem("cartItems");
         //alert("주문이 완료되었습니다.");
-        navigate("/Paymentcomplete",{ state: {orderNumber: createOrderNumber, cartItems, paymentPerson} });
+        navigate("/Paymentcomplete", {
+          state: { orderNumber: createOrderNumber, cartItems, paymentPerson },
+        });
       } else {
         alert("주문에 실패했습니다. 다시 시도해주세요.");
       }
@@ -143,7 +146,8 @@ export default function Payment() {
 
   //-------------------------결제 메소드-------------------------
 
-  const { paymentType, channelKey, payMethod, paymentName } = selectedPaymentMethod;
+  const { paymentType, channelKey, payMethod, paymentName } =
+    selectedPaymentMethod;
 
   let payResponse;
 
@@ -246,7 +250,7 @@ export default function Payment() {
       }
 
       if (payResponse.transactionType === "PAYMENT") {
-         handleOrder();
+        handleOrder();
         //await handleOrder();
       }
     } catch (error) {
@@ -257,7 +261,7 @@ export default function Payment() {
 
   return (
     <div className="payment-body">
-      <div className="body-header">
+      <div className="payment-body-header">
         <h2>결제화면</h2>
         <div className="page">
           <p className="page-1">
@@ -269,7 +273,13 @@ export default function Payment() {
           <p className="page-3">주문완료</p>
         </div>
       </div>
-      <form className="info-payment-flex" onSubmit={(e) => {e.preventDefault(); processPayment();}}>
+      <form
+        className="info-payment-flex"
+        onSubmit={(e) => {
+          e.preventDefault();
+          processPayment();
+        }}
+      >
         <div className="info-part">
           <h2>배송정보</h2>
           <div className="orderer-info">
@@ -358,18 +368,18 @@ export default function Payment() {
             <div>
               {paymentMethods.map((paymentData, index) => (
                 <MultiPayment
-                 key={`payment-${index}`} // 고유한 key prop 추가
-                 paymentData={paymentData}
+                  key={`payment-${index}`} // 고유한 key prop 추가
+                  paymentData={paymentData}
                   setSelectedPaymentMethod={setSelectedPaymentMethod}
-                 index={index} // index prop 추가
-              />
+                  index={index} // index prop 추가
+                />
               ))}
             </div>
           </div>
           <div className="final-payment">
             <FinalPayment totalPrice={totalPrice} />
             <div className="button">
-              <OrderButton processPayment={processPayment}/>
+              <OrderButton processPayment={processPayment} />
             </div>
           </div>
         </div>

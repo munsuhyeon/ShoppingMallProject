@@ -54,13 +54,19 @@ const Slider = () => {
         <img
           className="slide_img"
           src="assets/slider/slider4.png"
-          alt="이미지5"
+          alt="이미지4"
         />
 
         <img
           className="slide_img"
           src="assets/slider/slider5.png"
-          alt="이미지4"
+          alt="이미지5"
+        />
+
+        <img
+          className="slide_img"
+          src="assets/slider/slider6.png"
+          alt="이미지6"
         />
       </div>
       {/* 이미지 개수만 만큼 동그라미 */}

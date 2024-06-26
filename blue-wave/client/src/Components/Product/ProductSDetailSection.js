@@ -10,7 +10,6 @@ const formatPrice = (price) => {
 };
 
 const ProductSection = () => {
-
   const navigate = useNavigate();
   // URL에서 카테고리, 서브 카테고리 및 제품 ID를 가져옴
   const { categoryId, subCategoryId, id } = useParams();
@@ -112,7 +111,7 @@ const ProductSection = () => {
     fetchOptions();
   }, [categoryId, resolvedSubCategoryId, id]);
 
-    console.log(selectedOptions);
+  console.log(selectedOptions);
   // 작은 이미지에 마우스를 올렸을 때 이미지 변경 핸들러
   const handleSmallImageMouseOver = (originalSrc, zoomedSrc) => {
     setMainImageSrc(originalSrc);
@@ -181,12 +180,12 @@ const ProductSection = () => {
   // 옵션 리스트
   const options = Object.keys(optionPrices);
   console.log(selectedOptions);
-  console.log(product);  
+  console.log(product);
   console.log(product.p_name);
 
   const handleAddToCart = () => {
-    // 상품 정보
-    const cartItem = Object.keys(selectedOptions).map((optionName) => ({
+    // 선택된 옵션을 기반으로 상품 정보를 생성
+    const cartItemsToAdd = Object.keys(selectedOptions).map((optionName) => ({
       id: product.product_id,
       image: mainImageSrc,
       p_name: product.p_name,
@@ -195,51 +194,72 @@ const ProductSection = () => {
       quantity: selectedOptions[optionName],
       orderAmount: selectedOptions[optionName] * optionPrices[optionName],
     }));
-    console.log("cart Item  ::  ", cartItem);
 
     // 현재 장바구니 데이터 가져오기
-    const savedCartItems = localStorage.getItem('cartItems');
+    const savedCartItems = localStorage.getItem("cartItems");
     let cartItems = savedCartItems ? JSON.parse(savedCartItems) : [];
 
-    // 장바구니에 새로운 상품 추가 (각 요소를 개별적으로 추가)
-    cartItems = [...cartItems, ...cartItem];
-    console.log("장바구니 추가  ::  ", cartItems);
+    // 새로운 상품을 장바구니에 추가하거나 기존 상품의 수량을 업데이트
+    cartItemsToAdd.forEach((cartItemToAdd) => {
+      const existingItemIndex = cartItems.findIndex(
+        (item) =>
+          item.id === cartItemToAdd.id && item.option === cartItemToAdd.option
+      );
 
-    // 로컬 스토리지에 저장
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      if (existingItemIndex !== -1) {
+        // 이미 있는 상품이면 수량을 추가
+        cartItems[existingItemIndex].quantity += cartItemToAdd.quantity;
+      } else {
+        // 새로운 상품을 장바구니에 추가
+        cartItems.push(cartItemToAdd);
+      }
+    });
+
+    // 로컬 스토리지에 장바구니 저장
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
     // 장바구니 페이지로 이동
-    navigate('/cart');
-};
+    navigate("/cart");
+  };
 
-const handleAddandpayment = () => {
-  // 상품 정보
-  const cartItem = Object.keys(selectedOptions).map((optionName) => ({
-    id: product.product_id,
-    image: mainImageSrc,
-    p_name: product.p_name,
-    option: optionName,
-    price: optionPrices[optionName],
-    quantity: selectedOptions[optionName],
-    orderAmount: selectedOptions[optionName] * optionPrices[optionName],
-  }));
+  const handleAddandpayment = () => {
+    // 선택된 옵션을 기반으로 상품 정보를 생성
+    const cartItemsToAdd = Object.keys(selectedOptions).map((optionName) => ({
+      id: product.product_id,
+      image: mainImageSrc,
+      p_name: product.p_name,
+      option: optionName,
+      price: optionPrices[optionName],
+      quantity: selectedOptions[optionName],
+      orderAmount: selectedOptions[optionName] * optionPrices[optionName],
+    }));
 
-  // 현재 장바구니 데이터 가져오기
-  const savedCartItems = localStorage.getItem('cartItems');
-  let cartItems = savedCartItems ? JSON.parse(savedCartItems) : [];
+    // 현재 장바구니 데이터 가져오기
+    const savedCartItems = localStorage.getItem("cartItems");
+    let cartItems = savedCartItems ? JSON.parse(savedCartItems) : [];
 
-  // 장바구니에 새로운 상품 추가 (각 요소를 개별적으로 추가)
-  cartItems = [...cartItems, ...cartItem];
+    // 새로운 상품을 장바구니에 추가하거나 기존 상품의 수량을 업데이트
+    cartItemsToAdd.forEach((cartItemToAdd) => {
+      const existingItemIndex = cartItems.findIndex(
+        (item) =>
+          item.id === cartItemToAdd.id && item.option === cartItemToAdd.option
+      );
 
-  // 로컬 스토리지에 저장
-  localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      if (existingItemIndex !== -1) {
+        // 이미 있는 상품이면 수량을 추가
+        cartItems[existingItemIndex].quantity += cartItemToAdd.quantity;
+      } else {
+        // 새로운 상품을 장바구니에 추가
+        cartItems.push(cartItemToAdd);
+      }
+    });
 
-  // 장바구니 페이지로 이동
-  navigate('/payment',{ state: { cartItems } });
-};
+    // 로컬 스토리지에 장바구니 저장
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
 
-
-
+    // 결제 페이지로 이동
+    navigate("/payment", { state: { cartItems } });
+  };
 
   return (
     <section className="Product-Section">
@@ -368,7 +388,7 @@ const handleAddandpayment = () => {
           </div>
           <div className="Right-Button">
             <div className="Right-basket">
-              <button onClick={handleAddToCart} >장바구니</button>
+              <button onClick={handleAddToCart}>장바구니</button>
             </div>
             <div className="Right-Buy">
               <button onClick={handleAddandpayment}>즉시구매</button>
