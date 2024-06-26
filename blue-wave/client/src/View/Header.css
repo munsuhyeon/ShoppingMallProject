@@ -1,7 +1,8 @@
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
 }
 
 /* 스크롤바 색깔 */
@@ -22,6 +23,7 @@ header {
   padding: 0;
   border-bottom: 1px solid #fff;
   font-style: normal;
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 /* header top */
@@ -128,11 +130,11 @@ header .container {
 
 .nav_menu li a.active {
   font-weight: bold;
-  color: #000;
+  color: #2764e6;
 }
 
 .nav_menu li a.inactive {
-  color: #aaa;
+  color: #000000;
 }
 
 /* Dropdown menu */
