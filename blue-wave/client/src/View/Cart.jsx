@@ -22,14 +22,12 @@ export default function Cart() {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const handleDelete = (index) => {
-    setCartItems((prevCartItems) => {
-      // 새로운 배열을 복사
-      const updatedCartItems = [...prevCartItems];
-      // index 위치에서 한 개의 항목을 삭제
-      updatedCartItems.splice(index, 1);
-      return updatedCartItems;
-    });
+  const handleDelete = (id, option) => {
+    setCartItems((prevCartItems) =>
+      prevCartItems.filter(
+        (item) => !(item.id === id && item.option === option)
+      )
+    );
   };
 
   const handleDeleteAll = () => {
@@ -42,13 +40,33 @@ export default function Cart() {
 
   // 새로운 updateQuantity 함수 추가
   const updateQuantity = (id, option, newQuantity) => {
-    setCartItems((prevCartItems) =>
-      prevCartItems.map((item) =>
-        item.id === id && item.option === option
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
+    setCartItems((prevCartItems) => {
+      // 같은 상품의 같은 옵션인 항목을 찾습니다
+      const existingCartItemIndex = prevCartItems.findIndex(
+        (item) => item.id === id && item.option === option
+      );
+
+      if (existingCartItemIndex !== -1) {
+        // 이미 있는 경우 해당 항목의 수량을 증가시킵니다
+        const updatedCartItems = [...prevCartItems];
+        updatedCartItems[existingCartItemIndex].quantity = newQuantity;
+        return updatedCartItems;
+      } else {
+        // 없는 경우 새로운 항목으로 추가합니다
+        return [
+          ...prevCartItems,
+          {
+            id: id,
+            option: option,
+            quantity: newQuantity,
+            // 아래는 예시 데이터로, 실제로 사용하는 데이터에 맞게 수정 필요
+            p_name: "Product Name",
+            price: "10000",
+            image: "product_image_url",
+          },
+        ];
+      }
+    });
   };
 
   return (
@@ -82,7 +100,7 @@ export default function Cart() {
           <tbody>
             {cartItems.map((item, index) => (
               <Cartitem
-                key={`item-${index}`}
+                key={`${item.id}-${item.option}`} // 고유 식별자 설정
                 item={item}
                 onDelete={handleDelete}
                 updateQuantity={updateQuantity}

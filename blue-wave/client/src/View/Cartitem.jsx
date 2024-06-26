@@ -1,31 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import PayButton from "../UI/PayButton";
 
-// 가격 포맷팅 함수
 const formatPrice = (price) => {
   return new Intl.NumberFormat("ko-KR").format(price);
 };
 
-const Cartitem = ({ index, item, onDelete, updateQuantity }) => {
-  const [quantity, setQuantity] = useState(item.quantity);
-
+const CartItem = ({ item, onDelete, updateQuantity }) => {
   const onIncrease = () => {
-    const newQuantity = quantity + 1;
-    setQuantity(newQuantity);
-    updateQuantity(item.id, item.option, newQuantity);
+    const newQuantity = item.quantity + 1;
+    updateQuantity(item.id, item.option, newQuantity); // updateQuantity 함수 호출
   };
 
   const onDecrease = () => {
-    if (quantity > 1) {
-      const newQuantity = quantity - 1;
-      setQuantity(newQuantity);
-      updateQuantity(item.id, item.option, newQuantity);
+    if (item.quantity > 1) {
+      const newQuantity = item.quantity - 1;
+      updateQuantity(item.id, item.option, newQuantity); // updateQuantity 함수 호출
     }
   };
 
-  // 상품 가격을 숫자로 변환하여 계산
   const price = parseInt(item.price);
-  const orderTotal = quantity * price;
+  const orderTotal = item.quantity * price;
 
   return (
     <tr className="basket-change">
@@ -42,14 +36,17 @@ const Cartitem = ({ index, item, onDelete, updateQuantity }) => {
         <PayButton className="plus-button" onClick={onIncrease}>
           +
         </PayButton>
-        {quantity}
+        {item.quantity}
         <PayButton className="plus-button" onClick={onDecrease}>
           -
         </PayButton>
       </td>
       <td>{formatPrice(orderTotal)}원</td>
       <td>
-        <PayButton className="Delete-button" onClick={() => onDelete(index)}>
+        <PayButton
+          className="Delete-button"
+          onClick={() => onDelete(item.id, item.option)}
+        >
           삭제하기
         </PayButton>
       </td>
@@ -58,4 +55,4 @@ const Cartitem = ({ index, item, onDelete, updateQuantity }) => {
   );
 };
 
-export default Cartitem;
+export default CartItem;
