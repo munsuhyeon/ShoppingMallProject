@@ -86,6 +86,7 @@ const DataProvider2 = ({ children }) => {
       title: "[만화] 하이큐 세트 판매 중!",
       description: "흥미진진한 배구 경기와 감동적인 성장물로 만든 스포츠 만화!",
       pTag: "#배구 #성장물 #스포츠 #완결",
+      link: "/product/4/6",
     },
     {
       id: "banner4",
@@ -93,6 +94,7 @@ const DataProvider2 = ({ children }) => {
       alt: "사무용품",
       title: "부드러움 필기감을 원한다면?",
       description: "제브라 삼색 볼펜을 사용해보세요!",
+      link: "/product/5/7",
     },
     {
       id: "banner5",
@@ -100,6 +102,7 @@ const DataProvider2 = ({ children }) => {
       alt: "나이키",
       title: '"활동성과 편안함을 필수인 그들에게"',
       description: "여름 특가 이월 상품 최대 50%",
+      link: "/product/3",
     },
   ];
 

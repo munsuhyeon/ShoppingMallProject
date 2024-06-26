@@ -1,20 +1,25 @@
-import React, { useState } from 'react';
-import PayButton from '../UI/PayButton';
+import React, { useState } from "react";
+import PayButton from "../UI/PayButton";
 
-const Cartitem = ({ index ,item, onDelete, updateQuantity }) => {
+// 가격 포맷팅 함수
+const formatPrice = (price) => {
+  return new Intl.NumberFormat("ko-KR").format(price);
+};
+
+const Cartitem = ({ index, item, onDelete, updateQuantity }) => {
   const [quantity, setQuantity] = useState(item.quantity);
 
   const onIncrease = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    updateQuantity(item.id, item.option,newQuantity);
+    updateQuantity(item.id, item.option, newQuantity);
   };
 
   const onDecrease = () => {
     if (quantity > 1) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      updateQuantity(item.id, item.option,newQuantity);
+      updateQuantity(item.id, item.option, newQuantity);
     }
   };
 
@@ -25,16 +30,13 @@ const Cartitem = ({ index ,item, onDelete, updateQuantity }) => {
   return (
     <tr className="basket-change">
       <td className="img-option-flex">
-        <img
-          src={item.image}
-          alt=""
-        />
+        <img src={item.image} alt="" />
         <div className="option">
           <p>{item.p_name}</p>
           <p>{item.option}</p>
         </div>
       </td>
-      <td>{item.price}</td>
+      <td>{formatPrice(item.price)}원</td>
       <td>0</td>
       <td>
         <PayButton className="plus-button" onClick={onIncrease}>
@@ -45,9 +47,11 @@ const Cartitem = ({ index ,item, onDelete, updateQuantity }) => {
           -
         </PayButton>
       </td>
-      <td>{orderTotal}</td>
+      <td>{formatPrice(orderTotal)}원</td>
       <td>
-        <PayButton onClick={() => onDelete(index)}>삭제하기</PayButton>
+        <PayButton className="Delete-button" onClick={() => onDelete(index)}>
+          삭제하기
+        </PayButton>
       </td>
       <td>배송비 무료</td>
     </tr>

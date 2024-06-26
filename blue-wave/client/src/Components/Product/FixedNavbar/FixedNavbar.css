@@ -1,3 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
+}
+
+a {
+  text-decoration-line: none;
+}
+ul {
+  list-style: none;
+}
+
 /* 상세페이지 네비게이션  */
 .ProductInfo-navbar {
   width: 1200px;

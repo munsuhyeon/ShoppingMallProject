@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 // FixedAd 컴포넌트 정의
 const FixedAd = ({ ad }) => (
@@ -12,7 +13,7 @@ const FixedAd = ({ ad }) => (
         <div className="text">
           <h2 dangerouslySetInnerHTML={{ __html: ad.title }}></h2>
           <p dangerouslySetInnerHTML={{ __html: ad.description }}></p>
-          <a href="">구매하기</a>
+          <Link to={ad.link}>구매하기</Link>
         </div>
       </div>
     </div>
