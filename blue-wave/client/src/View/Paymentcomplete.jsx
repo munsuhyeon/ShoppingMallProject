@@ -1,7 +1,6 @@
 import "./Paymentcomplete.css";
 import { useLocation } from "react-router-dom";
 import Paymentcompleteitem from "./Paymentcompleteitem";
-import Header from "./Header";
 
 export default function Paymentcomplete() {
   const location = useLocation();
@@ -11,7 +10,6 @@ export default function Paymentcomplete() {
 
   return (
     <>
-      <Header />
       <div className="paymentcomplete-body">
         <div className="Paymentcomplete-body-header">
           <div className="page">

@@ -4,6 +4,7 @@ import Cartitem from "./Cartitem";
 import "./Cart.css";
 import { AuthContext } from "../Utils/AuthContext";
 import Header from "./Header";
+import Footer from "../Components/Footer/Footer";
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -96,6 +97,7 @@ export default function Cart() {
           <button onClick={handleOrder}>주문하기</button>
         </div>
       </div>
+      <Footer />
     </>
   );
 }
