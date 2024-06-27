@@ -21,6 +21,9 @@ import BackToTop from "./Components/BackToTop/BackToTop.js";
 import { AuthProvider, AuthContext } from "./Utils/AuthContext.js";
 import FindPassword from "./View/FindPassword.js";
 import ResetPassword from "./View/ResetPassword.js";
+import ChangedPassword from "./View/ChangedPassword.js";
+import FindId from "./View/FindId.js";
+import FindIdResult from "./View/FindIdResult.js";
 
 // import"./App.css"
 
@@ -76,6 +79,18 @@ const AppRoutes = () => {
       <Route
         path="/resetPassword"
         element={loggedIn ? <Navigate to="/" /> : <ResetPassword />}
+      />
+      <Route
+        path="/complete_changePw"
+        element={loggedIn ? <Navigate to="/" /> : <ChangedPassword />}
+      />
+       <Route
+        path="/findId"
+        element={loggedIn ? <Navigate to="/" /> : <FindId />}
+      />
+      <Route
+        path="/findIdResult"
+        element={loggedIn ? <Navigate to="/" /> : <FindIdResult />}
       />
       {/* 기본 라우트 */}
       <Route path="/" element={<Main />} />

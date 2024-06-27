@@ -79,7 +79,7 @@ const Login = () => {
                         <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} />
                         <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"}/>
                         <div style={{display:'flex', justifyContent:'space-around',marginBottom:'20px',fontSize:'13px',fontWeight:'500'}}>
-                            <p>아이디 찾기</p>
+                            <Link to='/findId'><p>아이디 찾기</p></Link>
                             <p>|</p>
                             <Link to='/findPassword'><p>비밀번호 찾기</p></Link>
                         </div>

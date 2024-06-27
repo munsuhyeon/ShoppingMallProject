@@ -8,7 +8,6 @@ const SearchResults = () => {
     const data = {...location.state}; // 검색바에서 넘긴 검색결과
     const searchTerm = data.searchTerm;
     const products = data.result;
-    console.log(products)
 
     // 가격 포맷팅 함수
     const formatPrice = (price) => {
