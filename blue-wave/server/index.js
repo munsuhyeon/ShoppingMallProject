@@ -318,7 +318,6 @@ app.post('/api/search', async (req,res) => {
       });
     });
 
-    console.log("쿼리결과   ::   " + updateResult.affectedRows);
     if (updateResult.affectedRows > 0) {
       return res.status(200).json({ message: 'Search log updated successfully' });
     } else {
@@ -371,12 +370,11 @@ app.delete('/api/allSearch', async (req, res) => {
     console.error('검색기록 삭제 중 오류 발생:', error);
   }
 });
-// 선택한 검색기록 삭제하고 유저의 검색기록 다시 조회해서 반환
+// 선택한 검색기록 삭제
 app.delete('/api/search', async(req,res) => {
   const userId = req.query.userId;
   const seasrchId = req.query.searchId;
   const deleteSql = "DELETE FROM search WHERE user_id = ? AND search_id = ?"
-  const allSearchSql = "SELECT * FROM search WHERE user_id = ?";
   try {
     await new Promise((resolve, reject) => {
       connection.query(deleteSql, [userId,seasrchId], (err, result) => {
