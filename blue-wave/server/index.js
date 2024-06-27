@@ -459,13 +459,13 @@ app.get("/api/orders", async (req, res) => {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE DATE(order_date) = CURDATE()
+      WHERE DATE(order_date) = CURDATE() ORDER BY order_data DESC
     `;
   } else {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_data DESC
     `;
     queryParams = [months];
   }
@@ -769,6 +769,48 @@ app.post("/text", async (req,res) => {
       });
   }
 });
+
+app.get("/api/reviews", async (req, res) => {
+  const months = parseInt(req.query.months, 10);
+  let sqlQuery;
+  let queryParams = [];
+
+  if (months === 0) {
+    sqlQuery = `
+      SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
+      FROM review r
+      JOIN product p ON r.product_id = p.product_id
+      WHERE DATE(r.review_date) = CURDATE() ORDER BY r.review_id DESC `;
+  } else {
+    sqlQuery = `
+      SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
+      FROM review r
+      JOIN product p ON r.product_id = p.product_id
+      WHERE r.review_date >= DATE_SUB(NOW(), INTERVAL ? MONTH )
+;
+    `;
+    queryParams = [months];
+  }
+
+  try {
+    const results = await new Promise((resolve, reject) => {
+      connection.query(sqlQuery, queryParams, (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).send("Error fetching reviews");
+  }
+});
+
+
 /*=================   비밀번호 찾기   =====================*/
 app.get("/api/findPassword", async (req, res) => {
   const userId = req.query.userId;

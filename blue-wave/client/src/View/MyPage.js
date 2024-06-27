@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from "./Header";
 import NavBar from "../Components/MyPage/NavBar";
 import UserInfo from "../Components/MyPage/UserInfo";
-import ReviewText from './ReviewText'
+import ReviewText from '../Components/MyPage/ReviewText'
 import OrderSheet from '../Components/MyPage/OrderSheet';
 import "./MyPage.css";
 
