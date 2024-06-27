@@ -1,0 +1,143 @@
+.ordersheet {
+  width: 980px ;
+  margin-right: -20px;
+}
+
+
+.order_inquiry {
+    text-align: center;
+    margin: 5px;
+}
+
+.order_inquiry h1{
+  font-size: 25px;
+    font-weight: 600;
+    font-family: Arial, sans-serif;
+}
+
+.ordersheet_table{
+    max-width: 1000px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.ordersheet_thead th  {
+    text-align: center;
+    background-color: #6ca6f3;
+}
+
+.ordersheet_thead tr {
+  vertical-align: middle;
+}
+
+
+.ordersheet_tbody td {
+    border-bottom: 1px solid #51c1f7;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    vertical-align: middle;
+}
+
+
+.period_month {
+    padding-left: 30px;
+}
+
+.period_month .btn {
+        padding: 1px 10px;
+        background-color: #2764e6;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 13px;
+        margin-right: 10px;
+    }
+
+
+    .btn.selected {
+        background-color: #51c1f7; 
+        color: white;
+    }
+
+
+.order {
+    margin:20px;
+    width: 100%;
+    text-align: center;
+}
+
+
+.order_list h3{
+    font-size: 18px;
+    text-align: left;
+    font-weight: 500;
+    font-family: Arial, sans-serif;
+    margin-bottom: 10px;
+}
+
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+
+.pagination .btn {
+    background-color: #2764e6; 
+    color: #fff;
+    margin: 0 10px;
+    padding: 0px 8px;
+    width: 50px;
+    border: none;
+}
+
+.pagination-btn:disabled {
+    background-color: #e0e0e0; 
+    color: #a0a0a0; 
+    cursor: default;; 
+    border: 1px solid #d0d0d0; 
+}
+
+
+.order_guide {
+    background-color: rgb(243, 243, 243);
+    padding: 20px 26px 16px;
+    text-align: left;
+    width: 100%;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+    margin-top: 50px;
+}
+
+.order_guide .headline {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.order_guide .subtitle {
+    font-size: 14.3px;
+    font-weight: 300;
+    margin-bottom: 10px;
+    color: rgb(136, 136, 136);
+}
+
+.order_guide .headline span {
+    color: #e52628;
+}
+
+.order_guide .subtitle span {
+    font-size: 15px;
+    font-weight: 500;
+    display: block;
+    margin-top: 10px;
+}
+
+.order_guide .subtitle a {
+    color: rgb(72, 71, 71);
+}
+
+
+
+

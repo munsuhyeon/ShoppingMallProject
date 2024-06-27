@@ -1,0 +1,154 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration-line: none;
+}
+ul {
+  list-style: none;
+}
+/* AllProduct 첫번째 section */
+/* 상품section */
+.AllProduct-Section {
+  width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 전체상품이름 */
+.AllProduct-title {
+  width: 1175px;
+  margin: 0 auto;
+}
+.AllProduct-title h3 {
+  font-size: 20px;
+  margin: 50px 40px 0px 9px;
+  text-align: left;
+}
+
+.AllProduct-title p {
+  font-size: 14px;
+  color: rgb(170, 170, 170);
+  margin-left: 9px;
+}
+
+/* 상품전체 */
+.Allproduct {
+  width: 1200px;
+  display: flex;
+  gap: 20px 0px;
+  flex-wrap: wrap; /* 요소들이 자동으로 줄 바꿈되도록 설정 */
+  justify-content: flex-start;
+  margin-bottom: 80px;
+}
+
+/* 썸네일+제목+설명+별 */
+.Allproduct .Product-Card {
+  width: 240px; /* 너비 변경 */
+  height: auto;
+  margin: 0 0 20px; /* 상하 마진만 적용 */
+  padding: 20px;
+  background-color: #fff;
+}
+
+.Product-Thumbnail {
+  width: 200px;
+  height: 200px;
+  overflow: hidden; /* 넘치는 이미지를 숨김 */
+  border-radius: 8px; /* 부모 요소에 border-radius 적용 */
+}
+
+.Product-Thumbnail:hover {
+  box-shadow: 0.2em 0.2em 0.3em #9f9f9f;
+  transition: all 0.1s linear;
+}
+
+/* 썸네일 이미지 */
+.Product-Thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #ffffff;
+  transition: transform 0.1s linear; /* 변환 효과에 대한 전환 효과 설정 */
+}
+
+/* 썸네일 이미지 마우스오버 */
+.Allproduct .Product-Card:hover img {
+  transform: scale(1.05);
+}
+
+/* 상품이름 글 */
+.Product-Card h4 {
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+/* 상품설명 글 */
+.Product-Card .Product-Description {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(72, 72, 72);
+  margin-bottom: 20px;
+}
+
+/* 가격 */
+.Product-Card .Product-Price {
+  font-weight: bold;
+  color: black;
+}
+
+/* 별표시 */
+.Product-Card .star-ratings-fill span {
+  color: rgb(254, 138, 5);
+  font-size: 20px;
+}
+
+/* 별점 */
+.star-ratings {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 5px;
+}
+.star-ratings-fill {
+  color: #f39c12;
+}
+.star-rating input {
+  display: none;
+}
+.star-ratings-fill span {
+  font-size: 14px;
+}
+
+.star-rating label {
+  -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 2.3px;
+  -webkit-text-stroke-color: rgb(20, 20, 20);
+  cursor: pointer;
+}
+
+.star-rating :checked ~ label {
+  -webkit-text-fill-color: gold;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  -webkit-text-fill-color: #fff58c;
+}
+
+/* Allproduct 두번째 section */
+
+.AllProduct-Section2 {
+  width: 1200px;
+  height: auto;
+  margin: 50px auto;
+  border-top: 1px solid rgb(210, 210, 210);
+}

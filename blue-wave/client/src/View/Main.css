@@ -1,0 +1,328 @@
+/* product1  */
+#product {
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  margin: 0 auto;
+  margin-top: 50px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+#product a {
+  text-decoration: none;
+}
+
+/* product_container */
+.product_container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* product_tile  */
+.content_title {
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.title h1 {
+  font-size: 30px;
+  text-align: left;
+}
+
+/* product sub_title */
+.sub_title {
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.sub_title p {
+  font-size: 14px;
+  color: #666;
+  margin: 5px;
+}
+/* product sub_title 더 보기  */
+.sub_title a {
+  font-size: 16px;
+  text-decoration-line: none;
+  color: #d3d3d3;
+  font-weight: bold;
+}
+
+.sub_title a:hover {
+  text-decoration-line: underline;
+}
+
+/* product_all */
+
+.product_all {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+}
+
+/* product_card <이미지/제목/설명 */
+.product_card {
+  width: 100%;
+  max-width: 200px;
+  margin: 0 5px;
+  margin-bottom: 30px;
+  text-align: left;
+}
+
+/* product_img 이미지  */
+.product_img img {
+  width: 100%;
+  max-width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background-color: #ffffff;
+  margin-top: 5px;
+  border-radius: 5px;
+}
+
+.product_img2 img {
+  width: 100%;
+  max-width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background-color: #ffffff;
+  margin-top: 50px;
+  border-radius: 5px;
+}
+.product_info h4 {
+  font-size: 13px;
+  font-weight: bolder;
+  color: black;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.product_content {
+  font-size: 12px;
+  font-weight: normal;
+  color: black;
+  margin-top: 2px;
+}
+
+.product_description {
+  font-size: 12px;
+  font-weight: normal;
+  background-color: #51c0f7dc;
+  display: inline-block;
+  border-radius: 2px;
+  margin: 5px 0;
+  color: white;
+  padding: 1px 5px;
+}
+
+.product_price p {
+  font-size: 12px;
+  font-weight: normal;
+  color: black;
+}
+
+.product_price .price {
+  font-size: 14px;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+/* 배너광고 1 */
+
+#banner {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: #eaeaea;
+  padding: 20px;
+}
+
+.banner_item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.content img {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+  margin-top: 50px;
+  margin-bottom: 25px;
+}
+.content .text {
+  margin-top: 5px; /* 이미지와 텍스트 사이 간격 조정 */
+}
+
+.content .text h2 {
+  font-size: 30px;
+  margin-bottom: 5px;
+  color: #121010;
+}
+
+.text a {
+  display: inline-block;
+  color: #000000;
+  font-weight: bold;
+  padding: 5px 10px;
+  text-decoration: underline;
+}
+
+#banner p {
+  margin-top: 13px;
+  font-weight: bold;
+}
+
+#banner .p1 {
+  font-size: 18px;
+  color: #033d2c;
+  text-decoration: underline;
+}
+
+#banner .p1_1 {
+  font-size: 14px;
+  color: #313131;
+}
+
+#banner a {
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 2px;
+  color: #656565;
+}
+/* 광고2 배너 만들기 */
+
+#banner2 {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgb(199 227 212);
+  padding: 20px;
+}
+
+#banner2 .text h2 {
+  color: rgba(4, 62, 11, 0.987);
+  font-size: 40px;
+  margin-bottom: 40px;
+}
+
+#banner2 a {
+  color: rgb(30, 30, 30);
+  border-radius: 2px;
+  font-size: 20px;
+}
+.content2 img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+}
+
+/* 광고 배너 3 */
+
+#banner3 {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgb(255, 225, 180);
+  padding: 20px;
+}
+
+#banner3 h2 {
+  color: rgb(64, 63, 63);
+  margin-bottom: 20px;
+}
+
+#banner3 p {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+#banner3 .p_title {
+  font-size: 16px;
+  color: #370f03;
+  font-weight: bolder;
+  margin-bottom: 20px;
+}
+
+#banner3 .p_tag {
+  font-weight: bolder;
+  font-size: 15px;
+  color: rgb(62, 56, 56);
+  margin-bottom: 20px;
+}
+.content3 img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+/* 광고 배너 4 */
+
+#banner4 {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgb(255, 240, 169);
+  padding: 20px;
+}
+
+.content4 img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+#banner4 h2 {
+  color: rgb(43, 42, 42);
+  margin-bottom: 20px;
+}
+
+#banner4 p {
+  font-weight: bolder;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #383838;
+}
+
+#banner4 a {
+  background-color: ivory;
+  border-radius: 2px;
+  color: rgb(67, 64, 64);
+}
+/* 광고 배너 5 */
+
+#banner5 {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: rgb(129, 205, 194);
+  padding: 20px;
+}
+
+#banner5 h2 {
+  margin-bottom: 20px;
+  color: #000000;
+  font-weight: bold;
+}
+
+#banner5 a {
+  color: #333;
+}
+
+.content5 img {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+}

@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+.MyPage{
+    font-family: "Noto Sans KR", sans-serif;
+}
+.wrapper{
+    display: flex;
+    justify-content: space-between;
+    margin: 50px auto 80px;
+    width: 1280px;
+}
+main{
+    flex-basis: 900px;
+    background-color: rgb(255, 255, 255);
+}
+.edit_wrraper{
+    display: flex;
+    justify-content: space-between;
+    margin: 0 20px;
+    padding: 25px 0px 20px;
+}
+.edit_area{
+    display: flex;
+    align-items: flex-end;
+}
+.edit_profile{
+    font-weight: 500;
+    font-size: 20px;
+    letter-spacing: -0.5px;
+    line-height: 28px;
+}
+.form_wrapper{
+    padding: 0 20px;
+}
+.form_area{
+    width: 100%;
+    margin: 0px auto 20px;
+}

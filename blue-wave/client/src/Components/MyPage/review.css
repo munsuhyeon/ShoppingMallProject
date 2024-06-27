@@ -1,0 +1,176 @@
+
+
+.modal_body{
+    position:absolute;
+    top:50%; 
+
+
+    width:500px;  
+    height:600px; 
+
+    padding:40px;  
+
+    /* text-align: center; */
+
+    background-color: rgb(255,255,255); 
+    border-radius:10px; 
+    box-shadow:0 2px 3px 0 rgba(34,36,38,0.15);
+
+    transform:translateY(-50%); 
+
+}
+
+.review_btn {
+    background-color: #2764e6;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: none;
+}
+
+
+.modal{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(88, 88, 88, 0.5);
+    display: flex;
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+}  
+
+
+/* 내용  */
+.reviewContents {
+    width: 100%;
+    height: 250px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: solid 1.5px #51c1f7;
+    border-radius: 10px;
+    font-size: 16px;
+    resize: none;
+    position: relative;
+    top: 50px;
+    text-align: left;
+}
+
+
+
+/* 제목 */
+.reviewContents_1{
+    position: relative;
+    top: 25px;
+    width: 100%;
+    height: 10px;
+    padding: 15px;
+    box-sizing: border-box;
+    border: solid 1.5px #51c1f7;
+    border-radius: 10px;
+    font-size: 16px;
+    resize: none;
+    margin-top: 10px;
+    text-align: left;
+}
+
+
+
+.mb-3 {
+    width: 90%;
+    margin: auto;
+}
+
+/* 별점 */
+#myform fieldset{
+    margin-top: 20px;
+    direction: rtl;
+    border:0;
+ text-align: center;
+}
+/* #myform fieldset legend{
+    text-align: right;
+} */
+#myform input[type=radio]{
+    display: none;
+}
+#myform label{
+    font-size: 32px;
+    color: transparent;
+    text-shadow: 0 0 0 #e6e6e6;
+    
+}
+#myform label:hover{
+    text-shadow: 0 0 0 rgba(0, 212, 250, 0.99);
+}
+#myform label:hover ~ label{
+    text-shadow: 0 0 0 rgba(0, 212, 250, 0.99);
+}
+#myform input[type=radio]:checked ~ label{
+    text-shadow: 0 0 0 rgba(0, 212, 250, 0.99);
+}
+
+/* 버튼 */
+.ReviewButton{
+    position: relative;
+    top: 80px;
+    height: 50px;
+    cursor: pointer;
+    width: 50%;
+    background-color: #51c1f7 ;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    /* margin: auto ; */
+    /* margin: 40px auto ; */
+}
+
+.ReviewButton_x{
+    border: none;
+    position: absolute;
+    bottom: 95%;
+    left: 92%;
+    background-color: #ffffff;
+    color: #51c1f7;
+    font-weight: bold;
+    font-size: 16px;
+}
+.ReviewButton_x:hover {
+    background-color: #2764e6;
+    color:white;
+        }
+.button_reivew{
+    width: 100%;
+    display: flex;
+    margin-top: 6%;
+     /* justify-content: space-between;
+    align-items: center; */
+} 
+
+.ReviewButton:hover {
+    background-color:#2764e6 ;
+    border: none;
+}
+
+
+
+
+
+
+ 
+
+.div1 {
+    display: grid;
+    grid-template-columns: repeat(4, 25%);
+    grid-template-rows: 60px;
+    
+}
+
+.product_id {
+    text-align: start;
+    grid-column: 2/5;
+    grid-row: 1/2;
+}

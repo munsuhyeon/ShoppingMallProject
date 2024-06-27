@@ -1,0 +1,108 @@
+/* 상세페이지 섹션 */
+#ProductInfo-Section {
+  width: 1200px;
+  height: auto;
+  margin: 0 auto;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 표 아래 경고문 */
+.Notation-warning {
+  width: auto;
+  border: 1px solid #cccccc;
+  padding: 30px;
+  color: rgb(0, 0, 0);
+  margin-bottom: 50px;
+  font-weight: bold;
+}
+
+.Notation-warning i {
+  margin-right: 5px;
+}
+
+/* 필수 표기정보 표 */
+.Notation {
+  margin-bottom: 50px;
+}
+.Notation h3 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.Notation table {
+  width: 100%;
+  border-collapse: separate; /* 셀의 경계를 별도로 설정 */
+  border-spacing: 0; /* 셀 간격 초기화 */
+}
+
+.Notation th,
+.Notation td {
+  padding: 8px;
+  text-align: left;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+/* 첫 번째 열의 너비 조정 */
+.Notation th:first-child,
+.Notation th:nth-child(3),
+.Notation th:nth-child(4) {
+  width: 20%;
+}
+
+.Notation th {
+  background-color: #f5f5f5;
+}
+
+/* 상세이미지 */
+.ProductInfo-Container {
+  width: 100%;
+  position: relative;
+  margin-bottom: 50px;
+}
+
+/* 이미지 숨기기 */
+.ProductInfo-ImageWrapper {
+  width: 120%; /* 이미지의 너비를 넓힙니다 */
+  margin: 0 -10%; /* 이미지를 가운데 정렬하기 위해 좌우 마진을 조정합니다 */
+  text-align: center;
+  position: relative;
+  margin-bottom: 50px;
+  height: 600px;
+  overflow-y: hidden;
+  position: relative; /* 추가: 그라데이션을 위해 상대 위치로 설정 */
+}
+
+/* 그라데이션 효과 */
+.ProductInfo-GradientOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 800px; /* 그라데이션의 높이를 조정합니다 */
+  background: linear-gradient(
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.1),
+    rgb(255, 255, 255)
+  );
+  z-index: 3;
+}
+
+/* 버튼 */
+.ProductInfo-OpenButton {
+  display: block;
+  background-color: white;
+  color: black;
+  border-radius: 4px;
+  border: 1px solid #6ca6f3;
+  padding: 16px 0px;
+  width: 230px;
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 auto;
+  cursor: pointer;
+  text-align: center;
+}

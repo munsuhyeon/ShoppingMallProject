@@ -1,0 +1,195 @@
+.Product-Section {
+  width: 1200px;
+  margin: 80px auto 120px;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+/* 맨 위 주문섹션에 이미지와 주문(배송정보, 옵션) 분리 */
+.Product-Section-Inner {
+  display: flex;
+}
+
+/* 분리된 공간중 이미지가 차지할 공간 */
+.Product-ImageCard {
+  width: 48%;
+}
+
+/* 메인이미지 */
+.Product-Image {
+  width: 480px;
+  height: 480px;
+  margin-bottom: 25px;
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* 메인이미지 */
+.Product-Image img {
+  /* 이미지가 부모 요소에 맞게 확대됨 */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.Product-Image img:hover {
+  opacity: 0.5;
+}
+/* 확대된 이미지 컨테이너 스타일 */
+.zoom-container {
+  position: absolute;
+  top: 0;
+  left: 100%; /* 원본 이미지 오른쪽에 배치 */
+  width: 600px;
+  height: 600px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  display: none; /* 기본적으로 숨김 */
+  margin-left: 20px;
+  z-index: 1;
+}
+
+/* 확대된 이미지 스타일 */
+.zoomed-image {
+  width: 100%;
+  height: 100%; /* 원하는 크기로 조정 */
+  object-fit: cover;
+}
+
+/* 마우스를 올렸을 때 확대된 이미지 컨테이너를 보여줌 */
+.Product-Image:hover .zoom-container {
+  display: block;
+}
+
+/* 작은 이미지들 */
+.Small-Image {
+  display: flex;
+}
+
+/* 작은 이미지들 */
+.Small-Image img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.Small-Image img:hover {
+  box-shadow: 0 0 0 2px #2764e6;
+}
+
+/* 오른쪽 주문(옵션,배송정보) 공간 */
+.Product-ImageCard-Right {
+  width: 52%;
+}
+
+.Right-Title {
+  margin-bottom: 40px;
+}
+
+.Right-Title h3 {
+  font-size: 35px;
+  font-weight: 900;
+}
+
+.Right-Title h4 {
+  font-size: 25px;
+  font-weight: 550;
+}
+
+.Right-Title p {
+  font-size: 17px;
+  color: rgb(167, 167, 167);
+}
+
+.Right-Delivery h5 {
+  font-size: 17px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* 배송정보 왼, 오 분리 */
+.DeliveryInfo {
+  display: flex;
+  margin-bottom: 60px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgb(194, 194, 194);
+}
+
+/* 배송정보 왼 */
+.DeliveryInfo-2 {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(80, 80, 80);
+}
+
+/* 한줄 당 마진 */
+.DeliveryInfo-2 p {
+  margin-bottom: 10px;
+}
+
+/* 배송정보 오 */
+.DeliveryInfo-3 {
+  font-size: 17px;
+  margin: 0 10px;
+  color: rgb(126, 126, 126);
+  overflow: hidden;
+}
+
+.DeliveryInfo-3 p {
+  margin-bottom: 10px;
+}
+
+.DeliveryInfo-3 span {
+  color: rgb(198, 198, 198);
+}
+
+/* 상품 총 금액 */
+.Right-Price {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #6ca6f3;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+.Right-Price p {
+  font-size: 18px;
+}
+
+.Right-Price span {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* 장바구니, 구매 버튼 */
+.Right-Button {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Right-basket button {
+  background-color: #2764e6;
+  width: 260px;
+  height: 52px;
+  font-size: 20px;
+  border: none;
+  border-radius: 10px;
+  color: rgb(236, 236, 236);
+  font-weight: 550;
+  cursor: pointer;
+  text-align: center;
+}
+
+.Right-Buy button {
+  background-color: #6ca6f3;
+  width: 260px;
+  height: 52px;
+  font-size: 20px;
+  border: none;
+  border-radius: 10px;
+  color: rgb(236, 236, 236);
+  font-weight: 550;
+  cursor: pointer;
+  text-align: center;
+}
