@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./OrderSheet.css";
+import Review from "./Review"
 
 const OrderSheet = () => {
     const [orderData, setOrderData] = useState([]);
@@ -33,6 +34,7 @@ const OrderSheet = () => {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = orderData.slice(indexOfFirstOrder, indexOfLastOrder);
+    console.log(currentOrders)
 
     // 페이지 번호 변경 핸들러
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -103,7 +105,14 @@ const OrderSheet = () => {
                                             <td>{order.order_count}</td>
                                             <td>{order.total_amount}</td>
                                             <td className="order_time">{formatDate(order.order_date)}</td>
-                                            <td><button className="btn" type="submit">리뷰작성</button></td>
+                                            {/* <td><button className="btn" type="submit">리뷰작성</button></td> */}
+                                            <Review
+                                              orderId={order.order_id}
+                                              productId={order.product_id}
+                                              userId={order.user_id}
+                                              pname={order.p_name}
+                                              mainimage={order.main_image}
+                                            />
                                         </tr>
                                     ))}
                                 </tbody>

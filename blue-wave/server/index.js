@@ -455,7 +455,7 @@ app.post("/reqOrder", (req, res, next) => {
 });
 
 
-/*=================   로그인   =====================*/
+/*=================   구매내역   =====================*/
 
 // 주문 데이터를 가져오는 API 엔드포인트
 app.get("/api/orders", async (req, res) => {
@@ -495,12 +495,6 @@ app.get("/api/orders", async (req, res) => {
     res.status(500).send("Error fetching orders");
   }
 });
-
-
-
-
-
-
 /*=================   로그인   =====================*/
 app.post("/api/login", async (req, res) => {
   let { userId, userPassword } = req.body; // 클라이언트에서 받은 로그인정보
@@ -751,6 +745,44 @@ app.post("/api/updateUser", async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "회원정보 수정중 오류가 발생하였습니다",
+      error: err.message,
+    });
+  }
+});
+/*=================   비밀번호 찾기   =====================*/
+app.get("/api/finwPassword", async (req, res) => {
+  console.log(req.query)
+  const userId = req.query.userId;
+  const userEmail = req.query.userEmail;
+  try {
+    // 전달받은 아이디와 이메일로 유저 찾기
+    const findIdSql = "SELECT user_id,user_email FROM user WHERE user_id = ? AND user_email = ?";
+
+    const findUserResult = await new Promise((resolve, reject) => {
+      connection.query(findIdSql, [userId,userEmail], (err, result) => {
+        if (err) {
+          console.error("쿼리 실행 중 오류 발생:", err);
+          reject(err);
+          
+        } else {
+          resolve(result);
+        }
+      });
+    });
+    console.log("findUserResult.length      ", findUserResult.length)
+   
+    if (findUserResult.length > 0) {
+      // 일치하는 사용자가 있는 경우
+      return res.status(200).json({ success: true, result: findUserResult[0] });
+    }else{
+       // 일치하는 사용자가 없는 경우
+      return res.status(200).json({ success: false, message: "일치하는 사용자가 없습니다" });
+    }
+  } catch (err) {
+    console.error("서버에서 오류 발생 : ", err);
+    return res.status(500).json({
+      success: false,
+      message: "사용자 조회 중 오류가 발생하였습니다",
       error: err.message,
     });
   }

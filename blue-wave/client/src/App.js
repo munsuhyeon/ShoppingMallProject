@@ -19,6 +19,9 @@ import MyPage from "./View/MyPage.js";
 import SearchResults from "./View/SearchResults";
 import BackToTop from "./Components/BackToTop/BackToTop.js";
 import { AuthProvider, AuthContext } from "./Utils/AuthContext.js";
+import FindPassword from "./View/FindPassword.js";
+import ResetPassword from "./View/ResetPassword.js";
+
 // import"./App.css"
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
@@ -65,6 +68,14 @@ const AppRoutes = () => {
       <Route
         path="/login"
         element={loggedIn ? <Navigate to="/" /> : <Login />}
+      />
+      <Route
+        path="/findPassword"
+        element={loggedIn ? <Navigate to="/" /> : <FindPassword />}
+      />
+      <Route
+        path="/resetPassword"
+        element={loggedIn ? <Navigate to="/" /> : <ResetPassword />}
       />
       {/* 기본 라우트 */}
       <Route path="/" element={<Main />} />
