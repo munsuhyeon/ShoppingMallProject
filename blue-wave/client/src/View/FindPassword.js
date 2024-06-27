@@ -19,12 +19,18 @@ const FindPassword = () => {
         try{
             const userId = data.userId;
             const userEmail = data.userEmail;
-            const response = await axios.get(`http://localhost:8000/api/finwPassword?userId=${userId}&userEmail=${userEmail}`);
-                //setError('userEmail',{message: response.data.message})
-                console.log(response)
-                //navigate('/resetPassword', {state:response.data.result}) 
+            const response = await axios.get(`http://localhost:8000/api/findPassword?userId=${userId}&userEmail=${userEmail}`);
+            console.log(response)
+            if(response.data.message === "wrong id"){
+                setError('userId',{message: "존재하지 않는 아이디입니다"})
+            }else if(response.data.message === "wrong email"){
+                setError('userEmail',{message: "존재하지 않는 이메일입니다"})
+            }else if(response.data.success === true){
+                alert("true")
+                //navigate('/resetPassword', {state:{userId:userId, userEmail:userEmail}}) 
+            }
         } catch(error){
-            alert("서버와의 응답 중 오류가 발생하였습니다")
+            alert(error.message)
             console.log(error)
         }
     }

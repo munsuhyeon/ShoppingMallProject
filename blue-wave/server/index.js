@@ -778,34 +778,40 @@ app.post("/text", async (req,res) => {
   }
 });
 /*=================   비밀번호 찾기   =====================*/
-app.get("/api/finwPassword", async (req, res) => {
-  console.log(req.query)
+app.get("/api/findPassword", async (req, res) => {
   const userId = req.query.userId;
   const userEmail = req.query.userEmail;
-  try {
-    const findAuthSql = "SELECT user_id AS id, NULL AS email FROM user WHERE user_id = ? UNION SELECT NULL AS id, user_email AS email FROM user WHERE user_email = ?"
-    const findUserResult = await new Promise((resolve, reject) => {
-      connection.query(findAuthSql, [userId,userEmail], (err, result) => {
-        if (err) {
-          console.error("쿼리 실행 중 오류 발생:", err);
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
+  try{
+    const findAuthSql = "SELECT user_id AS id, NULL AS email FROM user WHERE user_id = ? UNION ALL SELECT NULL AS id, user_email AS email FROM user WHERE user_email = ?"
+    const [findAuth] = await new Promise((resolve,reject) => {
+      connection.query(findAuthSql, [userId,userEmail],(err,result) => {
+        if(err) reject(err);
+        else resolve(result);
+      })
+    })
+    if (!findAuth || findAuth.length === 0) {
+      return res.status(404).json({ success: false, message: "존재하지 않는 아이디 또는 이메일입니다" });
+    }
+    let idExists = false;
+    let emailExists = false;
+    console.log("======findAuth========")
+    console.log(findAuth)
+    findAuth.forEach(result => {
+      if(result.user_id) idExists = true;
+      if(result.user_email) emailExists = true;
     });
-    console.log("findUserResult.length      ", findUserResult.length)
-    console.log("findUserResult     ", findUserResult)
-    
-    return res.status(200).json({result: findUserResult[0] });
-  } catch (err) {
-    console.error("서버에서 오류 발생 : ", err);
-    return res.status(500).json({
-      success: false,
-      message: "사용자 조회 중 오류가 발생하였습니다",
-      error: err.message,
-    });
+    if(!idExists){
+      return res.status(200).json({success:false, message:"wrong id"})
+    }else if(!emailExists){
+      return res.status(200).json({success:false, message:"wrong email"})
+    }else{
+      return res.status(200).json({success:true})
+    }
+  }catch(error){
+    console.error(error);
+    return res.status(500).json({success:false, message:"서버 오류가 발생하였습니다"})
   }
+  
 });
 /*==========================================================*/
 
