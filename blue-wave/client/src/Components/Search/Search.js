@@ -154,7 +154,7 @@ const Search = () => {
                             <li key={item.search_id}  className='keyword_wrapper'>
                                 <div onClick={() => searchDB(item.key_word)} className='dropdownKeyword'>{item.key_word}</div>
                                 <div onClick={() => handleDeleteKeyword(item.search_id)}>
-                                    <img src={process.env.PUBLIC_URL + `assets/close-svgrepo-com.svg`} alt="close" className='closeImg'/>
+                                    <img src={`${process.env.PUBLIC_URL}/assets/close-svgrepo-com.svg`} alt="close" className='closeImg'/>
                                 </div>
                                 
                             </li>
