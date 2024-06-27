@@ -20,6 +20,13 @@
 
 }
 
+.review_btn {
+    background-color: #2764e6;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 4px;
+    border: none;
+}
 
 
 .modal{
