@@ -755,5 +755,41 @@ app.post("/api/updateUser", async (req, res) => {
     });
   }
 });
+/*=========================리뷰 작성=================================*/
+app.post("/text", async (req,res) => {
+  try{
+      console.log(req.body)
+      let {
+          user_id,
+          product_id,
+          order_id,
+          title,
+          contents,
+          star_rating,
+      } = req.body;
+  console.log(req.body)
+      
+        const insertQuery = "INSERT INTO review ( user_id,product_id,order_id,title, contents, star_rating) VALUES ( ?, ?, ?, ?, ?, ?)";
+          await new Promise((resolve,reject) => {
+              connection.query(insertQuery,[user_id,product_id,order_id,title,contents,star_rating],(err,result) => {
+                  if(err) reject(err);
+                  else resolve(result);
+              });
+          });
+          return res.json({success:true, message : "리뷰가 등록되었습니다"})
+  } catch(error){
+      console.error("서버에서 오류 발생 : ", error);
+      return res.status(500).json({
+          success: false,
+          message: "리뷰등록 중 오류가 발생하였습니다",
+          error: error.message
+      });
+  }
+});
+
+
+
+
 /*==========================================================*/
+
 app.listen(port, () => console.log(`${port}번으로 서버 실행`));
