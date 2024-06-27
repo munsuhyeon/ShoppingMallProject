@@ -47,7 +47,7 @@ const OrderSheet = () => {
         const day = ('0' + date.getDate()).slice(-2); // 2자리로 맞추기
         return `${year}-${month}-${day}`;
     };
-console.log(currentOrders)
+    // console.log(currentOrders)
     return (
         <div className='ordersheet'>
             <div className="order_inquiry">

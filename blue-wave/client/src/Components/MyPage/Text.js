@@ -4,7 +4,7 @@ import axios from 'axios';
 import "./review.css"
 import OrderSheet from './OrderSheet';
 
-const Text = ({userId,orderId,productId,pname,mainimage}) => {
+const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
     const navigate = useNavigate();
 
 
@@ -18,7 +18,6 @@ const Text = ({userId,orderId,productId,pname,mainimage}) => {
         contents: '',
         star_rating: '',
     });
-   console.log(formData)
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,7 +28,8 @@ const Text = ({userId,orderId,productId,pname,mainimage}) => {
             const response = await axios.post('http://localhost:8000/text', formData);
             if(response.data.success){
                 alert(response.data.message);
-                navigate('/');
+                isClose()
+                navigate('/myPage');
             } else{
                 alert(response.data.message);
             }
@@ -59,7 +59,7 @@ const Text = ({userId,orderId,productId,pname,mainimage}) => {
         
         <div>
             <div className='div1'>
-                <img src={mainimage}></img>
+                <img src={mainimage} style={{width:'90px'}}></img>
             <p className='product_id'>{pname}</p>
             </div>
             

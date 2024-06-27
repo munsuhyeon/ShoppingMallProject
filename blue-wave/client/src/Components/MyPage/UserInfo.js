@@ -37,7 +37,6 @@ const UserInfo = () => {
                 headers: { user_id: `${userId}` }
             });
             const userData = response.data.data[0];
-            console.log(userData)
             const defaultValues = {
                 userId: userData.user_id,
                 userPassword: '',

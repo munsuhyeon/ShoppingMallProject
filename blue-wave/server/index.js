@@ -459,13 +459,13 @@ app.get("/api/orders", async (req, res) => {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE DATE(order_date) = CURDATE() ORDER BY order_data DESC
+      WHERE DATE(order_date) = CURDATE() ORDER BY order_date DESC
     `;
   } else {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_data DESC
+      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_date DESC
     `;
     queryParams = [months];
   }
@@ -809,8 +809,6 @@ app.get("/api/reviews", async (req, res) => {
     res.status(500).send("Error fetching reviews");
   }
 });
-
-
 /*=================   비밀번호 찾기   =====================*/
 app.get("/api/findPassword", async (req, res) => {
   const userId = req.query.userId;
