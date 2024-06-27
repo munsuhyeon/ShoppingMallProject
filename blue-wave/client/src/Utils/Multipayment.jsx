@@ -1,4 +1,4 @@
-const MultiPayment = ({ paymentData, setSelectedPaymentMethod, index }) => {
+const MultiPayment = ({ paymentData, setSelectedPaymentMethod, index, onChange }) => {
   const { paymentName } = paymentData;
 
   return (
@@ -11,7 +11,7 @@ const MultiPayment = ({ paymentData, setSelectedPaymentMethod, index }) => {
             type="radio"
             name="payment"
             value={paymentName}
-            onChange={() => setSelectedPaymentMethod(paymentData)}
+            onChange={() => onChange(paymentData)}
             key="kakaopay" // 고유한 key prop 추가
           />
           <img src="http://localhost:8000/img/kakaopaylogo.png" alt="" className="kakaopay" />
@@ -25,7 +25,7 @@ const MultiPayment = ({ paymentData, setSelectedPaymentMethod, index }) => {
             type="radio"
             name="payment"
             value={paymentName}
-            onChange={() => setSelectedPaymentMethod(paymentData)}
+            onChange={() => onChange(paymentData)}
             key={`payment_${index}`} // 고유한 key prop 추가
           />
           {paymentName}
