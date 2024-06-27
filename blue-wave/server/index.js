@@ -271,7 +271,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 /*=================   검색 수정.ver   =====================*/
-
 // 입력한 검색어를 DB에서 조회하는 기능
 app.get('/api/search', async (req,res) => {
   const term = req.query.term;
@@ -388,7 +387,7 @@ app.delete('/api/search', async(req,res) => {
         resolve(result);
       });
     });
-     res.status(200).json({message:success});
+     res.status(200).json({message:'success'});
   } catch (error) {
     // 오류 발생 시 콘솔에 로그 남기고 클라이언트에 500 에러 응답
     console.error('검색기록 삭제 중 오류 발생:', error);
