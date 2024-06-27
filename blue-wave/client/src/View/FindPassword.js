@@ -20,13 +20,9 @@ const FindPassword = () => {
             const userId = data.userId;
             const userEmail = data.userEmail;
             const response = await axios.get(`http://localhost:8000/api/finwPassword?userId=${userId}&userEmail=${userEmail}`);
-            if(response.data.success === false){
-                setError('userEmail',{message: response.data.message})
-            }else{
-                console.log(response.data.result)
-                navigate('/resetPassword', {state:response.data.result}) 
-            }
-
+                //setError('userEmail',{message: response.data.message})
+                console.log(response)
+                //navigate('/resetPassword', {state:response.data.result}) 
         } catch(error){
             alert("서버와의 응답 중 오류가 발생하였습니다")
             console.log(error)

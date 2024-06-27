@@ -47,7 +47,7 @@ const OrderSheet = () => {
         const day = ('0' + date.getDate()).slice(-2); // 2자리로 맞추기
         return `${year}-${month}-${day}`;
     };
-
+console.log(currentOrders)
     return (
         <div className='ordersheet'>
             <div className="order_inquiry">
@@ -105,8 +105,8 @@ const OrderSheet = () => {
                                             <td>{order.order_count}</td>
                                             <td>{order.total_amount}</td>
                                             <td className="order_time">{formatDate(order.order_date)}</td>
-                                            {/* <td><button className="btn" type="submit">리뷰작성</button></td> */}
                                             <Review
+                                            className="btn"
                                               orderId={order.order_id}
                                               productId={order.product_id}
                                               userId={order.user_id}

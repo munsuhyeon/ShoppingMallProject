@@ -271,7 +271,6 @@ const authenticateToken = (req, res, next) => {
   });
 };
 /*=================   검색 수정.ver   =====================*/
-
 // 입력한 검색어를 DB에서 조회하는 기능
 app.get('/api/search', async (req,res) => {
   const term = req.query.term;
@@ -388,7 +387,7 @@ app.delete('/api/search', async(req,res) => {
         resolve(result);
       });
     });
-     res.status(200).json({message:success});
+     res.status(200).json({message:'success'});
   } catch (error) {
     // 오류 발생 시 콘솔에 로그 남기고 클라이언트에 500 에러 응답
     console.error('검색기록 삭제 중 오류 발생:', error);
@@ -749,35 +748,58 @@ app.post("/api/updateUser", async (req, res) => {
     });
   }
 });
+/*=========================리뷰 작성=================================*/
+app.post("/text", async (req,res) => {
+  try{
+      console.log(req.body)
+      let {
+          user_id,
+          product_id,
+          order_id,
+          title,
+          contents,
+          star_rating,
+      } = req.body;
+  console.log(req.body)
+      
+        const insertQuery = "INSERT INTO review ( user_id,product_id,order_id,title, contents, star_rating) VALUES ( ?, ?, ?, ?, ?, ?)";
+          await new Promise((resolve,reject) => {
+              connection.query(insertQuery,[user_id,product_id,order_id,title,contents,star_rating],(err,result) => {
+                  if(err) reject(err);
+                  else resolve(result);
+              });
+          });
+          return res.json({success:true, message : "리뷰가 등록되었습니다"})
+  } catch(error){
+      console.error("서버에서 오류 발생 : ", error);
+      return res.status(500).json({
+          success: false,
+          message: "리뷰등록 중 오류가 발생하였습니다",
+          error: error.message
+      });
+  }
+});
 /*=================   비밀번호 찾기   =====================*/
 app.get("/api/finwPassword", async (req, res) => {
   console.log(req.query)
   const userId = req.query.userId;
   const userEmail = req.query.userEmail;
   try {
-    // 전달받은 아이디와 이메일로 유저 찾기
-    const findIdSql = "SELECT user_id,user_email FROM user WHERE user_id = ? AND user_email = ?";
-
+    const findAuthSql = "SELECT user_id AS id, NULL AS email FROM user WHERE user_id = ? UNION SELECT NULL AS id, user_email AS email FROM user WHERE user_email = ?"
     const findUserResult = await new Promise((resolve, reject) => {
-      connection.query(findIdSql, [userId,userEmail], (err, result) => {
+      connection.query(findAuthSql, [userId,userEmail], (err, result) => {
         if (err) {
           console.error("쿼리 실행 중 오류 발생:", err);
           reject(err);
-          
         } else {
           resolve(result);
         }
       });
     });
     console.log("findUserResult.length      ", findUserResult.length)
-   
-    if (findUserResult.length > 0) {
-      // 일치하는 사용자가 있는 경우
-      return res.status(200).json({ success: true, result: findUserResult[0] });
-    }else{
-       // 일치하는 사용자가 없는 경우
-      return res.status(200).json({ success: false, message: "일치하는 사용자가 없습니다" });
-    }
+    console.log("findUserResult     ", findUserResult)
+    
+    return res.status(200).json({result: findUserResult[0] });
   } catch (err) {
     console.error("서버에서 오류 발생 : ", err);
     return res.status(500).json({
@@ -788,4 +810,5 @@ app.get("/api/finwPassword", async (req, res) => {
   }
 });
 /*==========================================================*/
+
 app.listen(port, () => console.log(`${port}번으로 서버 실행`));

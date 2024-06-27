@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from "./Header";
 import NavBar from "../Components/MyPage/NavBar";
 import UserInfo from "../Components/MyPage/UserInfo";
-import Review from './Review'
+import ReviewText from './ReviewText'
 import OrderSheet from '../Components/MyPage/OrderSheet';
 import "./MyPage.css";
 
@@ -27,7 +27,7 @@ const MyPage = () => {
                     {/* activeMenu 상태에 따라 조건부 렌더링 */}
                     {activeMenu === 'UserInfo' && <UserInfo />}
                     {activeMenu === 'OrderSheet' && <OrderSheet />}
-                    {activeMenu === 'Review' && <Review />} 
+                    {activeMenu === 'Review' && <ReviewText />} 
                 </main>
             </div>
         </div>
