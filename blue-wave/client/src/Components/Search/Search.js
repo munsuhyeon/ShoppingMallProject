@@ -105,7 +105,6 @@ const Search = () => {
 
     // 전체 삭제
     const handleDeleteAll = async () => {
-        console.log("함수 작동11111")
         axios.delete('http://localhost:8000/api/allSearch?userId=' + userId)
         .then(response => {
             setSearchHistory([]); // 검색 기록 상태 초기화
@@ -120,7 +119,6 @@ const Search = () => {
     // 선택한 검색어 삭제
     const handleDeleteKeyword = async (searchId) => {
         try{
-            console.log("함수 작동22222")
             await axios.delete(`http://localhost:8000/api/search?userId=${userId}&searchId=${searchId}` )
             const updatedSearchHistory = searchHistory.filter(item => item.search_id !== searchId);
             setHistoryLength(updatedSearchHistory.length);
