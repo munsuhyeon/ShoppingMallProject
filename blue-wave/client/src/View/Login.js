@@ -2,7 +2,7 @@ import {useForm} from 'react-hook-form';
 import Input from '../UI/Input';
 import Button from '../UI/Button';
 import axios from "axios";
-import {useNavigate } from 'react-router-dom';
+import {useNavigate,Link } from 'react-router-dom';
 import Header from './Header';
 
 const Login = () => {
@@ -78,6 +78,11 @@ const Login = () => {
                     <form noValidate onSubmit={handleSubmit(onSubmit)}>
                         <Input type={'text'} id={'userId'} prop={userId} errors={errors} title={"아이디"} />
                         <Input type={'password'} id={'userPassword'} prop={userPassword} errors={errors} title={"비밀번호"}/>
+                        <div style={{display:'flex', justifyContent:'space-around',marginBottom:'20px',fontSize:'13px',fontWeight:'500'}}>
+                            <Link to='/findId'><p>아이디 찾기</p></Link>
+                            <p>|</p>
+                            <Link to='/findPassword'><p>비밀번호 찾기</p></Link>
+                        </div>
                         <div className="btn_area" style={{display:'block'}}>
                             <Button text={"로그인"} className={'join_btn'} type='submit'/>
                         </div>

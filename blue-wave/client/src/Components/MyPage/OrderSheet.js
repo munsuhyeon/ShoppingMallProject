@@ -34,6 +34,7 @@ const OrderSheet = () => {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = orderData.slice(indexOfFirstOrder, indexOfLastOrder);
+    console.log(currentOrders)
 
     // 페이지 번호 변경 핸들러
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
