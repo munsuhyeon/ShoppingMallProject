@@ -84,16 +84,16 @@ console.log(currentOrders)
                         currentOrders.length === 0 ? (
                             <div>주문내역이 없습니다</div>
                         ) : (
-                            <table>
-                                <thead className='ordersheet_table'>
+                            <table className='ordersheet_table'>
+                                <thead className='ordersheet_thead'>
                                     <tr>
-                                        <th>주문번호</th>
-                                        <th>IMAGE</th>
-                                        <th>상품명</th>
-                                        <th>수량</th>
-                                        <th>가격</th>
-                                        <th>주문일시</th>
-                                        <th></th>
+                                        <th style={{width:'30%'}}>주문번호</th>
+                                        <th style={{width:'15%'}}>IMAGE</th>
+                                        <th style={{width:'15%'}}>상품명</th>
+                                        <th style={{width:'5%'}}>수량</th>
+                                        <th style={{width:'5%'}}>가격</th>
+                                        <th style={{width:'10%'}}>주문일시</th>
+                                        <th style={{width:"10%"}}></th>
                                     </tr>
                                 </thead>
                                 <tbody className='ordersheet_tbody'>
@@ -105,7 +105,7 @@ console.log(currentOrders)
                                             <td>{order.order_count}</td>
                                             <td>{order.total_amount}</td>
                                             <td className="order_time">{formatDate(order.order_date)}</td>
-                                            <Review
+                                            <td><Review
                                             className="btn"
                                               orderId={order.order_id}
                                               productId={order.product_id}
@@ -113,6 +113,7 @@ console.log(currentOrders)
                                               pname={order.p_name}
                                               mainimage={order.main_image}
                                             />
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
