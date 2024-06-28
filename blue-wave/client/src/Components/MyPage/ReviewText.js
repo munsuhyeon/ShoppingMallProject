@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../Utils/AuthContext';
 import axios from 'axios';
 import "./ReviewText.css"
 
@@ -7,13 +8,14 @@ const ReviewText = () => {
     const [loading, setLoading] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const {userId} = useContext(AuthContext);
 
     const reviewsPerPage = 3;
 
     const fetchReviews = async (months) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/reviews?months=${months}`);
+            const response = await axios.get(`http://localhost:8000/api/reviews?months=${months}&userId=${userId}`);
             setReviewData(response.data);
             setSelectedPeriod(months);
             setCurrentPage(1);
