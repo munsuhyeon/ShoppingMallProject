@@ -308,10 +308,10 @@ app.post('/api/search', async (req,res) => {
       connection.query(updateSearchSql, [userId, searchTerm], (err, result) => {
         if (err) {
           reject(err);
-          console.error(err);
+          //console.error(err);
         } else {
           resolve(result);
-          console.log(result);
+          //console.log(result);
         }
       });
     });
@@ -335,10 +335,10 @@ app.get('/api/allSearch', async (req,res) => {
       connection.query(allSearchSql, [userId], (err, result) => {
         if (err) {
           reject(err);
-          console.error(err);
+          //console.error(err);
         } else {
           resolve(result);
-          console.log(result);
+          //console.log(result);
         }
       });
     });
@@ -452,6 +452,7 @@ app.post("/reqOrder", (req, res, next) => {
 // 주문 데이터를 가져오는 API 엔드포인트
 app.get("/api/orders", async (req, res) => {
   const months = parseInt(req.query.months, 10);
+  const userId = req.query.userId;
   let sqlQuery;
   let queryParams = [];
 
@@ -459,20 +460,20 @@ app.get("/api/orders", async (req, res) => {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE DATE(order_date) = CURDATE() ORDER BY order_date DESC
+      WHERE user_id = ? AND DATE(order_date) = CURDATE() ORDER BY order_date DESC
     `;
   } else {
     sqlQuery = `
       SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
       FROM bluewave.order
-      WHERE order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_date DESC
+      WHERE user_id = ? AND order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_date DESC
     `;
     queryParams = [months];
   }
 
   try {
     const results = await new Promise((resolve, reject) => {
-      connection.query(sqlQuery, queryParams, (err, results) => {
+      connection.query(sqlQuery, [userId,queryParams], (err, results) => {
         if (err) {
           reject(err);
         } else {
@@ -772,6 +773,7 @@ app.post("/text", async (req,res) => {
 
 app.get("/api/reviews", async (req, res) => {
   const months = parseInt(req.query.months, 10);
+  const userId = req.query.userId;
   let sqlQuery;
   let queryParams = [];
 
@@ -780,13 +782,13 @@ app.get("/api/reviews", async (req, res) => {
       SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
       FROM review r
       JOIN product p ON r.product_id = p.product_id
-      WHERE DATE(r.review_date) = CURDATE() ORDER BY r.review_id DESC `;
+      WHERE user_id = ? AND DATE(r.review_date) = CURDATE() ORDER BY r.review_id DESC `;
   } else {
     sqlQuery = `
       SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
       FROM review r
       JOIN product p ON r.product_id = p.product_id
-      WHERE r.review_date >= DATE_SUB(NOW(), INTERVAL ? MONTH )
+      WHERE user_id = ? AND r.review_date >= DATE_SUB(NOW(), INTERVAL ? MONTH )
 ;
     `;
     queryParams = [months];
@@ -794,11 +796,12 @@ app.get("/api/reviews", async (req, res) => {
 
   try {
     const results = await new Promise((resolve, reject) => {
-      connection.query(sqlQuery, queryParams, (err, results) => {
+      connection.query(sqlQuery, [userId,queryParams], (err, results) => {
         if (err) {
           reject(err);
         } else {
           resolve(results);
+          //console.log(results)
         }
       });
     });
