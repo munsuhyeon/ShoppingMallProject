@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../../Utils/AuthContext';
 import axios from 'axios';
 import "./OrderSheet.css";
 import Review from "./Review"
 
 const OrderSheet = () => {
+    const {userId} = useContext(AuthContext);
     const [orderData, setOrderData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState(0); // 선택된 기간을 저장하는 상태
@@ -14,7 +16,7 @@ const OrderSheet = () => {
     const fetchOrders = async (months) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/orders?months=${months}`);
+            const response = await axios.get(`http://localhost:8000/api/orders?months=${months}&userId=${userId}`);
             setOrderData(response.data);
             setSelectedPeriod(months); // 선택된 기간 업데이트
             setCurrentPage(1); // 페이지 초기화
