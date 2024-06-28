@@ -5,7 +5,7 @@ import axios from 'axios';
 const accessToken = localStorage.getItem('accessToken')
 
 const AxiosInstance = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: `${process.env.REACT_APP_HOST}`,
   headers: {
     'Authorization': `Bearer ${accessToken}`,
     'Content-Type': 'application/json'

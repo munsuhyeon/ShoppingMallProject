@@ -19,7 +19,7 @@ const FindPassword = () => {
         try{
             const userId = data.userId;
             const userEmail = data.userEmail;
-            const response = await axios.get(`http://localhost:8000/api/findPassword?userId=${userId}&userEmail=${userEmail}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/findPassword?userId=${userId}&userEmail=${userEmail}`);
             if(response.data.success){
                 navigate('/resetPassword', {state:{userId:userId, userEmail:userEmail}}) 
             }else{

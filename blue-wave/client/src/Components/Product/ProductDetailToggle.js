@@ -18,7 +18,7 @@ const ProductDetailToggle = ({ categoryId, subCategoryId, productId }) => {
       try {
         const response = await axios.get(
           // 주소 수정필요
-          `http://localhost:8000/product/${categoryId}/${subCategoryId}/${productId}`
+          `${process.env.REACT_APP_HOST}/product/${categoryId}/${subCategoryId}/${productId}`
         );
         if (response.data && response.data.description_image) {
           setDescriptionImage(response.data.description_image);

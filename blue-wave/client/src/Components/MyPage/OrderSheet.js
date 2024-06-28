@@ -16,7 +16,7 @@ const OrderSheet = () => {
     const fetchOrders = async (months) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/orders?months=${months}&userId=${userId}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/orders?months=${months}&userId=${userId}`);
             setOrderData(response.data);
             setSelectedPeriod(months); // 선택된 기간 업데이트
             setCurrentPage(1); // 페이지 초기화

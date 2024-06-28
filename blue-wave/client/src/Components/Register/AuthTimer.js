@@ -18,14 +18,14 @@ const AuthTimer = () => {
             // 토큰 만료 1분 전에 토큰을 갱신해서 자동 로그인 처리
             try {
                 const accessToken = localStorage.getItem('accessToken');
-                const verifyResponse = await axios.get('http://localhost:8000/api/verify-token', {
+                const verifyResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/verify-token`, {
                     headers: { Authorization: `Bearer ${accessToken}` },
                     withCredentials: true
                 });
                 if (verifyResponse.status === 200) {
                     try {
                         // 토큰 갱신 요청
-                        const refreshResponse = await axios.get('http://localhost:8000/api/refresh-token', { withCredentials: true });
+                        const refreshResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/refresh-token`, { withCredentials: true });
                         if (refreshResponse.status === 200) {
                             const newToken = refreshResponse.data.newToken;
                             localStorage.removeItem("accessToken"); // 기존 토큰 삭제

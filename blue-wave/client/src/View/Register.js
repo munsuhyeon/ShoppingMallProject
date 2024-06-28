@@ -22,7 +22,7 @@ const Register = () => {
 
     // 가입하기 버튼 클릭
     const onSubmit = async (data) => {
-        await axios.post('http://localhost:8000/api/register',{
+        await axios.post(`${process.env.REACT_APP_HOST}/api/register`,{
             ...data
         })
         .then((response) => {

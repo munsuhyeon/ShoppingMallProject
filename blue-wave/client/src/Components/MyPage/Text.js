@@ -25,7 +25,7 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
 
     const handleSubmit = async (data) => {
         try{
-            const response = await axios.post('http://localhost:8000/text', formData);
+            const response = await axios.post('${process.env.REACT_APP_HOST}/text', formData);
             if(response.data.success){
                 alert(response.data.message);
                 isClose()

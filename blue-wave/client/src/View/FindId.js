@@ -34,7 +34,7 @@ const FindId = () => {
         try{
             const userName = data.userName;
             const userEmail = data.userEmail;
-            const response = await axios.get(`http://localhost:8000/api/findId?userName=${userName}&userEmail=${userEmail}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/findId?userName=${userName}&userEmail=${userEmail}`);
             if(response.data.success){
                 const getUserId = response.data.data.user_id;
                 console.log(getUserId)

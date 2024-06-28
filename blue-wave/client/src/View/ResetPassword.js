@@ -44,7 +44,7 @@ const ResetPassword = () => {
             ...data,
             userId: userId
         };
-        await axios.post('http://localhost:8000/api/resetPassword',payload)
+        await axios.post(`${process.env.REACT_APP_HOST}/api/resetPassword`,payload)
         .then((response) => {
             alert("비밀번호가 변경되었습니다")
             navigate('/complete_changePw')

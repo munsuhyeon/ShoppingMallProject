@@ -38,7 +38,7 @@ const ProductSection = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/product/${categoryId}/${resolvedSubCategoryId}/${id}`
+          `${process.env.REACT_APP_HOST}/product/${categoryId}/${resolvedSubCategoryId}/${id}`
         );
         console.log("API 응답:", response.data);
         if (response.data) {
@@ -92,7 +92,7 @@ const ProductSection = () => {
     const fetchOptions = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/product/${categoryId}/${resolvedSubCategoryId}/${id}/options`
+          `${process.env.REACT_APP_HOST}/product/${categoryId}/${resolvedSubCategoryId}/${id}/options`
         );
         console.log("Options API response:", response.data);
         // 옵션 이름과 가격을 객체로 변환

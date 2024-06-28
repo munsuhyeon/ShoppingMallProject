@@ -33,7 +33,7 @@ const UserInfo = () => {
     // 비동기 함수로 defaultValues를 설정합니다.
     const fetchDefaultValues = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/userInfo`, {
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/userInfo`, {
                 headers: { user_id: `${userId}` }
             });
             const userData = response.data.data[0];
@@ -131,7 +131,7 @@ const UserInfo = () => {
 
     const onSubmit = async (data) => {
         // 제출할 때 실행되는 코드
-        await axios.post('http://localhost:8000/api/updateUser',{
+        await axios.post(`${process.env.REACT_APP_HOST}/api/updateUser`,{
             ...data
         })
         .then((response) => {

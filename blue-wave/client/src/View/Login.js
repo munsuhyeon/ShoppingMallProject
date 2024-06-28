@@ -15,7 +15,7 @@ const Login = () => {
 
     const onSubmit = async (data) => {
         try{
-            const response = await axios.post('http://localhost:8000/api/login', { ...data }, { withCredentials: true })
+            const response = await axios.post(`${process.env.REACT_APP_HOST}/api/login`, { ...data }, { withCredentials: true })
             if(response.data.success){
                 // Axios 인스턴스로 만든 모든 미래의 요청에 해당 헤더가 포함됩니다. 
                 const accessToken = response.headers['authorization'];

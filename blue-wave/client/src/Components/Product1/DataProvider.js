@@ -12,7 +12,7 @@ const DataProvider = ({ children }) => {
     const fetchData = async () => {
       try {
         // API 호출로 데이터를 가져옴
-        const response = await axios.get("http://localhost:8000/shop");
+        const response = await axios.get(`${process.env.REACT_APP_HOST}/shop`);
         const data = response.data;
 
         // 섹션 데이터 초기값 설정

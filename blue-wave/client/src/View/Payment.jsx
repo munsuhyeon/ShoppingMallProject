@@ -142,7 +142,7 @@ export default function Payment() {
       }));
 
     try {
-      const response = await axios.post("http://localhost:8000/reqOrder", {
+      const response = await axios.post(`${process.env.REACT_APP_HOST}/reqOrder`, {
         orderSheet: reqOrderSheet,
         paymentPersonDB: paymentPerson,
       });
