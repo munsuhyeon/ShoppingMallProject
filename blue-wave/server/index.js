@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000", // origin 옵션은 허용할 출처(도메인)를 지정
+    origin: "https://client-61969.web.app", // origin 옵션은 허용할 출처(도메인)를 지정
     credentials: true, // credentials: true는 자격 증명(쿠키, 인증 헤더 등)을 포함한 요청을 허용할지 여부를 지정
     exposedHeaders: ["Authorization"],
   })
