@@ -8,7 +8,7 @@ import axios from "axios";
 import { AuthContext } from "../../Utils/AuthContext";
 
 const UserInfo = () => {
-    const { userId } = useContext(AuthContext);
+    //const { userId } = useContext(AuthContext);
     const [userData, setUserData] = useState({
         userId: '',
         userPassword: '',
@@ -20,7 +20,7 @@ const UserInfo = () => {
         detailAddress: '',
         zonecode: ''
     });
-
+    
     const { register,
         handleSubmit,
         formState: { errors },
@@ -30,12 +30,12 @@ const UserInfo = () => {
         reset
     } = useForm({mode:'onBlur'}); 
 
+    const userId = localStorage.getItem('userId')
+
     // 비동기 함수로 defaultValues를 설정합니다.
     const fetchDefaultValues = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/userInfo`, {
-                headers: { user_id: `${userId}` }
-            });
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/userInfo?user_id=` + userId);
             const userData = response.data.data[0];
             const defaultValues = {
                 userId: userData.user_id,

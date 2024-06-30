@@ -27,11 +27,11 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
         try{
             const response = await axios.post('${process.env.REACT_APP_HOST}/text', formData);
             if(response.data.success){
-                alert(response.data.message);
+                alert(response.data.data.message);
                 isClose()
                 navigate('/myPage');
             } else{
-                alert(response.data.message);
+                alert(response.data.data.message);
             }
         } catch(error){
             // 서버가 응답한 상태 코드가 200이 아닌 경우
