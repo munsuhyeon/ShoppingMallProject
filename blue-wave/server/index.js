@@ -929,5 +929,7 @@ app.get("/api/findId", async (req, res) => {
   }
 });
 /*==========================================================*/
-
+app.get('/test', (req,res) => {
+  res.send("테스트 페이지 입니다")
+})
 app.listen(port, () => console.log(`${port}번으로 서버 실행`));
