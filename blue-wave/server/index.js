@@ -611,7 +611,7 @@ app.get("/api/refresh-token", (req, res) => {
 });
 /*=================   회원정보 가져오기   =====================*/
 app.get("/api/userInfo", async (req, res) => {
-  const userId = req.params.user_id;
+  const userId = req.query.user_id;
   console.log("=================userId====================")
   console.log(userId);
   try {
