@@ -26,8 +26,8 @@ const CategoryProducts = () => {
     async function fetchData() {
       try {
         const endpoint = subCategoryId
-          ? `${process.env.REACT_APP_HOST}/${categoryId}/${subCategoryId}`
-          : `${process.env.REACT_APP_HOST}/${categoryId}`;
+          ? `${process.env.REACT_APP_HOST}/product/${categoryId}/${subCategoryId}`
+          : `${process.env.REACT_APP_HOST}/product/${categoryId}`;
 
         const response = await axios.get(endpoint);
         setProducts(response.data);
