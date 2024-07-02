@@ -46,12 +46,6 @@ app.use(express.json());
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
-console.log(`DB_HOST: ${DB_HOST}`);
-console.log(`DB_USER: ${DB_USER}`);
-console.log(`DB_PASSWORD: ${DB_PASSWORD}`);
-console.log(`DB_DATABASE: ${DB_DATABASE}`);
-console.log(`DB_PORT: ${DB_PORT}`);
-console.log(`JWT_SECRET: ${JWT_SECRET}`);
 
 var connection = mysql.createConnection({
   host:DB_HOST,
