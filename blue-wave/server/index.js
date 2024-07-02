@@ -782,31 +782,20 @@ app.post("/text", async (req,res) => {
 });
 
 app.get("/api/reviews", async (req, res) => {
-  const months = parseInt(req.query.months, 10);
+  //const months = parseInt(req.query.months, 10);
   const userId = req.query.userId;
   let sqlQuery;
-  let queryParams = [];
+  //let queryParams = [];
 
-  if (months === 0) {
     sqlQuery = `
       SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
       FROM review r
       JOIN product p ON r.product_id = p.product_id
-      WHERE user_id = ? AND DATE(r.review_date) = CURDATE() ORDER BY r.review_id DESC `;
-  } else {
-    sqlQuery = `
-      SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
-      FROM review r
-      JOIN product p ON r.product_id = p.product_id
-      WHERE user_id = ? AND r.review_date >= DATE_SUB(NOW(), INTERVAL ? MONTH )
-;
-    `;
-    queryParams = [months];
-  }
+      WHERE user_id = ? ORDER BY review_date DESC `;
 
   try {
     const results = await new Promise((resolve, reject) => {
-      connection.query(sqlQuery, [userId,queryParams], (err, results) => {
+      connection.query(sqlQuery, userId, (err, results) => {
         if (err) {
           reject(err);
         } else {
