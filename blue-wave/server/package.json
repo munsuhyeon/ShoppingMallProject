@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js",
-    "prod" : "node index.js"
+    "dev": "nodemon -r dotenv/config index.js dotenv_config_path=.env.local",
+    "start":"node -r dotenv/config index.js dotenv_config_path=.env.production"
   },
   "keywords": [],
   "author": "",

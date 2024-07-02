@@ -39,6 +39,8 @@ const ScrollToTop = () => {
   return null;
 };
 
+const apiUrl = process.env.REACT_APP_HOST;
+console.log(`API URL: ${apiUrl}`);
 
 const AppRoutes = () => {
   const { loggedIn } = useContext(AuthContext);

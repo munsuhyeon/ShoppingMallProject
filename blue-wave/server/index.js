@@ -20,16 +20,17 @@ const {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+dotenv.config();
+const port = 8000;
 app.use(
   cors({
-    origin: "https://client-61969.web.app", // origin 옵션은 허용할 출처(도메인)를 지정
+    origin: `${process.env.CLIENT_URL}`, // origin 옵션은 허용할 출처(도메인)를 지정
     credentials: true, // credentials: true는 자격 증명(쿠키, 인증 헤더 등)을 포함한 요청을 허용할지 여부를 지정
     exposedHeaders: ["Authorization"],
   })
 );
-dotenv.config();
-const port = 8000;
-
+console.log(`CLIENT_URL: ${process.env.CLIENT_URL}`);
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.static(path.join(__dirname + "/images")));
@@ -44,15 +45,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } =
-  process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
+console.log(`DB_HOST: ${DB_HOST}`);
+console.log(`DB_USER: ${DB_USER}`);
+console.log(`DB_PASSWORD: ${DB_PASSWORD}`);
+console.log(`DB_DATABASE: ${DB_DATABASE}`);
+console.log(`DB_PORT: ${DB_PORT}`);
+console.log(`JWT_SECRET: ${JWT_SECRET}`);
 
 var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT,
+  host:DB_HOST,
+  user:DB_USER,
+  password:DB_PASSWORD,
+  database:DB_DATABASE,
+  port:DB_PORT,
 });
 connection.connect((err) => {
   if (err) {
@@ -760,10 +766,7 @@ app.post("/text", async (req,res) => {
         const insertQuery = "INSERT INTO review ( user_id,product_id,order_id,title, contents, star_rating) VALUES ( ?, ?, ?, ?, ?, ?)";
           await new Promise((resolve,reject) => {
               connection.query(insertQuery,[user_id,product_id,order_id,title,contents,star_rating],(err,result) => {
-                  if(err){
-                    reject(err);
-                    console.log(err)
-                  } 
+                  if(err) reject(err);
                   else resolve(result);
               });
           });
