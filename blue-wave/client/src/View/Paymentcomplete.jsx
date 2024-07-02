@@ -28,7 +28,7 @@ export default function Paymentcomplete() {
           <div className="payment-complete-text">
             <h2>결제완료</h2>
             <img
-              src="http://localhost:8000/img/bluewavelogo.png"
+              src={`${process.env.REACT_APP_HOST}/img/bluewavelogo.png`}
               alt="bluewavelogo"
             />
             <p>

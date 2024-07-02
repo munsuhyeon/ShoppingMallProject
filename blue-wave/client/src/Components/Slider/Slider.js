@@ -37,35 +37,35 @@ const Slider = () => {
       <div className="slide" ref={slideItemsRef}>
         <img
           className="slide_img"
-          src="assets/slider/slider1.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider1.png`}
           alt="이미지1"
         />
         <img
           className="slide_img"
-          src="assets/slider/slider2.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider2.png`}
           alt="이미지2"
         />
         <img
           className="slide_img"
-          src="assets/slider/slider3.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider3.png`}
           alt="이미지3"
         />
 
         <img
           className="slide_img"
-          src="assets/slider/slider4.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider4.png`}
           alt="이미지4"
         />
 
         <img
           className="slide_img"
-          src="assets/slider/slider5.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider5.png`}
           alt="이미지5"
         />
 
         <img
           className="slide_img"
-          src="assets/slider/slider6.png"
+          src={process.env.PUBLIC_URL + `/assets/slider/slider6.png`}
           alt="이미지6"
         />
       </div>

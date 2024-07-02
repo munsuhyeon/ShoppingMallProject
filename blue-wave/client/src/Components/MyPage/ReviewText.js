@@ -15,7 +15,7 @@ const ReviewText = () => {
     const fetchReviews = async (months) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/reviews?months=${months}&userId=${userId}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/reviews?months=${months}&userId=${userId}`);
             setReviewData(response.data);
             setSelectedPeriod(months);
             setCurrentPage(1);

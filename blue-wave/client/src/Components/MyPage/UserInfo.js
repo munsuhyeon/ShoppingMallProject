@@ -8,7 +8,7 @@ import axios from "axios";
 import { AuthContext } from "../../Utils/AuthContext";
 
 const UserInfo = () => {
-    const { userId } = useContext(AuthContext);
+    //const { userId } = useContext(AuthContext);
     const [userData, setUserData] = useState({
         userId: '',
         userPassword: '',
@@ -20,7 +20,7 @@ const UserInfo = () => {
         detailAddress: '',
         zonecode: ''
     });
-
+    
     const { register,
         handleSubmit,
         formState: { errors },
@@ -30,12 +30,12 @@ const UserInfo = () => {
         reset
     } = useForm({mode:'onBlur'}); 
 
+    const userId = localStorage.getItem('userId')
+
     // 비동기 함수로 defaultValues를 설정합니다.
     const fetchDefaultValues = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/userInfo`, {
-                headers: { user_id: `${userId}` }
-            });
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/userInfo?user_id=` + userId);
             const userData = response.data.data[0];
             const defaultValues = {
                 userId: userData.user_id,
@@ -131,11 +131,11 @@ const UserInfo = () => {
 
     const onSubmit = async (data) => {
         // 제출할 때 실행되는 코드
-        await axios.post('http://localhost:8000/api/updateUser',{
+        await axios.post(`${process.env.REACT_APP_HOST}/api/updateUser`,{
             ...data
         })
         .then((response) => {
-            console.log("서버 응답 :::   ", response.data);
+            //console.log("서버 응답 :::   ", response.data);
             if(response.data.message === "duplicate email"){
                 setError("userEmail", {message: "중복된 이메일입니다"});
             } else if(response.status === 200){

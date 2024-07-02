@@ -14,7 +14,7 @@ const MultiPayment = ({ paymentData, setSelectedPaymentMethod, index, onChange }
             onChange={() => onChange(paymentData)}
             key="kakaopay" // 고유한 key prop 추가
           />
-          <img src="http://localhost:8000/img/kakaopaylogo.png" alt="" className="kakaopay" />
+          <img src={`${process.env.REACT_APP_HOST}/img/kakaopaylogo.png`} alt="" className="kakaopay" />
           {paymentName}
         </label>
       ) : (

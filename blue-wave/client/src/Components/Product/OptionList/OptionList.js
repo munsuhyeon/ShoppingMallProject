@@ -17,7 +17,7 @@ const OptionList = ({
 
 
 
-  console.log(options);
+  //console.log(options);
   // 드롭다운 요소의 DOM 노드를 참조하기 위한 useRef hook
   const dropdownRef = useRef(null);
   // 드롭다운의 열림/닫힘 상태를 관리하는 상태 변수

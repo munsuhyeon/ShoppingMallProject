@@ -23,9 +23,9 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (data) => {
+    const handleSubmit = async (formData) => {
         try{
-            const response = await axios.post('http://localhost:8000/text', formData);
+            const response = await axios.post(`${process.env.REACT_APP_HOST}/text`, formData);
             if(response.data.success){
                 alert(response.data.message);
                 isClose()
@@ -46,7 +46,7 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
                 console.error("서버 응답이 없음 :::  ", error.request);
                 alert("서버 응답이 없습니다");
             }else{
-                console.error("요청 설정 중 오류 :::  ", error.message)
+                console.error("요청 설정 중 오류 :::  ", error)
                 alert("요청 설정 중 오류가 발생했습니다");
             }
         }

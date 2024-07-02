@@ -22,7 +22,7 @@ const Search = () => {
     // 로그인한 유저의 검색기록 가져오기
     useEffect(() => {
         if(userId !== null){
-                axios.get('http://localhost:8000/api/allSearch?userId=' + userId)
+                axios.get(`${process.env.REACT_APP_HOST}/api/allSearch?userId=` + userId)
                 .then(response => {
                     const result = response.data.result; // 서버에서 반환한 유저 검색기록
                     setHistoryLength(result.length)
@@ -52,7 +52,7 @@ const Search = () => {
     // 검색어를 DB에서 조회하는 기능 함수
     const searchDB = async (searchTerm) => {
         try{
-            const res = await axios.get('http://localhost:8000/api/search?term=' + searchTerm)
+            const res = await axios.get(`${process.env.REACT_APP_HOST}/api/search?term=` + searchTerm)
             const result = res.data.result;
             //setSearchHistory(result);
             navigate('/search', {state:{result:result,searchTerm:searchTerm}}) // 검색결과페이지로 이동 SearchResult.js
@@ -75,12 +75,12 @@ const Search = () => {
         if(userId !== null){
             try{
                 // 1. 로그인한 유저의 검색기록 저장하기
-                const updateSearch = await axios.post('http://localhost:8000/api/search',{userId:userId,searchTerm:searchTerm})
+                const updateSearch = await axios.post(`${process.env.REACT_APP_HOST}/api/search`,{userId:userId,searchTerm:searchTerm})
                 if(updateSearch.status === 200){
                     // 2.입력한 검색어로 DB조회하기 + 검색결과페이지로 이동하기
                     await searchDB(currentSearchTerm);
                     // 3. 유저의 검색기록 다시 조회해서 setSearchHistory갱신 
-                    axios.get('http://localhost:8000/api/allSearch?userId=' + userId)
+                    axios.get(`${process.env.REACT_APP_HOST}/api/allSearch?userId=` + userId)
                     .then(response => {
                         const result = response.data.result; // 서버에서 반환한 유저 검색기록
                         setHistoryLength(result.length)
@@ -105,7 +105,7 @@ const Search = () => {
 
     // 전체 삭제
     const handleDeleteAll = async () => {
-        axios.delete('http://localhost:8000/api/allSearch?userId=' + userId)
+        axios.delete(`${process.env.REACT_APP_HOST}/api/allSearch?userId=` + userId)
         .then(response => {
             setSearchHistory([]); // 검색 기록 상태 초기화
             setDropdownVisible(false)
@@ -119,7 +119,7 @@ const Search = () => {
     // 선택한 검색어 삭제
     const handleDeleteKeyword = async (searchId) => {
         try{
-            await axios.delete(`http://localhost:8000/api/search?userId=${userId}&searchId=${searchId}` )
+            await axios.delete(`${process.env.REACT_APP_HOST}/api/search?userId=${userId}&searchId=${searchId}` )
             const updatedSearchHistory = searchHistory.filter(item => item.search_id !== searchId);
             setHistoryLength(updatedSearchHistory.length);
             setSearchHistory(updatedSearchHistory);

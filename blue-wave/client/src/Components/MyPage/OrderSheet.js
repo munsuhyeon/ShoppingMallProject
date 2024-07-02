@@ -16,7 +16,7 @@ const OrderSheet = () => {
     const fetchOrders = async (months) => {
         setLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/orders?months=${months}&userId=${userId}`);
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/orders?months=${months}&userId=${userId}`);
             setOrderData(response.data);
             setSelectedPeriod(months); // 선택된 기간 업데이트
             setCurrentPage(1); // 페이지 초기화
@@ -36,7 +36,7 @@ const OrderSheet = () => {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = orderData.slice(indexOfFirstOrder, indexOfLastOrder);
-    console.log(currentOrders)
+    //console.log(currentOrders)
 
     // 페이지 번호 변경 핸들러
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
