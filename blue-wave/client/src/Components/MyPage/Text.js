@@ -42,12 +42,6 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
                     error.response.data
                 );
                 alert(error.response.data.message || "서버 응답 중 오류가 발생하였습니다")
-            }else if(error.request){
-                console.error("서버 응답이 없음 :::  ", error.request);
-                alert("서버 응답이 없습니다");
-            }else{
-                console.error("요청 설정 중 오류 :::  ", error)
-                alert("요청 설정 중 오류가 발생했습니다");
             }
         }
     };
