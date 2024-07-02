@@ -8,7 +8,7 @@ const ReviewText = () => {
     const [loading, setLoading] = useState(false);
     const [selectedPeriod, setSelectedPeriod] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const {userId} = useContext(AuthContext);
+    const userId = localStorage.getItem("userId");
 
     const reviewsPerPage = 3;
 
