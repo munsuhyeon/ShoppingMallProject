@@ -429,10 +429,10 @@ app.post("/reqOrder", (req, res, next) => {
       connection.query(insertOrderQuery, [[data]], (err, result) => {
         if (err) {
           reject(err);
-          console.log("insertOrderQuery  ::  " + err);
+          //console.log("insertOrderQuery  ::  " + err);
         } else {
           resolve(result);
-          console.log("insertOrderQuery  ::  " + result);
+          //console.log("insertOrderQuery  ::  " + result);
         }
       });
     });
@@ -587,7 +587,7 @@ app.get("/api/refresh-token", (req, res) => {
   const refreshToken = req.cookies["refreshToken"];
 
   if (!refreshToken) {
-    console.log("refresh토큰 없음");
+    //console.log("refresh토큰 없음");
     // 사용자를 로그인페이지로 이동시키기
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -612,15 +612,14 @@ app.get("/api/refresh-token", (req, res) => {
 /*=================   회원정보 가져오기   =====================*/
 app.get("/api/userInfo", async (req, res) => {
   const userId = req.query.user_id;
-  console.log("=================userId====================")
-  console.log(userId);
+
   try {
     const userInfoSql = "SELECT * FROM user WHERE user_id = ?";
     const userInfo = await new Promise((resolve, reject) => {
       connection.query(userInfoSql, [userId], (err, result) => {
         if (err){
           reject(err);
-          console.log(err)
+          //console.log(err)
         } 
         else resolve(result);
       });

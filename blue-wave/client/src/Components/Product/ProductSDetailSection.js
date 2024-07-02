@@ -40,7 +40,7 @@ const ProductSection = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_HOST}/product/${categoryId}/${resolvedSubCategoryId}/${id}`
         );
-        console.log("API 응답:", response.data);
+        //console.log("API 응답:", response.data);
         if (response.data) {
           setProduct(response.data);
           // 주 이미지 설정
@@ -94,7 +94,7 @@ const ProductSection = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_HOST}/product/${categoryId}/${resolvedSubCategoryId}/${id}/options`
         );
-        console.log("Options API response:", response.data);
+        //console.log("Options API response:", response.data);
         // 옵션 이름과 가격을 객체로 변환
         const prices = response.data.reduce((acc, option) => {
           acc[option.option_name] = option.option_price;
@@ -111,7 +111,7 @@ const ProductSection = () => {
     fetchOptions();
   }, [categoryId, resolvedSubCategoryId, id]);
 
-  console.log(selectedOptions);
+  //console.log(selectedOptions);
   // 작은 이미지에 마우스를 올렸을 때 이미지 변경 핸들러
   const handleSmallImageMouseOver = (originalSrc, zoomedSrc) => {
     setMainImageSrc(originalSrc);
@@ -179,9 +179,9 @@ const ProductSection = () => {
 
   // 옵션 리스트
   const options = Object.keys(optionPrices);
-  console.log(selectedOptions);
-  console.log(product);
-  console.log(product.p_name);
+  //console.log(selectedOptions);
+  //console.log(product);
+  //console.log(product.p_name);
 
   const handleAddToCart = () => {
     // 선택된 옵션을 기반으로 상품 정보를 생성

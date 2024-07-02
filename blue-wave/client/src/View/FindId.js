@@ -37,7 +37,6 @@ const FindId = () => {
             const response = await axios.get(`${process.env.REACT_APP_HOST}/api/findId?userName=${userName}&userEmail=${userEmail}`);
             if(response.data.success){
                 const getUserId = response.data.data.user_id;
-                console.log(getUserId)
                 navigate('/findIdResult', { state: { userId: getUserId } }) 
             }else{
                 if(response.data.message === "wrong email"){

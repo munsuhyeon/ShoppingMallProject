@@ -135,7 +135,7 @@ const UserInfo = () => {
             ...data
         })
         .then((response) => {
-            console.log("서버 응답 :::   ", response.data);
+            //console.log("서버 응답 :::   ", response.data);
             if(response.data.message === "duplicate email"){
                 setError("userEmail", {message: "중복된 이메일입니다"});
             } else if(response.status === 200){
