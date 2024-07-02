@@ -1,5 +1,9 @@
 # 이젠3조 쇼핑몰
 
+> ## 서버 실행 명령문
+> 클라이언트 : npm start<br>
+> 서버 : npm run dev
+
 ### Branch
 * main : 배포본
 * develop : 총 통합 내용
