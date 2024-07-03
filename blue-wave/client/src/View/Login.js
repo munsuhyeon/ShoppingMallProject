@@ -27,7 +27,7 @@ const Login = () => {
                 axios.defaults.headers.common['authorization'] = `Bearer ${accessToken}`;
 
                 localStorage.setItem("tokenExp", decodedExp); // 로컬스토리지에 access토큰 만료시간 저장 
-                localStorage.setItem("tokenIat", tokenIat); // 토큰 생성시간
+                //localStorage.setItem("tokenIat", tokenIat); // 토큰 생성시간
                 localStorage.setItem("accessToken", accessToken); // 토큰 저장
                 localStorage.setItem("loggedIn", true); // 로그인 유무 true로 저장
                 localStorage.setItem("userId", userId); // 로그인한 회원 아이디 저장
@@ -37,7 +37,7 @@ const Login = () => {
                 navigate('/');
                 window.location.reload();
              }
-            console.log(response.data)
+            //console.log(response.data)
         } catch(error){
             if(error.response){
                 console.error(

@@ -26,7 +26,7 @@ const Register = () => {
             ...data
         })
         .then((response) => {
-            console.log("서버 응답 :::   ", response.data);
+            //console.log("서버 응답 :::   ", response.data);
             if(response.data.success){
                 alert(response.data.message || "회원가입이 완료되었습니다");
                 navigate('/complete_register');

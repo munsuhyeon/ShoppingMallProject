@@ -17,4 +17,16 @@ export const formatTime = (seconds) => {
     const s = seconds % 60;
     return `${h > 0 ? `${h}시간 ` : ""}${m}분 ${s}초`;
 };  
+// 년-월-일 으로 표시하는 함수
+export const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+};
+// 엔터키를 줄바꿈으로 변환하는 함수
+export const createMarkup = (text) => {
+  return { __html: text.replace(/\n/g, '<br>') };
+};
   

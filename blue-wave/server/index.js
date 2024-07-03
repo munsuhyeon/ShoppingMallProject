@@ -30,7 +30,7 @@ app.use(
     exposedHeaders: ["Authorization"],
   })
 );
-console.log(`CLIENT_URL: ${process.env.CLIENT_URL}`);
+//console.log(`CLIENT_URL: ${process.env.CLIENT_URL}`);
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.static(path.join(__dirname + "/images")));
@@ -136,7 +136,7 @@ app.post("/api/register", async (req, res) => {
     });
 
     // 회원가입이 성공한 경우 클라이언트에게 응답을 보낸다
-    console.log("사용자가 성공적으로 등록");
+    //console.log("사용자가 성공적으로 등록");
     return res.status(200).json({
       success: true,
       message: "회원가입이 등록되었습니다",
@@ -533,11 +533,11 @@ app.post("/api/login", async (req, res) => {
       let decodedExp = verified.exp - verified.iat; // 생성 - 만료 = 유효시간
 
       // 쿠키에 refresh토큰을 저장하고, 클라이언트에게 JSON 응답 반환
-      console.log({
+      /*console.log({
         success: true,
         message: "로그인 성공",
         token: decodedExp,
-      });
+      });*/
       // refreshToken을 서버의 쿠키에 저장
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
@@ -594,7 +594,10 @@ app.get("/api/refresh-token", (req, res) => {
   try {
     const decoded = jwt.verify(refreshToken, JWT_SECRET);
     const newAccessToken = generateAccessToken({ userId: decoded.userId });
-    return res.status(200).json({ newToken: newAccessToken });
+
+    const verified = jwt.verify(newAccessToken, JWT_SECRET);
+    const decodedExp = verified.exp - verified.iat;
+    return res.status(200).json({ newToken: newAccessToken, tokenExp:decodedExp });
   } catch (error) {
     // 토큰 검증 실패
     if (error.name === "TokenExpiredError") {
@@ -920,6 +923,24 @@ app.get("/api/findId", async (req, res) => {
     console.error("Database query failed:", error);
     return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다" });
   }
+});
+/*=================   제품별 리뷰 가져오기   =====================*/
+app.get("/review/:categoryId/:subCategoryId/:id", (req, res) => {
+  const productId = req.params.id;
+  const sqlQuery = "SELECT * FROM bluewave.review WHERE product_id = ? ORDER BY review_date DESC";
+
+  connection.query(sqlQuery, [productId], (err, result) => {
+    if (err) {
+      res.status(500).send("리뷰목록을 가져오는 중 에러가 발생하였습니다");
+      return;
+    }
+    if (result.length > 0) {
+      res.status(200).json(result)
+    }else{
+      res.status(200).json({message:"no review"})
+    }
+    
+  });
 });
 /*==========================================================*/
 app.get('/test', (req,res) => {

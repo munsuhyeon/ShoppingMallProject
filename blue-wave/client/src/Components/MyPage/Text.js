@@ -23,8 +23,10 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (formData) => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         try{
+            alert(`${process.env.REACT_APP_HOST}/text`)
             const response = await axios.post(`${process.env.REACT_APP_HOST}/text`, formData);
             if(response.data.success){
                 alert(response.data.message);
@@ -41,7 +43,7 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
                     error.response.status,
                     error.response.data
                 );
-                alert(error.response.data.message || "서버 응답 중 오류가 발생하였습니다")
+                alert("서버 응답 중 오류가 발생하였습니다")
             }
         }
     };

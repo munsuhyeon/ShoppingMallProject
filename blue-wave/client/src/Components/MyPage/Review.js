@@ -18,7 +18,7 @@ const Review = ({userId,orderId,productId,pname,mainimage}) => {
   return (
     <div className="">
       <button className='review_btn' onClick={openModal}>리뷰쓰기</button>
-      <Modal isOpen={modalIsOpen}>
+      <Modal isOpen={modalIsOpen} onClose={closeModal}>
      <Text
       orderId={orderId}
       isClose={closeModal}
