@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../../Utils/AuthContext';
 import axios from 'axios';
 import "./ReviewText.css"
+import { createMarkup } from '../../Utils/Utils';
 
 const ReviewText = () => {
     const [reviewData, setReviewData] = useState([]);
@@ -53,7 +53,7 @@ const ReviewText = () => {
         }
         return stars;
     };
-
+    
     return (
         <div className='ordersheet'>
             <div className="order_inquiry">
@@ -61,7 +61,6 @@ const ReviewText = () => {
             </div>
             <div className="order">
                 <div className="order_list">
-                    <h3>리뷰내역</h3>
                 </div>
                 <div className="order_table">
                     {loading ? (
@@ -70,28 +69,25 @@ const ReviewText = () => {
                         currentReviews.length === 0 ? (
                             <div>리뷰내역이 없습니다</div>
                         ) : (
-                           
                                 <div className='reviewdiv'>
                                     {currentReviews.map(review => (
-                                        <div key={review.review_id} className='review_item '>
-                                            <p className='ppimg'><img className='pimg' src={review.main_image} alt="Product" style={{ width: '130px' }} /></p>
-                                            <p className='pstart' id="pp">별점: {renderStars(review.star_rating)}</p>
-                                            <p className='pdate' id="pp">날짜: {formatDate(review.review_date)}</p>
-                                            <p className='review'> 
-                                                <p className='pname' id="pp1"> {review.p_name}</p>
-                                                <p className='ptitle' id="pp1">리뷰 제목:{review.title}</p>
-                                                <p className='pcontent' id="pp1">리뷰 내용: {review.contents}</p>
-                                        
+                                        <div key={review.review_id} className='review_item'>
+                                            <div className='product_title'>{review.p_name}</div>
+                                            <div className='review_area'>
+                                            <div className='review_info'>
+                                                <div><img className='pimg' src={review.main_image} alt="Product" /></div>
+                                                <div className='star_area'>{renderStars(review.star_rating)}</div>
+                                                <div className='review_date'>{formatDate(review.review_date)}</div>
+                                            </div>
+                                            <div className='review_content'>
+                                                <div className='review_title'>{review.title}</div>
+                                                <div className='review_content' dangerouslySetInnerHTML={createMarkup(review.contents)}></div>
+                                            </div>
+                                            </div>
                                             
-                                            
-                                            </p>
-                                            
-                                           
                                        </div>
-                                        
                                     ))}
                                 </div>
-                               
                         )
                     )}
                 </div>

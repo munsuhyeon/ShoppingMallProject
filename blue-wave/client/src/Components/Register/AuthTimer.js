@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import { handleLogout, formatTime} from "../../Utils/Utils";
 
 const AuthTimer = () => {
-    const tokenExp = parseInt(localStorage.getItem('tokenExp')); // 로컬스토리지에 저장한 토큰의 유효시간
-    const tokenIat = parseInt(localStorage.getItem('tokenIat'));
+    const tokenExp = parseInt(localStorage.getItem('tokenExp')); // 로컬스토리지에 저장한 토큰의 생성시간
+    //const tokenIat = parseInt(localStorage.getItem('tokenIat'));
     const currentTime = Math.floor(Date.now() / 1000); // 현재 시간을 초 단위로 계산
     const initialTokenTime  = tokenExp ? (tokenExp - currentTime) : 0; // 토큰 유효시간 초기화
     const [loggedIn, setLoggedIn] = useState(false); // 로그인 유무 초기값은 false
@@ -28,8 +28,14 @@ const AuthTimer = () => {
                         const refreshResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/refresh-token`, { withCredentials: true });
                         if (refreshResponse.status === 200) {
                             const newToken = refreshResponse.data.newToken;
+                            const newTokenExp = refreshResponse.data.tokenExp;
+
                             localStorage.removeItem("accessToken"); // 기존 토큰 삭제
+                            localStorage.removeItem("tokenExp");
+
                             localStorage.setItem('accessToken', newToken);
+                            localStorage.setItem('tokenExp', newTokenExp);
+                            initialTokenTime  = tokenExp ? (tokenExp - currentTime) : 0;
                             setTokenTime(initialTokenTime ); // 타이머 초기화
                             console.log("토큰 갱신 성공")
                         }
@@ -62,13 +68,14 @@ const AuthTimer = () => {
             2. 활동시간이 0인데 토큰시간이 남았다면 갱신하지 않기
             3. 토큰시간이 0이면 활동시간이 남았더라고 로그아웃
         */
-        if(tokenTime === 0){
-            handleLogout();
-        }
         if (tokenTime === 60) {
             if( logoutTime > 0 )
             checkTokenExpiration();
         }
+        if(tokenTime === 0 && logoutTime === 0){
+            handleLogout();
+        }
+        
     }, [tokenTime]);
 
     useEffect(() => {
