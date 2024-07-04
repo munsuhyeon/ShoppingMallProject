@@ -3,7 +3,7 @@ import { AuthContext } from '../../Utils/AuthContext';
 import axios from 'axios';
 import "./OrderSheet.css";
 import Review from "./Review"
-
+import Button from '../../UI/Button';
 const OrderSheet = () => {
     const {userId} = useContext(AuthContext);
     const [orderData, setOrderData] = useState([]);
@@ -77,7 +77,7 @@ const OrderSheet = () => {
             </div>
             <div className="order">
                 <div className="order_list">
-                    <h3>주문내역</h3>
+                    
                 </div>
                 <div className="order_table">
                     {loading ? (
@@ -107,14 +107,14 @@ const OrderSheet = () => {
                                             <td>{order.order_count}</td>
                                             <td>{order.total_amount}</td>
                                             <td className="order_time">{formatDate(order.order_date)}</td>
-                                            <td><Review
+                                            <td>{order.review_yn === 'N' ? (<Review
                                             className="btn"
                                               orderId={order.order_id}
                                               productId={order.product_id}
                                               userId={order.user_id}
                                               pname={order.p_name}
                                               mainimage={order.main_image}
-                                            />
+                                            />) : (null)}
                                             </td>
                                         </tr>
                                     ))}
@@ -144,12 +144,12 @@ const OrderSheet = () => {
                     <span>취소</span><br />
                     <p className="subtitle">- 상품은 취소 시 수수료가 발생할 수 있으며,<br />
                         취소수수료를 확인하여 2일 이내(주말,공휴일 제외) 처리결과를 문자로 안내해드립니다.(당일 접수 기준, 마감시간 오후 4시)<br />
-                        - 상품은 금일 취소 신청 시 취소수수료가 발생되지 않습니다. <a href="#">주문취소 ></a><br /></p>
+                        - 상품은 금일 취소 신청 시 취소수수료가 발생되지 않습니다. <a href="#">주문취소 &gt;</a><br /></p>
                     <span>반품</span><br />
                     <p className="subtitle">- 상품 수령 후 7일 이내 신청하여 주세요.<br />
                         - 상품이 출고된 이후에는 배송 완료 후, 반품 상품을 회수합니다.<br /></p>
                     <span>교환</span>
-                    <p className="subtitle">- 상품의 교환 신청은 고객센터로 문의하여 주세요. <a href="#">고객센터 > </a></p>
+                    <p className="subtitle">- 상품의 교환 신청은 고객센터로 문의하여 주세요. <a href="#">고객센터 &gt; </a></p>
                 </div>
             </div>
         </div>

@@ -26,7 +26,6 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            alert(`${process.env.REACT_APP_HOST}/text`)
             const response = await axios.post(`${process.env.REACT_APP_HOST}/text`, formData);
             if(response.data.success){
                 alert(response.data.message);

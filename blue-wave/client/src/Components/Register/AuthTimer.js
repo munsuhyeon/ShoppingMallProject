@@ -12,44 +12,64 @@ const AuthTimer = () => {
     const [logoutTime, setLogoutTime] = useState(3600); // 로그아웃 시간 1시간 초기화 
 
 
-    // 토큰 만료 시간 확인 및 처리
-    const checkTokenExpiration = async () => {
-        if(tokenTime === 60){ // 로그인 후 화면이 처음 렌더링하면 실행되지 않게 조건추가
-            // 토큰 만료 1분 전에 토큰을 갱신해서 자동 로그인 처리
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                const verifyResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/verify-token`, {
-                    headers: { Authorization: `Bearer ${accessToken}` },
-                    withCredentials: true
-                });
-                if (verifyResponse.status === 200) {
-                    try {
-                        // 토큰 갱신 요청
-                        const refreshResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/refresh-token`, { withCredentials: true });
-                        if (refreshResponse.status === 200) {
-                            const newToken = refreshResponse.data.newToken;
-                            const newTokenExp = refreshResponse.data.tokenExp;
-
-                            localStorage.removeItem("accessToken"); // 기존 토큰 삭제
-                            localStorage.removeItem("tokenExp");
-
-                            localStorage.setItem('accessToken', newToken);
-                            localStorage.setItem('tokenExp', newTokenExp);
-                            initialTokenTime  = tokenExp ? (tokenExp - currentTime) : 0;
-                            setTokenTime(initialTokenTime ); // 타이머 초기화
-                            console.log("토큰 갱신 성공")
-                        }
-                    } catch (error) {
-                        alert("토큰 갱신 실패");
-                        handleLogout();
-                    }
-                }
-            } catch (error) {
-                alert("토큰 검증 실패")
-                console.error(error);
-            }
-        };
+// 토큰 검증 함수
+const verifyToken = async () => {
+    const accessToken = localStorage.getItem('accessToken');
+    try {
+        const verifyResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/verify-token`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            withCredentials: true
+        });
+        return verifyResponse.status === 200;
+    } catch (error) {
+        console.error("토큰 검증 실패:", error);
+        return false;
     }
+};
+// 토큰 갱신 함수
+const refreshToken = async () => {
+    try {
+        const refreshResponse = await axios.get(`${process.env.REACT_APP_HOST}/api/refresh-token`, { withCredentials: true });
+        if (refreshResponse.status === 200) {
+            const newToken = refreshResponse.data.newToken;
+            const newTokenExp = refreshResponse.data.tokenExp; // 서버가 반환한 남은 유효 시간
+
+            console.log("newTokenExp (remaining time):", newTokenExp);
+
+            localStorage.setItem('accessToken', newToken);
+            localStorage.setItem('tokenExp', newTokenExp);
+
+            // 서버가 반환한 남은 유효 시간을 바로 사용
+            setTokenTime(newTokenExp); // 타이머 초기화
+            console.log("토큰 갱신 성공", newTokenExp);
+            return newTokenExp;
+        } else {
+            console.error("토큰 갱신 실패: 예상치 못한 상태 코드", refreshResponse.status);
+            return 0;
+        }
+    } catch (error) {
+        console.error("토큰 갱신 실패:", error);
+        return 0;
+    }
+};
+
+// 토큰 만료 1분전 확인하는 함수
+const checkTokenExpiration = async () => {
+    if (tokenTime === 60) { // 로그인 후 화면이 처음 렌더링하면 실행되지 않게 조건추가
+        const isTokenValid = await verifyToken();
+        if (isTokenValid) {
+            const newTokenTime = await refreshToken();
+            alert("성공");
+            if (newTokenTime === 0) {
+                alert("토큰 갱신 실패");
+                handleLogout();
+            }
+        } else {
+            alert("토큰 검증 실패");
+            handleLogout();
+        }
+    }
+};
 
     useEffect(() => {
         if (loggedIn) {
@@ -76,7 +96,7 @@ const AuthTimer = () => {
             handleLogout();
         }
         
-    }, [tokenTime]);
+    }, [tokenTime,logoutTime]);
 
     useEffect(() => {
         const storedLoggedIn = localStorage.getItem('loggedIn');
@@ -85,13 +105,14 @@ const AuthTimer = () => {
             setLogoutTime(3600); // 유저의 활동 타이머 초기화
             checkTokenExpiration();
         }
+        const resetLogoutTime = () => setLogoutTime(3600);
 
-        window.addEventListener("mousemove", setLogoutTime(3600));
-        window.addEventListener("keypress", setLogoutTime(3600));
+        window.addEventListener("mousemove", resetLogoutTime);
+        window.addEventListener("keypress", resetLogoutTime);
 
         return () => {
-            window.removeEventListener("mousemove", setLogoutTime(3600));
-            window.removeEventListener("keypress", setLogoutTime(3600));
+            window.removeEventListener("mousemove", resetLogoutTime);
+            window.removeEventListener("keypress", resetLogoutTime);
             setLogoutTime(0);
         };
     }, [setLoggedIn]);
