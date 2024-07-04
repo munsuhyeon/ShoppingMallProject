@@ -458,13 +458,13 @@ app.get("/api/orders", async (req, res) => {
 
   if (months === 0) {
     sqlQuery = `
-      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id, review_yn
       FROM bluewave.order
       WHERE user_id = ? AND DATE(order_date) = CURDATE() ORDER BY order_date DESC
     `;
   } else {
     sqlQuery = `
-      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id
+      SELECT order_id, order_number, main_image, p_name, order_count, total_amount, order_date, user_id, product_id, review_yn
       FROM bluewave.order
       WHERE user_id = ? AND order_date >= DATE_SUB(NOW(), INTERVAL ? MONTH) ORDER BY order_date DESC
     `;
@@ -571,14 +571,17 @@ app.get("/api/verify-token", (req, res) => {
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
     // 로그인페이지로 이동하기
+    console.log("accessToken이 없습니다")
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, userID) => {
     if (err) {
       // 로그인페이지로 이동하기
+      console.log("유효하지 않은 accessToken")
       return res.status(403).json({ message: "토큰 확인 실패" });
     }
+    console.log("accessToken 검증 성공")
     return res.status(200).json({ valid: true, userId: userID });
   });
 });
@@ -587,7 +590,7 @@ app.get("/api/refresh-token", (req, res) => {
   const refreshToken = req.cookies["refreshToken"];
 
   if (!refreshToken) {
-    //console.log("refresh토큰 없음");
+    console.log("refresh토큰 없음");
     // 사용자를 로그인페이지로 이동시키기
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -597,9 +600,11 @@ app.get("/api/refresh-token", (req, res) => {
 
     const verified = jwt.verify(newAccessToken, JWT_SECRET);
     const decodedExp = verified.exp - verified.iat;
+    console.log("토큰 재발급 성공");
     return res.status(200).json({ newToken: newAccessToken, tokenExp:decodedExp });
   } catch (error) {
     // 토큰 검증 실패
+    console.log("토큰 재발급 실패");
     if (error.name === "TokenExpiredError") {
       console.log("토큰 만료");
       return res.status(403).json({ message: "Token expired" });
@@ -767,6 +772,13 @@ app.post("/text", async (req,res) => {
                   else resolve(result);
               });
           });
+          const orderReviewSql = "UPDATE bluewave.order SET review_yn = 'Y' WHERE user_id = ? AND product_id = ?"
+          await new Promise((resolve,reject) => {
+            connection.query(orderReviewSql,[user_id,product_id],(err,result)=>{
+              if(err) reject(err);
+                  else resolve(result);
+            })
+          })
           return res.json({success:true, message : "리뷰가 등록되었습니다"})
   } catch(error){
       console.error("서버에서 오류 발생 : ", error);
