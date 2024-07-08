@@ -30,7 +30,7 @@ const Text = ({userId,orderId,productId,pname,mainimage,isClose}) => {
             if(response.data.success){
                 alert(response.data.message);
                 isClose()
-                navigate('/myPage');
+                window.location.reload();
             } else{
                 alert(response.data.message);
             }
