@@ -13,6 +13,7 @@
     overflow-y: scroll; /* y축으로 오버플로우 되는 것을 scroll방식으로 바꾸는 것 */	
     padding: 30px;
     box-sizing: border-box;
+    margin-top: 10px;
 }
 .form-check{
     margin-bottom: 10px;
@@ -26,6 +27,7 @@
 .form-check-input{
     width: 1.25rem;
     height: 1.25rem;
+    margin-right: 10px;
 }
 .check_txt{
     margin-left:10px;
