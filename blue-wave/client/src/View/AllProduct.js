@@ -46,7 +46,7 @@ const CategoryProducts = () => {
 
   const renderProductList = () => {
     const repeatedProducts = products.flatMap((product) =>
-      Array.from({ length: 4 }, () => product)
+      Array.from({ length: 1 }, () => product)
     );
 
     const indexOfLastPost = currentPage * productsPerPage;
@@ -84,13 +84,6 @@ const CategoryProducts = () => {
               <div className="Product-Price">
                 <span>{formatPrice(product.p_price)}원</span>
               </div>
-              <div className="star-ratings">
-                <div className="star-ratings-fill">
-                  {[...Array(5)].map((_, i) => (
-                    <span key={i}>★</span>
-                  ))}
-                </div>
-              </div>
             </Link>
           </li>
         ))}
@@ -98,7 +91,7 @@ const CategoryProducts = () => {
     );
   };
 
-  const totalPages = Math.ceil((products.length * 4) / productsPerPage);
+  const totalPages = Math.ceil((products.length * 1) / productsPerPage);
 
   let categoryName = "";
   switch (categoryId) {
@@ -188,13 +181,6 @@ const CategoryProducts = () => {
               >
                 <div className="Product-Price">
                   <span>{formatPrice(product.p_price)}원</span>
-                </div>
-                <div className="star-ratings">
-                  <div className="star-ratings-fill">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i}>★</span>
-                    ))}
-                  </div>
                 </div>
               </Link>
             </li>

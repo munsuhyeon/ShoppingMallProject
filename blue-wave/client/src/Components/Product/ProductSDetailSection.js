@@ -320,15 +320,11 @@ const ProductSection = () => {
             <div className="DeliveryInfo">
               <div className="DeliveryInfo-2">
                 <p>일반배송</p>
-                <p>당일배송</p>
                 <p>픽업</p>
               </div>
               <div className="DeliveryInfo-3">
                 <p>
                   <span>|</span> 무료 (평균 3일 이내 배송)
-                </p>
-                <p>
-                  <span>|</span> 2,500원 또는 5,000원
                 </p>
                 <p>
                   <span>|</span> 배송비 조건 없음

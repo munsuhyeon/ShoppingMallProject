@@ -40,7 +40,7 @@ const ScrollToTop = () => {
 };
 
 const apiUrl = process.env.REACT_APP_HOST;
-//console.log(`API URL: ${apiUrl}`);
+console.log(`API URL: ${apiUrl}`);
 
 const AppRoutes = () => {
   const { loggedIn } = useContext(AuthContext);
@@ -86,7 +86,7 @@ const AppRoutes = () => {
         path="/complete_changePw"
         element={loggedIn ? <Navigate to="/" /> : <ChangedPassword />}
       />
-       <Route
+      <Route
         path="/findId"
         element={loggedIn ? <Navigate to="/" /> : <FindId />}
       />
