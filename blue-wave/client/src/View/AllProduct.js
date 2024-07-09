@@ -55,13 +55,12 @@ const CategoryProducts = () => {
       indexOfFirstPost,
       indexOfLastPost
     );
-
     return (
       <ul className="Allproduct">
         {currentPosts.map((product, index) => (
           <li key={`${product.product_id}-${index}`} className="Product-Card">
             <Link
-              to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
+              to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
               className="Product-Link"
             >
               <div className="Product-Thumbnail">
@@ -69,7 +68,7 @@ const CategoryProducts = () => {
               </div>
             </Link>
             <Link
-              to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
+              to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
               className="Product-Link"
             >
               <div className="Product-Info">
@@ -78,7 +77,7 @@ const CategoryProducts = () => {
               </div>
             </Link>
             <Link
-              to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
+              to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
               className="Product-Link"
             >
               <div className="Product-Price">
