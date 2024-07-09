@@ -7,20 +7,20 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ categoryId, subCategoryId, product }) => (
   <li className="product_card">
-    <Link to={`/product/${categoryId}/${subCategoryId}/${product.id}`}>
+    <Link
+      to={`/product/${product.categoryId}/${product.subCategoryId}/${product.id}`}
+    >
       <div className="product_img">
         <img src={product.imgSrc} alt={product.name} />
       </div>
-    </Link>
-    <Link to={`/product/${categoryId}/${subCategoryId}${product.id}`}>
+
       <div className="product_info">
         <h4>{product.name}</h4> {/* 제품 이름 */}
         <p className="product_content">{product.content}</p> {/* 제품 내용 */}
         <p className="product_description">{product.description}</p>{" "}
         {/* 제품 설명 */}
       </div>
-    </Link>
-    <Link to={`/product/${categoryId}/${subCategoryId}${product.id}`}>
+
       <div className="product_price">
         <p className="price">{formatPrice(product.price)}원</p>{" "}
         {/* 제품 가격 */}

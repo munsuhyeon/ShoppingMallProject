@@ -66,20 +66,12 @@ const CategoryProducts = () => {
               <div className="Product-Thumbnail">
                 <img src={product.main_image} alt={product.p_name} />
               </div>
-            </Link>
-            <Link
-              to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
-              className="Product-Link"
-            >
+
               <div className="Product-Info">
                 <h4>{product.p_name}</h4>
                 <p className="Product-Description">{product.p_description}</p>
               </div>
-            </Link>
-            <Link
-              to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
-              className="Product-Link"
-            >
+
               <div className="Product-Price">
                 <span>{formatPrice(product.p_price)}원</span>
               </div>
@@ -158,26 +150,18 @@ const CategoryProducts = () => {
           {filteredNewProducts.map((product) => (
             <li key={product.product_id} className="Product-Card">
               <Link
-                to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
+                to={`/product/${product.category_id}/${product.sub_category_id}/${product.product_id}`}
                 className="Product-Link"
               >
                 <div className="Product-Thumbnail">
                   <img src={product.main_image} alt={product.p_name} />
                 </div>
-              </Link>
-              <Link
-                to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
-                className="Product-Link"
-              >
+
                 <div className="Product-Info">
                   <h4>{product.p_name}</h4>
                   <p className="Product-Description">{product.p_description}</p>
                 </div>
-              </Link>
-              <Link
-                to={`/product/${categoryId}/${subCategoryId}/${product.product_id}`}
-                className="Product-Link"
-              >
+
                 <div className="Product-Price">
                   <span>{formatPrice(product.p_price)}원</span>
                 </div>

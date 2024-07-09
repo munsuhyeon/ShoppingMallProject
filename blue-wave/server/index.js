@@ -45,14 +45,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 // 환경변수에서 데이터베이스 연결 정보를 가져옵니다.
-const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } = process.env;
+const { DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE, DB_PORT, JWT_SECRET } =
+  process.env;
 
 var connection = mysql.createConnection({
-  host:DB_HOST,
-  user:DB_USER,
-  password:DB_PASSWORD,
-  database:DB_DATABASE,
-  port:DB_PORT,
+  host: DB_HOST,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_DATABASE,
+  port: DB_PORT,
 });
 connection.connect((err) => {
   if (err) {
@@ -272,38 +273,38 @@ const authenticateToken = (req, res, next) => {
 };
 /*=================   검색 수정.ver   =====================*/
 // 입력한 검색어를 DB에서 조회하는 기능
-app.get('/api/search', async (req,res) => {
+app.get("/api/search", async (req, res) => {
   const term = req.query.term;
-  try{
-    const searchSql = "SELECT * FROM product WHERE p_name LIKE ?"
-    const searchTerm = '%' + term + '%'
-      const searchResult = await new Promise((resolve,reject) => {
-          connection.query(searchSql, [searchTerm], (err, result) => {
-              if(err){
-                reject(err);
-              } 
-              else{
-                resolve(result)
-              } 
-          });
+  try {
+    const searchSql = "SELECT * FROM product WHERE p_name LIKE ?";
+    const searchTerm = "%" + term + "%";
+    const searchResult = await new Promise((resolve, reject) => {
+      connection.query(searchSql, [searchTerm], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
       });
-      if(searchResult.length > 0){
-        return res.status(200).json({result:searchResult})
-      } else {
-        return res.status(404).json({result: "Product not found"});
-      }
-  }catch (err) {
+    });
+    if (searchResult.length > 0) {
+      return res.status(200).json({ result: searchResult });
+    } else {
+      return res.status(404).json({ result: "Product not found" });
+    }
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error: '서버에서 오류 발생' });
+    res.status(500).json({ error: "서버에서 오류 발생" });
   }
 });
 // 로그인한 유저가 입력한 검색어 DB에 저장하는 기능
-app.post('/api/search', async (req,res) => {
+app.post("/api/search", async (req, res) => {
   const userId = req.body.userId;
   const searchTerm = req.body.searchTerm;
 
   try {
-    const updateSearchSql = "INSERT INTO search (user_id, key_word) VALUES (?, ?)";
+    const updateSearchSql =
+      "INSERT INTO search (user_id, key_word) VALUES (?, ?)";
     const updateResult = await new Promise((resolve, reject) => {
       connection.query(updateSearchSql, [userId, searchTerm], (err, result) => {
         if (err) {
@@ -317,19 +318,21 @@ app.post('/api/search', async (req,res) => {
     });
 
     if (updateResult.affectedRows > 0) {
-      return res.status(200).json({ message: 'Search log updated successfully' });
+      return res
+        .status(200)
+        .json({ message: "Search log updated successfully" });
     } else {
-      return res.status(500).json({ error: 'Failed to update search log' });
+      return res.status(500).json({ error: "Failed to update search log" });
     }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: '서버에서 오류 발생' });
+    res.status(500).json({ error: "서버에서 오류 발생" });
   }
 });
 // 유저의 검색기록 가져오기
-app.get('/api/allSearch', async (req,res) => {
+app.get("/api/allSearch", async (req, res) => {
   const userId = req.query.userId;
-  try{
+  try {
     allSearchSql = "SELECT * FROM search WHERE user_id = ?";
     const allSearchResult = await new Promise((resolve, reject) => {
       connection.query(allSearchSql, [userId], (err, result) => {
@@ -342,54 +345,54 @@ app.get('/api/allSearch', async (req,res) => {
         }
       });
     });
-    return res.status(200).json({result:allSearchResult});
+    return res.status(200).json({ result: allSearchResult });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: '서버에서 오류 발생' });
+    res.status(500).json({ error: "서버에서 오류 발생" });
   }
 });
 // 전체 검색기록 삭제
-app.delete('/api/allSearch', async (req, res) => {
+app.delete("/api/allSearch", async (req, res) => {
   const userId = req.query.userId;
   const deleteSearchSql = "DELETE FROM search WHERE user_id = ?";
-  
+
   try {
     const deleteResult = await new Promise((resolve, reject) => {
       connection.query(deleteSearchSql, [userId], (err, result) => {
         if (err) {
-          res.status(500).json({ error: '검색기록 삭제 중 오류 발생' });
+          res.status(500).json({ error: "검색기록 삭제 중 오류 발생" });
           return reject(err);
         }
         resolve(result);
       });
     });
-    res.status(200).json({ message: 'success' });
+    res.status(200).json({ message: "success" });
   } catch (error) {
-    console.error('검색기록 삭제 중 오류 발생:', error);
+    console.error("검색기록 삭제 중 오류 발생:", error);
   }
 });
 // 선택한 검색기록 삭제
-app.delete('/api/search', async(req,res) => {
+app.delete("/api/search", async (req, res) => {
   const userId = req.query.userId;
   const seasrchId = req.query.searchId;
-  const deleteSql = "DELETE FROM search WHERE user_id = ? AND search_id = ?"
+  const deleteSql = "DELETE FROM search WHERE user_id = ? AND search_id = ?";
   try {
     await new Promise((resolve, reject) => {
-      connection.query(deleteSql, [userId,seasrchId], (err, result) => {
+      connection.query(deleteSql, [userId, seasrchId], (err, result) => {
         if (err) {
-          console.error('검색기록 삭제 중 오류 발생:', err);
+          console.error("검색기록 삭제 중 오류 발생:", err);
           return reject(err);
         }
         resolve(result);
       });
     });
-     res.status(200).json({message:'success'});
+    res.status(200).json({ message: "success" });
   } catch (error) {
     // 오류 발생 시 콘솔에 로그 남기고 클라이언트에 500 에러 응답
-    console.error('검색기록 삭제 중 오류 발생:', error);
-    res.status(500).json({ error: '서버 오류 발생' });
+    console.error("검색기록 삭제 중 오류 발생:", error);
+    res.status(500).json({ error: "서버 오류 발생" });
   }
-})
+});
 /*=================   주문   =====================*/
 // 주문 처리 API 엔드포인트
 app.post("/reqOrder", (req, res, next) => {
@@ -421,7 +424,7 @@ app.post("/reqOrder", (req, res, next) => {
       article.main_image,
       article.total_amount,
       article.total_count,
-      article.p_name
+      article.p_name,
     ];
 
     // connection.query 메서드를 사용한 프로미스 반환
@@ -473,7 +476,7 @@ app.get("/api/orders", async (req, res) => {
 
   try {
     const results = await new Promise((resolve, reject) => {
-      connection.query(sqlQuery, [userId,queryParams], (err, results) => {
+      connection.query(sqlQuery, [userId, queryParams], (err, results) => {
         if (err) {
           reject(err);
         } else {
@@ -571,17 +574,17 @@ app.get("/api/verify-token", (req, res) => {
   const token = authHeader && authHeader.split(" ")[1];
   if (!token) {
     // 로그인페이지로 이동하기
-    console.log("accessToken이 없습니다")
+    console.log("accessToken이 없습니다");
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, userID) => {
     if (err) {
       // 로그인페이지로 이동하기
-      console.log("유효하지 않은 accessToken")
+      console.log("유효하지 않은 accessToken");
       return res.status(403).json({ message: "토큰 확인 실패" });
     }
-    console.log("accessToken 검증 성공")
+    console.log("accessToken 검증 성공");
     return res.status(200).json({ valid: true, userId: userID });
   });
 });
@@ -601,7 +604,9 @@ app.get("/api/refresh-token", (req, res) => {
     const verified = jwt.verify(newAccessToken, JWT_SECRET);
     const decodedExp = verified.exp - verified.iat;
     console.log("토큰 재발급 성공");
-    return res.status(200).json({ newToken: newAccessToken, tokenExp:decodedExp });
+    return res
+      .status(200)
+      .json({ newToken: newAccessToken, tokenExp: decodedExp });
   } catch (error) {
     // 토큰 검증 실패
     console.log("토큰 재발급 실패");
@@ -625,11 +630,10 @@ app.get("/api/userInfo", async (req, res) => {
     const userInfoSql = "SELECT * FROM user WHERE user_id = ?";
     const userInfo = await new Promise((resolve, reject) => {
       connection.query(userInfoSql, [userId], (err, result) => {
-        if (err){
+        if (err) {
           reject(err);
           //console.log(err)
-        } 
-        else resolve(result);
+        } else resolve(result);
       });
     });
     if (userInfo.length > 0) {
@@ -754,39 +758,43 @@ app.post("/api/updateUser", async (req, res) => {
   }
 });
 /*=========================리뷰 작성=================================*/
-app.post("/text", async (req,res) => {
-  try{
-      let {
-          user_id,
-          product_id,
-          order_id,
-          title,
-          contents,
-          star_rating,
-      } = req.body;
-      
-        const insertQuery = "INSERT INTO review ( user_id,product_id,order_id,title, contents, star_rating) VALUES ( ?, ?, ?, ?, ?, ?)";
-          await new Promise((resolve,reject) => {
-              connection.query(insertQuery,[user_id,product_id,order_id,title,contents,star_rating],(err,result) => {
-                  if(err) reject(err);
-                  else resolve(result);
-              });
-          });
-          const orderReviewSql = "UPDATE bluewave.order SET review_yn = 'Y' WHERE user_id = ? AND product_id = ?"
-          await new Promise((resolve,reject) => {
-            connection.query(orderReviewSql,[user_id,product_id],(err,result)=>{
-              if(err) reject(err);
-                  else resolve(result);
-            })
-          })
-          return res.json({success:true, message : "리뷰가 등록되었습니다"})
-  } catch(error){
-      console.error("서버에서 오류 발생 : ", error);
-      return res.status(500).json({
-          success: false,
-          message: "리뷰등록 중 오류가 발생하였습니다",
-          error: error.message
-      });
+app.post("/text", async (req, res) => {
+  try {
+    let { user_id, product_id, order_id, title, contents, star_rating } =
+      req.body;
+
+    const insertQuery =
+      "INSERT INTO review ( user_id,product_id,order_id,title, contents, star_rating) VALUES ( ?, ?, ?, ?, ?, ?)";
+    await new Promise((resolve, reject) => {
+      connection.query(
+        insertQuery,
+        [user_id, product_id, order_id, title, contents, star_rating],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+    const orderReviewSql =
+      "UPDATE bluewave.order SET review_yn = 'Y' WHERE user_id = ? AND product_id = ? AND order_id = ?";
+    await new Promise((resolve, reject) => {
+      connection.query(
+        orderReviewSql,
+        [user_id, product_id, order_id],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        }
+      );
+    });
+    return res.json({ success: true, message: "리뷰가 등록되었습니다" });
+  } catch (error) {
+    console.error("서버에서 오류 발생 : ", error);
+    return res.status(500).json({
+      success: false,
+      message: "리뷰등록 중 오류가 발생하였습니다",
+      error: error.message,
+    });
   }
 });
 
@@ -796,7 +804,7 @@ app.get("/api/reviews", async (req, res) => {
   let sqlQuery;
   //let queryParams = [];
 
-    sqlQuery = `
+  sqlQuery = `
       SELECT r.review_id, r.user_id, r.product_id, r.order_id, r.contents, r.review_date, r.star_rating, p.main_image,p_name,title
       FROM review r
       JOIN product p ON r.product_id = p.product_id
@@ -824,122 +832,126 @@ app.get("/api/reviews", async (req, res) => {
 app.get("/api/findPassword", async (req, res) => {
   const userId = req.query.userId;
   const userEmail = req.query.userEmail;
-  try{
-
-    const findEmailSql = "SELECT user_email FROM user WHERE user_email = ?"
-    const findUserEmail = await new Promise((resolve,reject) => {
-      connection.query(findEmailSql, [userEmail], (err,result) => {
-        if(err){
+  try {
+    const findEmailSql = "SELECT user_email FROM user WHERE user_email = ?";
+    const findUserEmail = await new Promise((resolve, reject) => {
+      connection.query(findEmailSql, [userEmail], (err, result) => {
+        if (err) {
           reject(err); //err: 데이터베이스 쿼리 중 발생한 오류를 나타내는 객체입니다. 오류가 발생하지 않으면 null입니다.
-        } 
-        else{
+        } else {
           resolve(result); // result: 데이터베이스 쿼리의 결과를 나타내는 객체나 배열
-        } 
-      })
+        }
+      });
     });
 
-    if (findUserEmail && findUserEmail.length > 0){
-      const findIdSql = "SELECT user_id FROM user WHERE user_id = ? AND user_email = ?"
-      const findUserId = await new Promise((resolve,reject) => {
-        connection.query(findIdSql, [userId,userEmail], (err,result) => {
-          if(err){
+    if (findUserEmail && findUserEmail.length > 0) {
+      const findIdSql =
+        "SELECT user_id FROM user WHERE user_id = ? AND user_email = ?";
+      const findUserId = await new Promise((resolve, reject) => {
+        connection.query(findIdSql, [userId, userEmail], (err, result) => {
+          if (err) {
             reject(err); //err: 데이터베이스 쿼리 중 발생한 오류를 나타내는 객체입니다. 오류가 발생하지 않으면 null입니다.
-          } 
-          else{
+          } else {
             resolve(result); // result: 데이터베이스 쿼리의 결과를 나타내는 객체나 배열
-          } 
-        })
+          }
+        });
       });
-       // 사용자 아이디 검색 결과를 확인합니다.
-        if (findUserId && findUserId.length > 0) {
-          // 사용자 아이디와 이메일 모두 존재하는 경우 성공적인 응답을 클라이언트에게 전송합니다.
-          return res.status(200).json({ success: true });
-        } else {
-          // 사용자 아이디가 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
-          return res.status(200).json({ success: false, message: "wrong id" });
-        }
+      // 사용자 아이디 검색 결과를 확인합니다.
+      if (findUserId && findUserId.length > 0) {
+        // 사용자 아이디와 이메일 모두 존재하는 경우 성공적인 응답을 클라이언트에게 전송합니다.
+        return res.status(200).json({ success: true });
+      } else {
+        // 사용자 아이디가 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
+        return res.status(200).json({ success: false, message: "wrong id" });
+      }
     } else {
       // 사용자 이메일이 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
       return res.status(200).json({ success: false, message: "wrong email" });
-  }
-  }catch(error){
+    }
+  } catch (error) {
     // 비동기 작업 중 발생한 모든 오류에 대한 일반적인 처리
     console.error("Database query failed:", error);
-    return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다" });
+    return res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다" });
   }
 });
 /*=================   비밀번호 재설정   =====================*/
-app.post('/api/resetPassword', async(req,res) => {
-  let { userPassword, userId } = req.body
-  try{
+app.post("/api/resetPassword", async (req, res) => {
+  let { userPassword, userId } = req.body;
+  try {
     // 비밀번호 암호화
     const salt = await bcrypt.genSalt(10); //매개변수 10은 "cost factor" 또는 "work factor"라고 불리며, 해싱 알고리즘의 반복 횟수를 결정
     const hash = await bcrypt.hash(userPassword, salt);
     userPassword = hash;
-    const resetPwSql = "UPDATE user SET user_pw = ? WHERE user_id = ?"
-    const resetPassword = await new Promise((resolve,reject) => {
-      connection.query(resetPwSql,[userPassword,userId],(err,result) => {
-        if(err) reject(err); 
-        else resolve(result); 
-      })
+    const resetPwSql = "UPDATE user SET user_pw = ? WHERE user_id = ?";
+    const resetPassword = await new Promise((resolve, reject) => {
+      connection.query(resetPwSql, [userPassword, userId], (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      });
     });
-    return res.status(200).json({success:true});
-  }catch(error){
+    return res.status(200).json({ success: true });
+  } catch (error) {
     console.error("Database query failed:", error);
-    return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다" });
+    return res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다" });
   }
 });
 /*=================   아이디 찾기   =====================*/
 app.get("/api/findId", async (req, res) => {
   const userName = req.query.userName;
   const userEmail = req.query.userEmail;
-  try{
-    const findEmailSql = "SELECT user_email FROM user WHERE user_email = ?"
-    const findUserEmail = await new Promise((resolve,reject) => {
-      connection.query(findEmailSql, [userEmail], (err,result) => {
-        if(err){
+  try {
+    const findEmailSql = "SELECT user_email FROM user WHERE user_email = ?";
+    const findUserEmail = await new Promise((resolve, reject) => {
+      connection.query(findEmailSql, [userEmail], (err, result) => {
+        if (err) {
           reject(err); //err: 데이터베이스 쿼리 중 발생한 오류를 나타내는 객체입니다. 오류가 발생하지 않으면 null입니다.
-        } 
-        else{
+        } else {
           resolve(result); // result: 데이터베이스 쿼리의 결과를 나타내는 객체나 배열
-        } 
-      })
+        }
+      });
     });
 
-    if (findUserEmail && findUserEmail.length > 0){
-      const findIdSql = "SELECT user_id FROM user WHERE user_name = ? AND user_email = ?"
-      const findUserId = await new Promise((resolve,reject) => {
-        connection.query(findIdSql, [userName,userEmail], (err,result) => {
-          if(err){
+    if (findUserEmail && findUserEmail.length > 0) {
+      const findIdSql =
+        "SELECT user_id FROM user WHERE user_name = ? AND user_email = ?";
+      const findUserId = await new Promise((resolve, reject) => {
+        connection.query(findIdSql, [userName, userEmail], (err, result) => {
+          if (err) {
             reject(err); //err: 데이터베이스 쿼리 중 발생한 오류를 나타내는 객체입니다. 오류가 발생하지 않으면 null입니다.
-          } 
-          else{
+          } else {
             resolve(result); // result: 데이터베이스 쿼리의 결과를 나타내는 객체나 배열
-          } 
-        })
+          }
+        });
       });
-       // 사용자 아이디 검색 결과를 확인합니다.
-        if (findUserId && findUserId.length > 0) {
-          // 사용자 아이디와 이메일 모두 존재하는 경우 성공적인 응답을 클라이언트에게 전송합니다.
-          return res.status(200).json({ success: true, data: findUserId[0] });
-        } else {
-          // 사용자 이름이 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
-          return res.status(200).json({ success: false, message: "wrong name" });
-        }
+      // 사용자 아이디 검색 결과를 확인합니다.
+      if (findUserId && findUserId.length > 0) {
+        // 사용자 아이디와 이메일 모두 존재하는 경우 성공적인 응답을 클라이언트에게 전송합니다.
+        return res.status(200).json({ success: true, data: findUserId[0] });
+      } else {
+        // 사용자 이름이 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
+        return res.status(200).json({ success: false, message: "wrong name" });
+      }
     } else {
       // 사용자 이메일이 존재하지 않는 경우 에러 응답을 클라이언트에게 전송합니다.
       return res.status(200).json({ success: false, message: "wrong email" });
-  }
-  }catch(error){
+    }
+  } catch (error) {
     // 비동기 작업 중 발생한 모든 오류에 대한 일반적인 처리
     console.error("Database query failed:", error);
-    return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다" });
+    return res
+      .status(500)
+      .json({ success: false, message: "서버 오류가 발생했습니다" });
   }
 });
 /*=================   제품별 리뷰 가져오기   =====================*/
 app.get("/review/:categoryId/:subCategoryId/:id", (req, res) => {
   const productId = req.params.id;
-  const sqlQuery = "SELECT * FROM bluewave.review WHERE product_id = ? ORDER BY review_date DESC";
+  const sqlQuery =
+    "SELECT * FROM bluewave.review WHERE product_id = ? ORDER BY review_date DESC";
 
   connection.query(sqlQuery, [productId], (err, result) => {
     if (err) {
@@ -947,15 +959,14 @@ app.get("/review/:categoryId/:subCategoryId/:id", (req, res) => {
       return;
     }
     if (result.length > 0) {
-      res.status(200).json(result)
-    }else{
-      res.status(200).json({message:"no review"})
+      res.status(200).json(result);
+    } else {
+      res.status(200).json({ message: "no review" });
     }
-    
   });
 });
 /*==========================================================*/
-app.get('/test', (req,res) => {
-  res.send("테스트 페이지 입니다")
-})
+app.get("/test", (req, res) => {
+  res.send("테스트 페이지 입니다");
+});
 app.listen(port, () => console.log(`${port}번으로 서버 실행`));

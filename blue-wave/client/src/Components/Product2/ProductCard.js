@@ -7,12 +7,13 @@ const formatPrice = (price) => {
 
 const ProductCard = ({ categoryId, subCategoryId, product }) => (
   <li className="product_card">
-    <Link to={`/product/${categoryId}/${subCategoryId}/${product.id}`}>
+    <Link
+      to={`/product/${product.categoryId}/${product.subCategoryId}/${product.id}`}
+    >
       <div className="product_img">
         <img src={product.imgSrc} alt={product.name} />
       </div>
-    </Link>
-    <Link to={`/product/${categoryId}/${subCategoryId}/${product.id}`}>
+
       <div className="product_info">
         {/* 제품이름 */}
         <h4>{product.name}</h4>
@@ -21,8 +22,7 @@ const ProductCard = ({ categoryId, subCategoryId, product }) => (
         {/* 제품 설명 */}
         <p className="product_description">{product.description}</p>
       </div>
-    </Link>
-    <Link to={`/product/${categoryId}/${subCategoryId}/${product.id}`}>
+
       <div className="product_price">
         <p className="price">{formatPrice(product.price)}원</p>
         <p>즉시구매</p>

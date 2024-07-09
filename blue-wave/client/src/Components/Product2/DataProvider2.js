@@ -62,6 +62,8 @@ const DataProvider2 = ({ children }) => {
                 description: "무료배송",
                 price: product.p_price,
                 imgSrc: product.main_image,
+                categoryId: product.category_id,
+                subCategoryId: product.sub_category_id,
               });
             }
           }
