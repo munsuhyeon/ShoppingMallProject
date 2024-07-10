@@ -575,17 +575,17 @@ app.get("/api/verify-token", (req, res) => {
   if (!token) {
     // 로그인페이지로 이동하기
     console.log("accessToken이 없습니다");
-    return res.status(401).json({ message: "Unauthorized" });
+    return res.json({ valid: false,message: "Unauthorized" });
   }
 
   jwt.verify(token, JWT_SECRET, (err, userID) => {
     if (err) {
       // 로그인페이지로 이동하기
       console.log("유효하지 않은 accessToken");
-      return res.status(403).json({ message: "토큰 확인 실패" });
+      return res.json({ valid: false,message: "토큰 확인 실패" });
     }
     console.log("accessToken 검증 성공");
-    return res.status(200).json({ valid: true, userId: userID });
+    return res.json({ valid: true, userId: userID });
   });
 });
 /*=================   refreshToken으로 accessToken 재발급   =====================*/
