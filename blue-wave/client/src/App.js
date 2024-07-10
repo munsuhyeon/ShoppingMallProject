@@ -24,7 +24,8 @@ import ResetPassword from "./View/ResetPassword.js";
 import ChangedPassword from "./View/ChangedPassword.js";
 import FindId from "./View/FindId.js";
 import FindIdResult from "./View/FindIdResult.js";
-
+import axios from "axios";
+import {handleLogout} from "./Utils/Utils.js"
 // import"./App.css"
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
@@ -38,9 +39,11 @@ const ScrollToTop = () => {
 
   return null;
 };
+// 웹페이지 처음 렌더링 시 전에 로그인한 유저인지 확인 후 
+// 토큰이 만료되면 로그아웃 처리하기
 
 const apiUrl = process.env.REACT_APP_HOST;
-console.log(`API URL: ${apiUrl}`);
+//console.log(`API URL: ${apiUrl}`);
 
 const AppRoutes = () => {
   const { loggedIn } = useContext(AuthContext);
@@ -112,6 +115,55 @@ const AppRoutes = () => {
   );
 };
 const App = () => {
+
+  useEffect(() => {
+    // 탭 전환에 따른 사용자 토큰 검증
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible') {
+        //console.log('페이지가 활성화되었습니다.');
+        const token = localStorage.getItem("accessToken");
+        if (token) {
+          try {
+            const response = await axios.get(`${process.env.REACT_APP_HOST}/api/verify-token`, {
+              headers: { Authorization: `Bearer ${token}` },
+              withCredentials: true,
+            });
+            if (response.data.valid === false) {
+              handleLogout();
+            }
+          } catch (error) {
+            handleLogout();
+          }
+        }
+      }
+    };
+    // 페이지가 처음 로드될 때 사용자 토큰 검증
+    const handleLoad = async () => {
+      //console.log('페이지가 로드되었습니다.');
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_HOST}/api/verify-token`, {
+            headers: { Authorization: `Bearer ${token}` },
+            withCredentials: true,
+          });
+          if (response.data.valid === false) {
+            handleLogout();
+          }
+        } catch (error) {
+          handleLogout();
+        }
+      }
+    };
+    window.addEventListener('load', handleLoad);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('load', handleLoad);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+  
   return (
     <AuthProvider>
       <Router>

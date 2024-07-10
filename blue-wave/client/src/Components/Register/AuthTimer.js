@@ -41,7 +41,7 @@ const refreshToken = async () => {
 
             // 서버가 반환한 남은 유효 시간을 바로 사용
             setTokenTime(newTokenExp); // 타이머 초기화
-            console.log("토큰 갱신 성공", newTokenExp);
+            //console.log("토큰 갱신 성공", newTokenExp);
             return newTokenExp;
         } else {
             console.error("토큰 갱신 실패: 예상치 못한 상태 코드", refreshResponse.status);
@@ -59,7 +59,6 @@ const checkTokenExpiration = async () => {
         const isTokenValid = await verifyToken();
         if (isTokenValid) {
             const newTokenTime = await refreshToken();
-            alert("성공");
             if (newTokenTime === 0) {
                 alert("토큰 갱신 실패");
                 handleLogout();
@@ -102,7 +101,7 @@ const checkTokenExpiration = async () => {
         const storedLoggedIn = localStorage.getItem('loggedIn');
         if (storedLoggedIn) {
             setLoggedIn(true);
-            setLogoutTime(3600); // 유저의 활동 타이머 초기화
+            setLogoutTime(120); // 유저의 활동 타이머 초기화
             checkTokenExpiration();
         }
         const resetLogoutTime = () => setLogoutTime(3600);
@@ -119,7 +118,7 @@ const checkTokenExpiration = async () => {
 
     return (
         <>
-            {/*<li style={{fontSize:'14px', fontWeight:'bold'}}>로그아웃시간: {formatTime(logoutTime)}</li>*/}
+            {/*<span style={{fontSize:'14px', fontWeight:'bold'}}>로그아웃시간: {formatTime(logoutTime)}</span><br/>*/}
             <span style={{fontSize:'14px', fontWeight:'bold'}}>{formatTime(tokenTime)}</span> {/*토큰만료시간 타이머*/}
         </>
     );
