@@ -30,7 +30,6 @@ app.use(
     exposedHeaders: ["Authorization"],
   })
 );
-console.log(`CLIENT_URL: ${process.env.CLIENT_URL}`);
 // 정적 파일을 제공하기 위해 디렉토리를 설정합니다.
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use(express.static(path.join(__dirname + "/images")));
@@ -972,7 +971,6 @@ app.post("/api/getKakaoUser", async (req,res) => {
   const data = req.headers.data;
   const parsedData = JSON.parse(data);
   const ACCESS_TOKEN = parsedData.access_token
-  console.log(JSON.parse(data))
   
   try{
     const response = await axios.post("https://kapi.kakao.com/v2/user/me",
@@ -983,19 +981,12 @@ app.post("/api/getKakaoUser", async (req,res) => {
         "Authorization" : ` Bearer ${ACCESS_TOKEN}`
       }
     });
-    console.log("사용자 정보")
-    console.log(response.data)
     const getEmail = response.data.kakao_account.email;
     const query = "SELECT * FROM user WHERE user_email = ? AND user_type = 'K'"
     connection.query(query,getEmail,(err, result) => {
       if (err) {
         return res.status(500).json({message : err});
       }
-      console.log("===========================")
-      console.log(result)
-      console.log("===========================")
-      console.log(result[0].user_id)
-      console.log("===========================")
       if (result.length > 0) {
         const accessToken = generateAccessToken({ userId: result[0].user_id });
         const verified = jwt.verify(accessToken, JWT_SECRET);
@@ -1013,7 +1004,5 @@ app.post("/api/getKakaoUser", async (req,res) => {
   }
 });
 /*==========================================================*/
-app.get("/test", (req, res) => {
-  res.send("테스트 페이지 입니다");
-});
+
 app.listen(port, () => console.log(`${port}번으로 서버 실행`));
