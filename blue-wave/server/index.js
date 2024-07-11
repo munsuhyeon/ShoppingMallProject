@@ -75,14 +75,15 @@ app.post("/api/register", async (req, res) => {
     zonecode,
     address,
     detailAddress,
+    userType
   } = req.body;
 
   try {
     // 아이디 중복체크와 이메일 중복체크가 동시에 일어나지 않도록 promise 사용
     // DB에 저장 전 id  중복체크
-    const checkIdSql = "SELECT user_id FROM user where user_id = ?";
+    const checkIdSql = "SELECT user_id FROM user WHERE user_id = ? AND user_type = ?";
     const idResult = await new Promise((resolve, reject) => {
-      connection.query(checkIdSql, [userId], (err, result) => {
+      connection.query(checkIdSql, [userId,userType], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -95,9 +96,9 @@ app.post("/api/register", async (req, res) => {
     }
 
     // 이메일 저장 전 중복 체크
-    const checkEmailSql = "SELECT user_email FROM user where user_email = ?";
+    const checkEmailSql = "SELECT user_email FROM user where user_email = ? AND user_type = ?";
     const emailResult = await new Promise((resolve, reject) => {
-      connection.query(checkEmailSql, [userEmail], (err, result) => {
+      connection.query(checkEmailSql, [userEmail,userType], (err, result) => {
         if (err) reject(err);
         else resolve(result);
       });
@@ -115,7 +116,7 @@ app.post("/api/register", async (req, res) => {
 
     // 회원정보 DB에 저장
     const registerSql =
-      "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail, zone_code) values(?,?,?,?,?,?,?,?)";
+      "INSERT INTO user (user_id, user_pw, user_name, user_email, user_phone, address, address_detail, zone_code, user_type) values(?,?,?,?,?,?,?,?,?)";
     await new Promise((resolve, reject) => {
       connection.query(
         registerSql,
@@ -128,6 +129,7 @@ app.post("/api/register", async (req, res) => {
           address,
           detailAddress,
           zonecode,
+          userType
         ],
         (err, result) => {
           if (err) reject(err);
@@ -964,6 +966,51 @@ app.get("/review/:categoryId/:subCategoryId/:id", (req, res) => {
       res.status(200).json({ message: "no review" });
     }
   });
+});
+/*=================   카카오 로그인  - 발급받은 토큰으로 사용자 정보 조회   =====================*/
+app.post("/api/getKakaoUser", async (req,res) => {
+  const data = req.headers.data;
+  const parsedData = JSON.parse(data);
+  const ACCESS_TOKEN = parsedData.access_token
+  console.log(JSON.parse(data))
+  
+  try{
+    const response = await axios.post("https://kapi.kakao.com/v2/user/me",
+      'property_keys=["kakao_account.email"]',
+      {
+      headers :{
+        "Content-Type" : "application/x-www-form-urlencoded",
+        "Authorization" : ` Bearer ${ACCESS_TOKEN}`
+      }
+    });
+    console.log("사용자 정보")
+    console.log(response.data)
+    const getEmail = response.data.kakao_account.email;
+    const query = "SELECT * FROM user WHERE user_email = ? AND user_type = 'K'"
+    connection.query(query,getEmail,(err, result) => {
+      if (err) {
+        return res.status(500).json({message : err});
+      }
+      console.log("===========================")
+      console.log(result)
+      console.log("===========================")
+      console.log(result[0].user_id)
+      console.log("===========================")
+      if (result.length > 0) {
+        const accessToken = generateAccessToken({ userId: result[0].user_id });
+        const verified = jwt.verify(accessToken, JWT_SECRET);
+        const decodedExp = verified.exp;
+        return res
+          .status(200)
+          .json({ message:"active user", accessToken: accessToken, tokenExp: decodedExp,userInfo:result[0] });
+      } else{
+        return res.status(200).json({message:"no user",userEmail:getEmail})
+      }
+    })
+  }catch(error){
+    console.log(error)
+    return res.status(500).json({message:error})
+  }
 });
 /*==========================================================*/
 app.get("/test", (req, res) => {
