@@ -77,6 +77,8 @@
     margin-top: 10px;
     display: flex;
     justify-content: center;
+    border: none;
+    cursor: pointer;
 }
 .join_btn{
     align-items: center;

@@ -26,6 +26,7 @@ import FindId from "./View/FindId.js";
 import FindIdResult from "./View/FindIdResult.js";
 import axios from "axios";
 import {handleLogout} from "./Utils/Utils.js"
+import KakaoLogin from "./Components/Register/KakaoLogin.js";
 // import"./App.css"
 
 // 페이지 이동 시 화면을 맨 위로 스크롤하는 컴포넌트
@@ -106,6 +107,10 @@ const AppRoutes = () => {
       <Route
         path="/product/:categoryId/:subCategoryId"
         element={<AllProduct />}
+      />
+      <Route
+        path="/kakaoLogin"
+        element={<KakaoLogin />}
       />
       <Route path="/product/:categoryId" element={<AllProduct />} />
       <Route path="/search" element={<SearchResults />} />

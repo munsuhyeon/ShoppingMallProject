@@ -66,7 +66,13 @@ const Login = () => {
     const userPassword = register('userPassword',{
         required : "필수 입력값입니다",
     });
-    
+    const kakaoLogin = (e) => {
+        e.preventDefault();
+        const clientId = process.env.REACT_APP_Kakao_clientId
+        const redirectUri = process.env.REACT_APP_Kakao_redirectUri
+        const kakaoUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code`
+        window.location.href = kakaoUrl;
+    }
     return(
         <div>
             <Header />
@@ -85,6 +91,8 @@ const Login = () => {
                         </div>
                         <div className="btn_area" style={{display:'block'}}>
                             <Button text={"로그인"} className={'join_btn'} type='submit'/>
+                            <Button text={"카카오 로그인"} className={'sns_btn kakao'} onClick={kakaoLogin} img={<img src={process.env.PUBLIC_URL + `assets/snsLogin/kakao-svgrepo-com.svg`} className="logo_social" type='button'/>}/>
+                       
                         </div>
                     </form>
                 </div>

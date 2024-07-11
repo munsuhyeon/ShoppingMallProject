@@ -1,6 +1,6 @@
 import {useForm} from 'react-hook-form';
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 import Terms from "../Components/Register/Terms";
 import Modal from 'react-modal';
@@ -10,6 +10,16 @@ import Button from '../UI/Button';
 import Header from './Header';
 
 const Register = () => {
+    const location = useLocation();
+    const [userType, setUserType] = useState('B');
+    const [getEmail, setGetEmail] = useState('');
+    useEffect(() => {
+        if (location.state) {
+            setUserType(location.state.userType || 'B');
+            setGetEmail(location.state.userEmail || '');
+        }
+    },[location.state])
+    
     const navigate = useNavigate();
     const {register,
         handleSubmit,
@@ -18,8 +28,11 @@ const Register = () => {
         setValue,
         reset
         } = useForm({mode:'onBlur'});
-       
-
+    useEffect(() => {
+        if (getEmail) {
+            reset({ userEmail: getEmail, userType: userType });
+        }
+    }, [getEmail, reset]);
     // 가입하기 버튼 클릭
     const onSubmit = async (data) => {
         await axios.post(`${process.env.REACT_APP_HOST}/api/register`,{
@@ -53,6 +66,7 @@ const Register = () => {
             reset();
         });
     };
+    
 
     const userId = register('userId',{
         required : "필수 입력값입니다",
@@ -171,8 +185,10 @@ const Register = () => {
                             <Input type={'password'} id={'comparePassword'} prop={comparePassword} errors={errors} title={"비밀번호 확인"} placeholder={'비밀번호를 한번 더 입력해주세요'} />
                             <Input type={'text'} id={'userName'} prop={userName} errors={errors} title={"이름"}/>
                             <Input type={'tel'} id={'userPhone'} prop={userPhone} errors={errors} title={"휴대폰"} placeholder={'숫자만 입력해주세요'} />
-                            <Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"}/>
-                        
+                            {userType == 'B' ? (<Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"}/>) 
+                            : (<Input type={'email'} id={'userEmail'} prop={userEmail} errors={errors} title={"이메일"} readOnly={true}/>)}
+                            
+                            <input type='hidden' name='userType' id='userType' value={userType} {...register('userType')} />
                             <div className="input_box">
                                 <label style={{fontSize: '13px', lineHeight: '18px',letterSpacing: '-.07px',fontWeight: '900'}}>주소</label>
                                 <div className="input_item input_address">
